@@ -1,0 +1,23 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:34     ...Page  1
+D:LOOKUP0.LTX , D:LOOKUP0.PRN , D:LOOKUP0.SYM = D:LOOKUP0.SA
+   ...
+
+                            1.           XDEF      DPTABLE0
+                            2.           XDEF      DPCOUNT0
+C'000000                    3.           SECTION   12
+     C'00000000             4.  DPTABLE0 EQU       *
+                            5.  *
+C'000000  0000              6.  DPCOUNT0 DC.W                 0
+C'000002                    7.           END
+    0 Errors
+..Run on May 7, 2025  14:53:34     ...Page  1
+D:LOOKUP0.LTX , D:LOOKUP0.PRN , D:LOOKUP0.SYM = D:LOOKUP0.SA
+   ...
+
+                            1.           XDEF      DPTABLE0
+                            2.           XDEF      DPCOUNT0
+C'000000                    3.           SECTION   12
+     C'00000000             4.  DPTABLE0 EQU       *
+                            5.  *
+C'000000  0000              6.  DPCOUNT0 DC.W                 0
+C'000002                    

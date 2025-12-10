@@ -1,0 +1,736 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page  1
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+                            1.           OPT       MEX,CEX,NOPCS
+                            2.           XDEF      ROLL
+                            3.  *
+                            4.           INCLUDE   FSYM.SA
+     # 0000147A             5:  FALPHA    EQU   $0000147A L 001 L S25  ANGLE OF ATTACK (DEGREES) 2-25,LONG 2-9(
+     # 0000147E             6:  FBALL     EQU   $0000147E L 001 L S20  IND BALL WIDTHS/1.6  AT 2-20(LONG) 2-4(W
+     # 00001482             7:  FBETA     EQU   $00001482 L 001 L S25  SIDE SLIP ANGLE(DEGREES)AT 2-25(LONG) 2-
+     # 00001486             8:  FHF       EQU   $00001486 L 001 L S17  GEOMETRIC FIELD ELEV(FT)AT 2-17(LONG WOR
+     # 0000148A             9:  FHGGND    EQU   $0000148A L 001 L S17  FLT HEIGHT ABOVE GROUND(FT)AT 2-17(LONG
+     # 0000148E            10:  FHFP      EQU   $0000148E L 001 L S17  FIELD PRESSURE ALTITUDE(FT)AT 2-17(LONG
+     # 00001492            11:  FHP       EQU   $00001492 L 001 L S17  PRESSURE ALTITUDE(FT)AT 2-17(LONG WORD)2
+     # 00001496            12:  FLAMBDA   EQU   $00001496 L 001 L S24  LAMBDA(BALL ANGLE)(DEGREES)AT 2-24(LONG)
+     # 0000149A            13:  FPA       EQU   $0000149A L 001 L S22  ROLL RATE(DEG/SEC)AT 2-22(LONG WORD) 2-6
+     # 0000149E            14:  FPHI      EQU   $0000149E L 001 L S22  BANK ANGLE(DEGREES)AT 2-22(LONG WORD) 2-
+     # 000014A2            15:  FPHIFRZ   EQU   $000014A2 L 001 L S22  FROZEN BANK ANGLE AT 2-22(LONG) 2-6(WORD
+     # 000014A6            16:  FPSI      EQU   $000014A6 L 001 L S22  HEADING ANGLE(DEGREES)AT 2-22(LONG) 2-6(
+     # 000014AA            17:  FQA       EQU   $000014AA L 001 L S25  PITCH RATE(DEG/SEC)AT 2-25(LONG WORD)2-9
+     # 000014AE            18:  FRA       EQU   $000014AE L 001 L S25  RATE OF TURN(DEG/SEC)AT 2-25(LONG) 2-9(W
+     # 000014B2            19:  FRCHOLD   EQU   $000014B2 L 001 L S22  RATE OF CLIMB HOLD INTEGRATER AT 2-22
+     # 000014B6            20:  FRCLIMB   EQU   $000014B6 L 001 L S22  INDICATED RATE OF CLIMB/2000 (FT/MIN) AT
+     # 000014BA            21:  FROLLHLD  EQU   $000014BA L 001 L S22  BANK HOLD INTEGRATER AT 2-22
+     # 000014BE            22:  FRCLIMB1  EQU   $000014BE L 001 L S03  RATE OF CLIMB (FEET/MINUTE) AT 2-3
+     # 000014C2            23:  FHG       EQU   $000014C2 L 001 L S17  GEOMETRIC ALTITUDE AT 2-17
+     # 000014C6            24:  FTEMP3    EQU   $000014C6 L 001 L S03  FLIGHT SPARE
+     # 000014CA            25:  FTEMP4    EQU   $000014CA L 001 L S04  FLIGHT SPARE
+     # 000014CE            26:  FTEMP5    EQU   $000014CE L 001 L S05  FLIGHT SPARE
+     # 000014D2            27:  FTEMP6    EQU   $000014D2 L 001 L S06  FLIGHT SPARE
+     # 000014D6            28:  FTHETA    EQU   $000014D6 L 001 L S25  PITCH ANGLE(DEGREES)AT 2-25(LONG WORD) 2
+     # 000014DA            29:  FUEW      EQU   $000014DA L 001 L S21  NORTH/SOUTH GROUND VEL.(FT/SEC)AT 2-21,2
+     # 000014DE            30:  FVCAL     EQU   $000014DE L 001 L S22  INDICATED AIRSPEED(FT/SEC)AT 2-22(LONG W
+     # 000014E2            31:  FVEW      EQU   $000014E2 L 001 L S21  EAST/WEST GROUND VEL.(FT/SEC)AT 2-21,2-5
+     # 000014E6            32:  FVP       EQU   $000014E6 L 001 L S22  TRUE AIRSPEED(FT/SEC)AT 2-22(LONG WORD 2
+     # 000014EA            33:  FVPGND    EQU   $000014EA L 001 L S21  TRUE GROUND VELOCITY(FT/SEC)AT 2-21,2-5
+     # 000014EE            34:  FALPHDOT  EQU   $000014EE W 001 L S07  RATE OF CHANGE OF ANGLE OF ATTACK(DEG/SE
+     # 000014F0            35:  FAZA      EQU   $000014F0 W 001 L S12  VERTICAL ACCELERATION (G'S) 2-12
+     # 000014F2            36:  FAZADOT   EQU   $000014F2 W 001 L S12  RATE OF CHANGE OF AZA/20  (G'S/SEC) AT 2
+     # 000014F4            37:  FBETADOT  EQU   $000014F4 W 001 L S07  RATE OF CHANGE OF SIDE SLIP ANGLE(DEG/SE
+     # 000014F6            38:  FCG       EQU   $000014F6 W 001 L S09  CENTER OF GRAVITY(%)AT 2-9
+     # 000014F8            39:  FCL       EQU   $000014F8 W 001 L S13  LIFT COEFFICIENT AT 2-13
+     # 000014FA            40:  FCOSALPH  EQU   $000014FA W 001 L S15  COSINE OF ANGLE OF ATTACK AT 2-31(LONG)2
+     # 000014FC            41:  FCOSPHI   EQU   $000014FC W 001 L S15  COSINE OF BANK ANGLE AT 2-31(LONG)2-15(W
+     # 000014FE            42:  FCOSPSI   EQU   $000014FE W 001 L S15  COSINE OF HEADING ANGLE AT 2-31(LONG)2-1
+     # 00001500            43:  FCOSPSIW  EQU   $00001500 W 001 L S15  COSINE CORRECTED WIND DIRECTION(FROM)AT
+     # 00001502            44:  FCOSTHET  EQU   $00001502 W 001 L S15  COSINE OF PITCH ANGLE AT 2-31(LONG) 2-15
+     # 00001504            45:  FDELAIL   EQU   $00001504 W 001 L S14  AILERON DEFLECTION(NORMALIZED,POS=LEFT W
+     # 00001506            46:  FDELEV    EQU   $00001506 W 001 L S14  ELEVATOR DEFLECTION (NORMALIZED,POS=NOSE
+     # 00001508            47:  FDELRUD   EQU   $00001508 W 001 L S14  RUDDER DEFLECTION(NORMALIZED,POS=NOSE LE
+     # 0000150A            48:  FDELTATK  EQU   $0000150A W 001 L S09  AIR TEMP DELTA TK (DEG C)AT 2-9
+     # 0000150C            49:  FELTRIM   EQU   $0000150C W 001 L S14  STAB TRIM(NORMALIZED)AT 2-14
+     # 0000150E            50:  FFLAPS    EQU   $0000150E W 001 L S14  FLAP POSITION(NORMALIZED)AT 2-14
+     # 00001510            51:  FFXA      EQU   $00001510 W 001 L S03  AERO DRAG(QSCD)(LBS)AT 2-3
+     # 00001512            52:  FFZA      EQU   $00001512 W 001 L S02  VERTICAL FORCE(LBS)DOWN IS POSITIVE AT 2
+     # 00001514            53:  FGAMMA    EQU   $00001514 W 001 L S10  FLIGHT PATH ELEVATION ANGLE(DEG)AT 2-10
+     # 00001516            54:  FHDOT     EQU   $00001516 W 001 L S06  RATE OF CLIMB(FT/SEC)AT 2-6
+     # 00001518            55:  FICOSPHI  EQU   $00001518 W 001 L S15  COSINE(INDICATER BANK ANGLE)AT 2-15
+     # 0000151A            56:  FISINPHI  EQU   $0000151A W 001 L S15  SINE(INDICATER BANK ANGLE)AT 2-15
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page  2
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+     # 0000151C            57:  FLAMDOT   EQU   $0000151C W 001 L S08  RATE OF CHANGE OF LAMBDA(DEG/SEC)AT 2-8
+     # 0000151E            58:  FMPX      EQU   $0000151E W 001 L S01  MULTIPLEX COUNTER AT 2-1
+     # 00001520            59:  FPADOT    EQU   $00001520 W 001 L S06  ROLL RATE DOT(DEG/SEC. SQ)AT 2-6
+     # 00001522            60:  FPBAR     EQU   $00001522 W 001 L S10  TOTAL BARO PRESSURE(INCHES)AT 2-10
+     # 00001524            61:  FPSIDOT   EQU   $00001524 W 001 L S08  RATE OF CHANGE OF HEADING(DEG/SEC)AT 2-8
+     # 00001526            62:  FQ        EQU   $00001526 W 001 L S06  DYNAMIC PRESSURE (LB/FT SQ)AT 2-6
+     # 00001528            63:  FQADOT    EQU   $00001528 W 001 L S07  PITCH RATE DOT(DEG/SEC SQ)AT 2-7
+     # 0000152A            64:  FPHIDOT   EQU   $0000152A W 001 L S08  RATE OF CHANGE OF BANK ANGLE(DEG/SEC)AT
+     # 0000152C            65:  FRADOT    EQU   $0000152C W 001 L S07  TURN RATE DOT(DEG/SEC SQ)AT 2-7
+     # 0000152E            66:  FRAND     EQU   $0000152E W 001 L S15  RANDOM NUMBER AT 2-15
+     # 00001530            67:  FRUFAIR   EQU   $00001530 W 001 L S06  VP*ROUGH AIR AT 2-6
+     # 00001532            68:  FSINALPH  EQU   $00001532 W 001 L S15  SINE OF ANGLE OF ATTACK AT 2-15
+     # 00001534            69:  FSINGAMA  EQU   $00001534 W 001 L S15  SINE FLIGHT PATH ELEV ANGLE AT 2-15
+     # 00001536            70:  FSINPHI   EQU   $00001536 W 001 L S15  SINE BANK ANGLE AT 2-15
+     # 00001538            71:  FSINPSI   EQU   $00001538 W 001 L S15  SINE HEADING ANGLE AT 2-15
+     # 0000153A            72:  FSINPSIW  EQU   $0000153A W 001 L S15  SINE CORRECTED WIND DIRECTION(FROM)AT 2-
+     # 0000153C            73:  FSINTHET  EQU   $0000153C W 001 L S15  SINE PITCH ANGLE AT 2-15
+     # 0000153E            74:  FTHETDOT  EQU   $0000153E W 001 L S08  RATE OF CHANGE OF PITCH ANGLE(DEG/SEC)AT
+     # 00001540            75:  FTIMER10  EQU   $00001540 W 001 L S00  POWER UP TIMER AT 2-0
+     # 00001542            76:  FTIMER50  EQU   $00001542 W 001 L S00  INITIALIZATION TIMER AT 2-0
+     # 00001544            77:  FVPDOT    EQU   $00001544 W 001 L S08  RATE OF CHANGE OF TRUE AIRSPEED(FT/SEC S
+     # 00001546            78:  FVPINV    EQU   $00001546 W 001 L S04  1845/VP AT 2-4
+     # 00001548            79:  FVW       EQU   $00001548 W 001 L S08  WIND VELOCITY(KNOTS)AT 2-8
+     # 0000154A            80:  FWG       EQU   $0000154A W 001 L S03  GROSS WEIGHT(LBS)AT 2-3
+     # 0000154C            81:  FWGINV    EQU   $0000154C W 001 L S17  1/WT AT 2-17
+     # 0000154E            82:  FWOW      EQU   $0000154E W 001 L S12  WT ON WHEELS(G'S)AT 2-12
+     # 00001550            83:  FBAROPR   EQU   $00001550 W 001 L S15  INST BARO PRESS  (A/I) +10V=31,-1029(IN
+     # 00001552            84:  FRAAMPL   EQU   $00001552 W 001 L S15  INST ROUGH AIR MAGNITUDE  (A/I) +10V=MAX
+     # 00001554            85:  FENGVOL   EQU   $00001554 W 001 L S15  INST ENG SOUND VOLUME     (A/I) 0V=MAX,+
+     # 00001556            86:  FFUELQR   EQU   $00001556 W 001 L S15  INST FUEL QTY (RIGHT)     (A/I) +10V=MAX
+     # 00001558            87:  FFUELQL   EQU   $00001558 W 001 L S15  INST FUEL QTY (LEFT)      (A/I) +10V=MAX
+     # 0000155A            88:  FCYLTP    EQU   $0000155A W 001 L S15  INST CLL TEMP             (A/I) +10V=MAX
+     # 0000155C            89:  FOILTP    EQU   $0000155C W 001 L S15  INST OIL TEMP             (A/I) +10V=MAX
+     # 0000155E            90:  FOILPR    EQU   $0000155E W 001 L S15  INST OIL PRESS            (A/I) +10V=MAX
+     # 00001560            91:  FSPARE0   EQU   $00001560 W 001 L S15  INST SPARE                (A/I)
+     # 00001562            92:  FSPARE1   EQU   $00001562 W 001 L S15  INST SPARE                (A/I)
+     # 00001564            93:  FWINDVEL  EQU   $00001564 W 001 L S15  INST WIND VELOCITY        (A/I) +10V=100
+     # 00001566            94:  FWINDC    EQU   $00001566 W 001 L S15  INST COS WIND DIRECTION   (A/I) +10V=COS
+     # 00001568            95:  FWINDS    EQU   $00001568 W 001 L S15  INST SINE WIND DIRECTION  (A/I) +10V=SIN
+     # 0000156A            96:  FOAT      EQU   $0000156A W 001 L S15  INST OUTSIDE AIR TEMP  (A/I) +10V=50,-10
+     # 0000156C            97:  FGRWT     EQU   $0000156C W 001 L S15  INST GROSS WT INPUT(A/I) +10V=2100,0V=16
+     # 0000156E            98:  FCGIN     EQU   $0000156E W 001 L S15  INST CG INPUT     (A/I) +10V=35,0V=25,-1
+     # 00001570            99:  FALTFRZ   EQU   $00001570 B 001 L H    1=FREEZE ALTITUDE
+     # 00001571           100:  FALTSDN   EQU   $00001571 B 001 L H    1=SLEW ALTITUDE DOWN
+     # 00001572           101:  FALTSUP   EQU   $00001572 B 001 L H    1=SLEW ALTITUDE UP
+     # 00001573           102:  FBFIELD   EQU   $00001573 B 001 L H    1=B FIELD SELECTED
+     # 00001574           103:  FBRAKE    EQU   $00001574 B 001 L H    1=PARK BRAKE APPLIED
+     # 00001575           104:  FFREEZE   EQU   $00001575 B 001 L H    1=FLIGHT FREEZE
+     # 00001576           105:  FINIT     EQU   $00001576 B 001 L H    1=LOAD INITIALIZED
+     # 00001577           106:  FMODE1    EQU   $00001577 B 001 L H    1=MODE 1 (PA,RA,BETA,PHI DOT,PHI,PSI DOT
+     # 00001578           107:  FMODE2    EQU   $00001578 B 001 L H    1=MODE 2 (ALTITUDE HOLD COMMAND)
+     # 00001579           108:  FMODE3    EQU   $00001579 B 001 L H    1=MODE 3 (BANK HOLD)
+     # 0000157A           109:  FSTALL    EQU   $0000157A B 001 L H    1=STALLED
+     # 0000157B           110:  FWOG      EQU   $0000157B B 001 L H    1=ON GROUND
+                          111.           INCLUDE   ESYM.SA
+     # 0000144C           112:  EPROPCTL  EQU   $0000144C L 001 L S29  PROP CONTROL POS(NORMALIZED)AT 2-29(LONG
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page  3
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+     # 00001450           113:  ENTHROTT  EQU   $00001450 L 001 L S29  THROTTLE POSITION (NORMALIZED) 2-29(LONG
+     # 00001454           114:  ESPARE1   EQU   $00001454 L 001 L S05  SPARE ENGINE CORE
+     # 00001458           115:  EBHP      EQU   $00001458 W 001 L S06  BRAKE HORSEPOWER AT 2-6
+     # 0000145A           116:  EFUELMIX  EQU   $0000145A W 001 L S13  FUEL MIX CONTROL (NORMALIZED) 2-13
+     # 0000145C           117:  EMAP      EQU   $0000145C W 001 L S09  MANIFOLD PRESSURE AT 2-9
+     # 0000145E           118:  ENRPMDOT  EQU   $0000145E W 001 L S03  RPM DOT
+     # 00001460           119:  EIRPM     EQU   $00001460 W 001 L S15  INDICATED RPM
+     # 00001462           120:  ENFULL    EQU   $00001462 W 001 L S03  RPM @ FULL THROTTLE 2-3
+     # 00001464           121:  ENIDLE    EQU   $00001464 W 001 L S03  RPM @ IDLE THROTTLE 2-3
+     # 00001466           122:  ENRPM     EQU   $00001466 W 001 L S03  RPM 2-3
+     # 00001468           123:  ENRPMDEM  EQU   $00001468 W 001 L S03  RPM DEMANDED 2-3
+     # 0000146A           124:  ENTHRUST  EQU   $0000146A W 001 L S05  THRUST (LBS.) 2-5
+     # 0000146C           125:  ERPMWM    EQU   $0000146C W 001 L S03  WINDMILL RPM 2-3
+     # 0000146E           126:  EFEATHER  EQU   $0000146E B 001 L H    1=PROP FEATHERED
+     # 0000146F           127:  EFIRED    EQU   $0000146F B 001 L H    1=ENGINE FIRED
+     # 00001470           128:  EFAIL     EQU   $00001470 B 001 L H    1=ENGINE FAILED
+     # 00001471           129:  ECUTOFF   EQU   $00001471 B 001 L H    1=FUEL CUTOFF
+     # 00001472           130:  EIGNITN   EQU   $00001472 B 001 L H    1=IGNITION ON
+     # 00001473           131:  EMASTER   EQU   $00001473 B 001 L H    1=MASTER SWITCH ON
+     # 00001474           132:  ESTART    EQU   $00001474 B 001 L H    1=START SWITCH ON
+     # 00001475           133:  EMAGLT    EQU   $00001475 B 001 L H    1=LEFT MAG ON
+     # 00001476           134:  EMAGRT    EQU   $00001476 B 001 L H    1=RIGHT MAG ON
+     # 00001477           135:  ECARBHT   EQU   $00001477 B 001 L H    1=CARBURETOR HEAT ON
+     # 00001478           136:  EMAGBOTH  EQU   $00001478 B 001 L H    1=BOTH MAG ON
+     # 00001479           137:  ESPAREB1  EQU   $00001479 B 001 L H    SPARE BYTE
+                          138.           INCLUDE   IO.SA
+     # 00000205           139:  OFUELLT      EQU    $00000205           LEFT FUEL QTY            0V=0,+10V=25 G
+     # 00000209           140:  OFUELRT      EQU    $00000209           RIGHT FUEL QTY           0V=0,+10V=25 G
+     # 00000211           141:  OOILP        EQU    $00000211           OIL PRESSURE             0V=0,+10V=100
+     # 00000215           142:  OCYLT        EQU    $00000215           CYL. HEAD TEMP.          0V=0,+10V=460
+     # 00000201           143:  OOILT        EQU    $00000201           OIL TEMP                 0V=0,+10V=260
+                          144:  *
+     # 00000221           145:  ITHR1        EQU    $00000221           THROTTLE                 +10V=FULL,+4.6
+     # 00000225           146:  IMIX1        EQU    $00000225           MIXTURE                  +3.3V=FULL RIC
+     # 00000229           147:  ICARBH1      EQU    $00000229           CARB. HEAT               -3.3V=ON,-10V=
+     # 00000231           148:  IPROP1       EQU    $00000231           PROP.                    -4.93V=MAX,-10
+                          149:  *
+     # 00000241           150:  IELEV        EQU    $00000241           ELEVATOR CONTROL          +7.33V=UP,-7V
+     # 00000245           151:  IAIL         EQU    $00000245           AILERON CONTROL           +6.5V=RT,-6.5
+     # 00000249           152:  IRUD         EQU    $00000249           RUDDER CONTROL            +3.5V=RT,-3.5
+     # 00000251           153:  IELEVT       EQU    $00000251           ELEVATOR TRIM             +7V=UP,-2.3V=
+                          154:  *
+     # 00000261           155:  OTURNP       EQU    $00000261           TURN NEEDLE               +10V=6 NW RT,
+     # 00000265           156:  OBALLP       EQU    $00000265           BALL                      +10V=1.6 BW R
+                          157:  *
+     # 00000271           158:  OIRCP        EQU    $00000271           R/C                       +10V=2000 FT
+                          159:  *
+     # 00000281           160:  OALTMP       EQU    $00000281           ALTIMETER                 0V=-1000 FT,-
+                          161:  *
+     # 00000291           162:  OIASP        EQU    $00000291           INDICATED AIRSPEED        0V=0 MPH,+10V
+                          163:  *
+     # 000002A1           164:  OIRPM        EQU    $000002A1           RPM                       0V=0 RPM,+10V
+                          165:  *
+     # 000002B1           166:  OIMAP1       EQU    $000002B1           MAP                       0V=29.92 IN H
+                          167:  *
+     # 000002C9           168:  OATTPIT      EQU    $000002C9           ATTITUDE PITCH            +10V=15 DEG U
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page  4
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+     # 000002C5           169:  OATTROLS     EQU    $000002C5           ATTITUDE ROLL SIN         +10V=SIN 90 D
+     # 000002C1           170:  OATTROLC     EQU    $000002C1           ATTITUDE ROLL COS         +10V=COS 0 DE
+                          171:  *
+     # 000002D1           172:  IMPSDI1      EQU    $000002D1           PANEL SWITCHES #1
+     # 00000007           173:  IMSTSW       EQU    7                   MASTER SWITCH ON
+     # 00000006           174:  IIGNST       EQU    6                   IGNITION SWITCH START
+     # 00000005           175:  IIGNBT       EQU    5                   IGNITION SWITCH BOTH
+     # 00000004           176:  IIGNRT       EQU    4                   IGNITION SWITCH RIGHT
+     # 00000003           177:  IIGNLT       EQU    3                   IGNITION SWITCH LEFT
+     # 00000002           178:  IRMI1ADF     EQU    2                   RMI #1 PTR ADF
+     # 00000000           179:  ILINKPWR     EQU    0                   1=LINKAGE POWER ON
+     # 000002D3           180:  IMPSDI2      EQU    $000002D3           PANEL SWITCHES #2
+     # 00000007           181:  IPARKBK      EQU    7                   PARKING BRAKE ON
+     # 00000006           182:  IFLAPUP      EQU    6                   FLAP SWITCH UP
+     # 00000005           183:  IFLAPHLF     EQU    5                   FLAP SWITCH 1/2
+     # 00000004           184:  IFLAPDN      EQU    4                   FLAP SWITCH DOWN
+     # 00000003           185:  IMONNAV1     EQU    3                   MONITOR NAV1
+     # 00000002           186:  IMONNAV2     EQU    2                   MONITOR NAV2
+     # 00000001           187:  IMONADF1     EQU    1                   MONITOR ADF1
+     # 00000000           188:  IXRCOM1      EQU    0                   XMIT/REC COMM1
+                          189:  *
+     # 0000040D           190:  INAV1F1      EQU    $0000040D           NAV1 FREQ WORD 1
+     # 00000007           191:  I117NAV1     EQU    7                   NAV1 117
+     # 00000006           192:  I116NAV1     EQU    6                   NAV1 116
+     # 00000005           193:  I115NAV1     EQU    5                   NAV1 115
+     # 00000004           194:  I114NAV1     EQU    4                   NAV1 114
+     # 00000003           195:  I113NAV1     EQU    3                   NAV1 113
+     # 00000002           196:  I112NAV1     EQU    2                   NAV1 112
+     # 00000001           197:  I111NAV1     EQU    1                   NAV1 111
+     # 00000000           198:  I110NAV1     EQU    0                   NAV1 110
+     # 00000411           199:  INAV1F2      EQU    $00000411           NAV1 FREQ WORD 2
+     # 00000007           200:  I109NAV1     EQU    7                   NAV1 109
+     # 00000006           201:  I108NAV1     EQU    6                   NAV1 108
+     # 00000005           202:  I9THNAV1     EQU    5                   NAV1 .9
+     # 00000004           203:  I8THNAV1     EQU    4                   NAV1 .8
+     # 00000003           204:  I7THNAV1     EQU    3                   NAV1 .7
+     # 00000002           205:  I6THNAV1     EQU    2                   NAV1 .6
+     # 00000001           206:  I5THNAV1     EQU    1                   NAV1 .5
+     # 00000000           207:  I4THNAV1     EQU    0                   NAV1 .4
+     # 00000413           208:  INAV1F3      EQU    $00000413           NAV1 FREQ WORD 3
+     # 00000007           209:  I3THNAV1     EQU    7                   NAV1 .3
+     # 00000006           210:  I2THNAV1     EQU    6                   NAV1 .2
+     # 00000005           211:  I1THNAV1     EQU    5                   NAV1 .1
+     # 00000004           212:  I0THNAV1     EQU    4                   NAV1 .0
+     # 00000003           213:  INAV1ILS     EQU    3                   NAV1 ILS SELECTED
+     # 00000002           214:  INAV1ON      EQU    2                   NAV1 POWER ON
+     # 00000001           215:  INAV1ID      EQU    1                   NAV1 ID ON
+     # 00000401           216:  INAV1VOL     EQU    $00000401           NAV1 VOLUME
+     # 00000409           217:  ICOM1SQ      EQU    $00000409           COMM1 SQUELCH
+     # 00000405           218:  ICOM1VOL     EQU    $00000405           COMM1 VOLUME
+                          219:  *
+     # 0000042D           220:  INAV2F1      EQU    $0000042D           NAV2 FREQ WORD 1
+     # 00000007           221:  I117NAV2     EQU    7                   NAV2 117
+     # 00000006           222:  I116NAV2     EQU    6                   NAV2 116
+     # 00000005           223:  I115NAV2     EQU    5                   NAV2 115
+     # 00000004           224:  I114NAV2     EQU    4                   NAV2 114
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page  5
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+     # 00000003           225:  I113NAV2     EQU    3                   NAV2 113
+     # 00000002           226:  I112NAV2     EQU    2                   NAV2 112
+     # 00000001           227:  I111NAV2     EQU    1                   NAV2 111
+     # 00000000           228:  I110NAV2     EQU    0                   NAV2 110
+     # 00000431           229:  INAV2F2      EQU    $00000431           NAV2 FREQ WORD 2
+     # 00000007           230:  I109NAV2     EQU    7                   NAV2 109
+     # 00000006           231:  I108NAV2     EQU    6                   NAV2 108
+     # 00000005           232:  I9THNAV2     EQU    5                   NAV2 .9
+     # 00000004           233:  I8THNAV2     EQU    4                   NAV2 .8
+     # 00000003           234:  I7THNAV2     EQU    3                   NAV2 .7
+     # 00000002           235:  I6THNAV2     EQU    2                   NAV2 .6
+     # 00000001           236:  I5THNAV2     EQU    1                   NAV2 .5
+     # 00000000           237:  I4THNAV2     EQU    0                   NAV2 .4
+     # 00000433           238:  INAV2F3      EQU    $00000433           NAV2 FREQ WORD 3
+     # 00000007           239:  I3THNAV2     EQU    7                   NAV2 .3
+     # 00000006           240:  I2THNAV2     EQU    6                   NAV2 .2
+     # 00000005           241:  I1THNAV2     EQU    5                   NAV2 .1
+     # 00000004           242:  I0THNAV2     EQU    4                   NAV2 .0
+     # 00000003           243:  INAV2ILS     EQU    3                   NAV2 ILS SELECTED
+     # 00000002           244:  INAV2ON      EQU    2                   NAV2 POWER ON
+     # 00000001           245:  INAV2ID      EQU    1                   NAV2 ID ON
+     # 00000421           246:  INAV2VOL     EQU    $00000421           NAV2 VOLUME
+     # 00000429           247:  ICOM2SQ      EQU    $00000429           COMM2 SQUELCH
+     # 00000425           248:  ICOM2VOL     EQU    $00000425           COMM2 VOL
+                          249:  *
+     # 00000449           250:  OADF1TM      EQU    $00000449           ADF1 TUNING METER
+     # 00000441           251:  IADF1VOL     EQU    $00000441           ADF1 VOLUME
+     # 00000445           252:  IADF1FRQ     EQU    $00000445           ADF1 FREQ
+     # 0000044D           253:  IADF1DI      EQU    $0000044D           ADF1 CONTROL DISCRETE IN
+     # 00000007           254:  IADF1B1      EQU    7                   ADF BAND 1 190 TO 430
+     # 00000006           255:  IADF1B2      EQU    6                   ADF BAND 2 420 TO 850
+     # 00000005           256:  IADF1B3      EQU    5                   ADF BAND 3 840 TO 1750
+     # 00000004           257:  IADF1TST     EQU    4                   ADF1 TEST
+     # 00000003           258:  IADF1REC     EQU    3                   ADF1 RECEIVE MODE
+     # 00000002           259:  IADF1ADF     EQU    2                   ADF1 ADF MODE
+     # 00000001           260:  IADF1MKR     EQU    1                   ADF1 MARKER ON
+                          261:  *
+     # 000004B5           262:  ORMIHS       EQU    $000004B5           RMI SIN MAG HEADING
+     # 000004B1           263:  ORMIHC       EQU    $000004B1           RMI COS MAG HEADING
+                          264:  *
+     # 00000451           265:  ONAV1LR      EQU    $00000451           NAV1 COURSE DEVIATION
+     # 00000459           266:  ONAV1GS      EQU    $00000459           NAV1 GLIDE SLOPE DEV.
+     # 00000455           267:  ONAV1TF      EQU    $00000455           NAV1 TO/OFF/FROM
+     # 00000461           268:  ICRS1SC      EQU    $00000461           COURSE SEL 1 SIN/COS
+     # 00000465           269:  OCDI1DO      EQU    $00000465           CDI 1 DISCRETE OUT
+     # 00000000           270:  OCRS1SEL     EQU    0                   COURSE SEL 1 EXCITATION
+     # 00000001           271:  ONAV1GSF     EQU    1                   NAV1 G/S FLAG 00V
+     # 00000467           272:  ICRS1DI      EQU    $00000467           CDI 1 DISCRETE IN
+     # 00000007           273:  INAV1TST     EQU    7                   NAV 1 TEST
+                          274:  *
+     # 00000471           275:  ONAV2LR      EQU    $00000471           NAV2 COURSE DEVIATION
+     # 00000479           276:  ONAV2GS      EQU    $00000479           NAV2 GLIDE SLOPE DEV.
+     # 00000475           277:  ONAV2TF      EQU    $00000475           NAV2 TO/OFF/FROM
+     # 00000481           278:  ICRS2SC      EQU    $00000481           COURSE SEL 2 SIN/COS
+     # 00000485           279:  OCDI2DO      EQU    $00000485           CDI 2 DISCRETE OUT
+     # 00000000           280:  OCRS2SEL     EQU    0                   COURSE SEL 2 EXCITATION
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page  6
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+     # 00000001           281:  ONAV2GSF     EQU    1                   NAV2 G/S FLAG 00V
+     # 00000487           282:  ICRS2DI      EQU    $00000487           CDI 2 DISCRETE IN
+     # 00000007           283:  INAV2TST     EQU    7                   NAV 2 TEST
+                          284:  *
+     # 000004A9           285:  ORMI1S       EQU    $000004A9           RMI SIN #1 PTR
+     # 000004A5           286:  ORMI1C       EQU    $000004A5           RMI COS #1 PTR
+     # 000004A1           287:  ORMI2S       EQU    $000004A1           RMI SIN #2 PTR
+     # 00000499           288:  ORMI2C       EQU    $00000499           RMI COS #2 PTR
+                          289:  *
+     # 00000601           290:  IINSTAI1     EQU    $00000601           INSTRUCTOR #1 AI
+     # 00000605           291:  IINSTAI2     EQU    $00000605           INSTRUCTOR #2 AI
+     # 00000609           292:  IAI1MPX      EQU    $00000609           MULTIPLEXER #1
+     # 0000060B           293:  IAI2MPX      EQU    $0000060B           MULTIPLEXER #2
+     # 0000061B           294:  IINSTDI1     EQU    $0000061B           INSTRUCTOR #1 DI
+     # 00000007           295:  IBFIELD      EQU    7                   B FIELD SELECTED
+     # 00000003           296:  IENGFAIL     EQU    3                   ENGINE FAIL
+     # 00000002           297:  IPITON       EQU    2                   PITCH MOTION ON
+     # 00000001           298:  IROLLON      EQU    1                   ROLL MOTION ON
+     # 00000000           299:  IYAWON       EQU    0                   YAW MOTION ON
+     # 00000619           300:  IFAIL1       EQU    $00000619           INSTRUCTER FAIL #1
+     # 00000007           301:  IDGFAIL      EQU    7                   DG FAIL
+     # 00000006           302:  IATGFAIL     EQU    6                   ATTITUDE IND FAIL
+     # 00000005           303:  IIASFAIL     EQU    5                   AIRSPEED IND FAIL
+     # 00000004           304:  IALTFAIL     EQU    4                   ALTIMETER FAIL
+     # 00000003           305:  IRCFAIL      EQU    3                   RATE OF CLIMB IND FAIL
+     # 00000002           306:  ITNFAIL      EQU    2                   TURN NEEDLE FAIL
+     # 00000001           307:  IVL2FAIL     EQU    1                   VOR/LOC 2  FAIL
+     # 00000000           308:  IVL1FAIL     EQU    0                   VOR/LOC 1  FAIL
+     # 0000061D           309:  IRCDRDI      EQU    $0000061D           RECORDER DI
+     # 00000007           310:  ISLEWN       EQU    7                   SLEW NORTH
+     # 00000006           311:  ISLEWS       EQU    6                   SLEW SOUTH
+     # 00000005           312:  ISLEWE       EQU    5                   SLEW EAST
+     # 00000004           313:  ISLEWW       EQU    4                   SLEW WEST
+     # 00000003           314:  IAPPR2       EQU    3                   APPROACH 2 SELECTED
+     # 00000002           315:  IAPPR1       EQU    2                   APPROACH 1 SELECTED
+     # 00000001           316:  ICCMODE      EQU    1                   CROSS COUNTRY SELECTED
+     # 00000000           317:  IPOSFRZ      EQU    0                   POSITION FREEZE
+     # 00000611           318:  ORCDNSD      EQU    $00000611           (A/0)+10V=7.5 IN NORTH,-10V=7.5 IN SOUT
+     # 00000615           319:  ORCDEWD      EQU    $00000615           (A/0)+10V=7.5 IN EAST,-10V=7.5 IN WEST
+     # 0000061F           320:  IFAIL2       EQU    $0000061F           INSTRUCTER FAIL #2
+     # 00000007           321:  IGSFAIL      EQU    7                   GLIDESLOPE FAIL
+     # 00000006           322:  ILF1FAIL     EQU    6                   ADF FAIL
+                          323:  *
+     # 00000621           324:  OMOTPITR     EQU    $00000621           MOTION PITCH RATE     +10V=30 DEG/SEC U
+     # 00000625           325:  OMOTROLR     EQU    $00000625           MOTION ROLL RATE      +10V=60 DEG/SEC R
+     # 00000629           326:  OMOTTRNR     EQU    $00000629           MOTION TURN RATE      +10V=30 DEG/SEC R
+     # 00000639           327:  ICPHDGS      EQU    $00000639           SIN COCKPIT HEADING   +10V=SINE 90 DEG
+     # 0000063D           328:  ICPHDGC      EQU    $0000063D           COS COCKPIT HEADING   +10V=COS 0 DEG
+     # 00000631           329:  ICPPITS      EQU    $00000631           SIN COCKPIT PITCH     +10V=SIN 90 DEG
+     # 00000635           330:  ICPROLS      EQU    $00000635           SIN COCKPIT ROLL      +10V=SIN 90 DEG
+     # 0000062D           331:  IINSTMDI     EQU    $0000062D           INSTRUCTER CONTROL DI     CARD A81
+     # 00000007           332:  IALTFRZ      EQU    7                   ALTITUDE FREEZE
+     # 00000006           333:  IALTSUP      EQU    6                   ALTITUDE SLEW UP
+     # 00000005           334:  IALTSDN      EQU    5                   ALTITUDE SLEW DOWN
+     # 00000004           335:  IFLTFRZ      EQU    4                   FLIGHT FREEZE
+     # 00000003           336:  IENGFIR      EQU    3                   ENGINE FIRED BYPASS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page  7
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+     # 00000002           337:  IMODE1       EQU    2                   MODE 1
+     # 00000001           338:  IMODE2       EQU    1                   MODE 2
+     # 00000000           339:  IMODE3       EQU    0                   MODE 3
+                          340:  *
+     # 00000651           341:  ONV1RNKY     EQU    $00000651           NAV1 RNG ATT/KEY
+     # 00000655           342:  ONV1WNL      EQU    $00000655           NAV1 WHITE NOISE LEVEL
+     # 00000659           343:  ODM1RNKY     EQU    $00000659           DME1 RNG ATT/KEY
+     # 0000065D           344:  ONV1VOL      EQU    $0000065D           NAV1 VOLUME LEVEL
+     # 0000064D           345:  ODMECTL      EQU    $0000064D           NAV  DME CONTROL
+     # 00000007           346:  ODM1SEP      EQU    7                   NAV1 DME SEPARATE
+     # 00000006           347:  ODM2SEP      EQU    6                   NAV2 DME SEPARATE
+     # 00000653           348:  ONV2RNKY     EQU    $00000653           NAV2 RNG ATT/KEY
+     # 00000657           349:  ONV2WNL      EQU    $00000657           NAV2 WHITE NOISE LEVEL
+     # 0000065B           350:  ODM2RNKY     EQU    $0000065B           DME2 RNG ATT/KEY
+     # 0000065F           351:  ONV2VOL      EQU    $0000065F           NAV2 VOLUME LEVEL
+     # 00000641           352:  OLF1RNKY     EQU    $00000641           ADF1 RNG ATT/KEY
+     # 00000645           353:  OLF1WNL      EQU    $00000645           ADF1 WHITE NOISE LEVEL
+     # 00000649           354:  OLF1VOL      EQU    $00000649           ADF1 VOLUME LEVEL
+     # 00000643           355:  OLF2RNKY     EQU    $00000643           ADF2 RNG ATT/KEY
+     # 00000647           356:  OLF2WNL      EQU    $00000647           ADF2 WHITE NOISE LEVEL
+     # 0000064B           357:  OLF2VOL      EQU    $0000064B           ADF2 VOLUME LEVEL
+                          358:  *
+     # 00000663           359:  OOMRAKY      EQU    $00000663           OM RANGE/KEY
+     # 00000665           360:  OMMRAKY      EQU    $00000665           MM RANGE/KEY
+     # 00000667           361:  OAMRAKY      EQU    $00000667           AM RANGE/KEY
+     # 00000669           362:  OMKRTST      EQU    $00000669           MARKER TEST
+     # 0000066B           363:  OMKRVOL      EQU    $0000066B           MKR VOLUME
+     # 00000661           364:  OMKRDO       EQU    $00000661           MKR DISCRETE OUT
+     # 00000007           365:  OOMFAIL      EQU    7                   OM FAIL
+     # 00000006           366:  OOMRAATT     EQU    6                   OM RANGE ATT.
+     # 00000005           367:  OMMFAIL      EQU    5                   MM FAIL
+     # 00000004           368:  OMMRAATT     EQU    4                   MM RANGE ATT.
+     # 00000003           369:  OAMFAIL      EQU    3                   AM FAIL
+     # 00000002           370:  OAMRAATT     EQU    2                   AM RANGE ATT.
+     # 00000001           371:  OMKRLTST     EQU    1                   MKR LAMP TEST
+                          372:  *
+     # 0000068B           373:  OATTEN1      EQU    $0000068B           ATTEN 1 EXHAUST NOISE
+     # 00000681           374:  OFUNCTA      EQU    $00000681           CARD 23 HIGH BYTE
+     # 00000683           375:  OFUNCT1      EQU    $00000683           FUNCT 1 RPM
+     # 00000685           376:  OFUNCT5      EQU    $00000685           FUNCT 5 SPARE
+     # 0000068D           377:  OATTEN5      EQU    $0000068D           ATTEN 5 SPARE
+     # 00000687           378:  OFUNCT6      EQU    $00000687           FUNCT 6 STALL WARN
+     # 00000691           379:  OATTEN6      EQU    $00000691           ATTEN 6 STALL WARN
+     # 00000689           380:  OFUNCT8      EQU    $00000689           FUNCT 8 TIRE SCREECH
+     # 00000693           381:  OATTEN8      EQU    $00000693           ATTEN 8 TIRE SCREECH
+     # 00000695           382:  OATTEN9      EQU    $00000695           ATTEN 9 INST. VOL
+     # 00000697           383:  OATTEN10     EQU    $00000697           ATTEN 10 PROP HISS
+     # 00000699           384:  OATTEN11     EQU    $00000699           ATTEN 11 AERO HISS
+                          385:  *
+     # 000006E1           386:  OFUNCTB      EQU    $000006E1           CARD 24 HIGH BYTE
+     # 000006E3           387:  OFUNCT2      EQU    $000006E3           FUNCT 2 HISS
+     # 000006EB           388:  OATTEN2      EQU    $000006EB           ATTEN 2 HISS
+     # 000006E5           389:  OFUNCT3      EQU    $000006E5           FUNCT 3 RUMBLE
+     # 000006ED           390:  OATTEN3      EQU    $000006ED           ATTEN 3 RUMBLE
+     # 000006E7           391:  OFUNCT4      EQU    $000006E7           FUNCT 4 SPARE
+     # 000006F1           392:  OATTEN4      EQU    $000006F1           ATTEN 4 SPARE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page  8
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+     # 000006E9           393:  OFUNCT7      EQU    $000006E9           FUNCT 7 AERO HISS
+     # 000006F3           394:  OATTEN7      EQU    $000006F3           ATTEN 7 AERO HISS
+                          395:  *
+     # 000006B1           396:  OCOM1SQ      EQU    $000006B1           COMM1 SQ CONTROL
+     # 000006B5           397:  OCOM1IVL     EQU    $000006B5           COMM1 INST. VOICE LEVEL
+     # 00000003           398:  OC1SXMIT     EQU    3                   COMM1 STUDENT XMIT
+     # 000006B9           399:  OCOM1VOL     EQU    $000006B9           COMM1 VOLUME LEVEL
+     # 000006B3           400:  OCOM2SQ      EQU    $000006B3           COMM2 SQ CONTROL
+     # 000006B7           401:  OCOM2IVL     EQU    $000006B7           COMM2 INST. VOICE LEVEL
+     # 00000002           402:  OC2SXMIT     EQU    2                   COMM2 STUDENT XMIT
+     # 000006BB           403:  OCOM2VOL     EQU    $000006BB           COMM2 VOLUME CONTROL
+     # 000006BD           404:  OSMIKEVL     EQU    $000006BD           STUDENT MIKE COMM LEVEL
+     # 000006CF           405:  IMICPTT      EQU    $000006CF           MIKE PTT
+     # 00000007           406:  ISMICPTT     EQU    7                   STUDENT MIKE PTT
+     # 00000006           407:  IIMICPTT     EQU    6                   INSTRUCTOR MIKE PTT
+     # 000006C1           408:  OSINPHVL     EQU    $000006C1           STUDENT INPH. LEVEL
+     # 000006C3           409:  OIINPHVL     EQU    $000006C3           INSTRUCTOR INPH. LEVEL
+     # 000006C5           410:  OSLISTVL     EQU    $000006C5           STUDENT VOLUME LEVEL
+     # 000006C9           411:  OASCONT1     EQU    $000006C9           AUDIO SELECT CONTROL 1
+     # 00000007           412:  OSSCOM1N     EQU    7                   STUDENT SEL COMM1 (NOT)
+     # 00000006           413:  OSSCOM2N     EQU    6                   STUDENT SEL COMM2 (NOT)
+     # 00000005           414:  OSSINPHN     EQU    5                   STUDENT SEL INPH.(NOT)
+     # 00000004           415:  OSSMKRN      EQU    4                   STUDENT SEL MARKER (NOT)
+     # 00000003           416:  OSSNAV1N     EQU    3                   STUDENT SEL NAV1   (NOT)
+     # 00000002           417:  OSSNAV2N     EQU    2                   STUDENT SEL NAV2   (NOT)
+     # 00000001           418:  OSSADF1N     EQU    1                   STUDENT SEL ADF1   (NOT)
+     # 00000000           419:  OSSADF2N     EQU    0                   STUDENT SEL ADF2   (NOT)
+     # 000006CB           420:  OASCONT2     EQU    $000006CB           AUDIO SELECT CONTROL 2
+     # 00000007           421:  OSSDME1N     EQU    7                   STUDENT SEL DME 1  (NOT)
+     # 00000006           422:  OSSDME2N     EQU    6                   STUDENT SEL DME 2  (NOT)
+     # 00000005           423:  OSSSPA1N     EQU    5                   STUDENT SEL SPARE  (NOT)
+     # 00000004           424:  OSSSPA2N     EQU    4                   STUDENT SEL SPARE  (NOT)
+     # 000006C7           425:  OILISTVL     EQU    $000006C7           INSTRUCTOR VOLUME LEVEL
+     # 000006CD           426:  OASCONT3     EQU    $000006CD           AUDIO SELECT CONTROL 3
+     # 00000007           427:  OISCOM1N     EQU    7                   INST. SEL COMM1   (NOT)
+     # 00000006           428:  OISCOM2N     EQU    6                   INST. SEL COMM2   (NOT)
+     # 00000005           429:  OISSTN       EQU    5                   INST. SEL SIDE TONE (NOT)
+     # 00000004           430:  OISMONTN     EQU    4                   INST. SEL MONITOR   (NOT)
+     # 00000003           431:  OISINPHN     EQU    3                   INST. SEL INPH.     (NOT)
+     # 00000002           432:  OISSPA1N     EQU    2                   INST. SEL SPARE     (NOT)
+     # 00000001           433:  OISSPA2N     EQU    1                   INST. SEL SPARE     (NOT)
+     # 00000000           434:  OISSPA3N     EQU    0                   INST. SEL SPARE     (NOT)
+                          435.  *
+C'000000                  436.           SECTION   12
+C'000000  1AE8            437.  FRC1     DC.W      6888                338*.0398 AT 2-9
+C'000002  273E            438.  FRC2     DC.W      10046               338*.001814 AT 2-14
+C'000004  0214            439.  FRC3     DC.W      532                 338*.0123 AT 2-7
+C'000006  32B3            440.  FRC4     DC.W      12979               338*4.8 AT 2-3
+C'000008  0306            441.  FRC5     DC.W      774                 338*.0179 AT 2-7
+C'00000A  12C00000        442.  FRC6     DC.L      314572800           75 AT 2-22
+C'00000E  ED400000        443.  FRC7     DC.L      -314572800         -75 AT 2-22
+C'000012  0F000000        444.  FRC8     DC.L      251658240           60 AT 2-22
+C'000016  F1000000        445.  FRC9     DC.L      -251658240         -60 AT 2-22
+C'00001A  60CE            446.  FRC10    DC.W      24782               338*.0179 AT 2-12
+C'00001C  0091            447.  FRC11    DC.W      145                 338*.0000523 AT 2-13
+C'00001E  0A66            448.  FRC12    DC.W      2662                1/.65 AT 2-12
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page  9
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+C'000020  00A4            449.  FRC13    DC.W      164                .01 AT 2-14
+C'000022  0002A400        450.  FRC14    DC.L      173056              84.5 AT 2-11
+C'000026  FFFD5C00        451.  FRC15    DC.L      -173056            -84.5 AT 2-11
+C'00002A  00064000        452.  FRC16    DC.L      409600              200 AT 2-11
+C'00002E  FFF9C000        453.  FRC17    DC.L      -409600            -200 AT 2-11
+C'000032  0CCD            454.  FRC18    DC.W      3277               .05 AT 2-16
+C'000034  0333            455.  FRC19    DC.W      819                .05 AT 2-14
+                          456.  ***************************************************************************
+                          457.  *        THIS MODULE COMPUTES:ROLL ACCELERATION(PA DOT)(DEG/SEC SQ AT 2-6 *
+                          458.  *                             ROLL RATE(PA)(DEG/SEC)    AT 2-22,2-6       *
+                          459.  *                             PHI DOT(BANK ANGLE VELOCITY)(DEG/SEC)AT 2-8 *
+                          460.  *                             BANK ANGLE(PHI)(DEGREES) AT 2-22,2-6        *
+                          461.  *                             MODE 1 BOOLEAN       1=MODE 1               *
+                          462.  *                             MODE 3 BOOLEAN       1=MODE 3               *
+                          463.  *                             AILERON POSITION AT 2-14(POS=RT WING DOWN)  *
+                          464.  *                             FROZEN BANK ANGLE  AT 2-22                  *
+                          465.  *                             BANK HOLD INTEGRATER AT 2-22                *
+                          466.  *        MODULE IS SKIPPED IF FLIGHT FREEZE IS ACTIVATED                  *
+                          467.  *        NOTE: NORMALIZED AILERON IS DEADBANDED BY PLUS OR MINUS .05      *
+                          468.  *                                                  OCTOBER 26,1983        *
+                          469.  ***************************************************************************
+     C'00000036           470.  ROLL     EQU *
+C'000036  2C7C 00FE6000   471.           MOVE.L    #$FE6000,A6      (I/O BASE IN A6)
+C'00003C  4A38 1575       472.           TST.B     FFREEZE          1=FLIGHT FREEZE
+C'000040  6702            473.           BEQ.S     UNFREEZR         BRANCH IF NOT FROZEN
+C'000042  4E40            474.           TRAP      #0               RETURN TO EXEC
+                          475.  **************************************************************************
+                          476.  *                                                                        *
+                          477.  *                          COMPUTE BANK HOLD                             *
+                          478.  *                                                                        *
+                          479.  *   FROZEN BANK ANGLE=BANK ANGLE(N)*K1+(BANK ANGLE(N-1)*K2               *
+                          480.  *          WHERE:K1=1 IF NOT MODE 3 OR ABS(AILERON)>.01,OR MODE1 SEL     *
+                          481.  *                K1=ZERO OTHERWISE                                       *
+                          482.  *                K2=1 IF MODE 3 AND ABS(AILERON)<.01,AND MODE1 NOT SEL   *
+                          483.  *                K2=ZER0 OTHERWISE                                       *
+                          484.  *   BANK ANGLE INTEGRATER=INTEGRAL(FROZEN BANK ANGLE-BANK ANGLE)*DT      *
+                          485.  *                                                                        *
+                          486.  **************************************************************************
+C'000044  2238 149E       487.  UNFREEZR MOVE.L    FPHI,D1                       BANK ANGLE(N)AT 2-22
+C'000048  082E 0000 062D  488.           BTST.B    #IMODE3,IINSTMDI(A6)          1=MODE 3 SELECTED
+C'00004E  56F8 1579       489.           SNE.B     FMODE3                        1=MODE 3 SELECTED
+C'000052  0F0E 0245       490.           MOVEP.W   IAIL(A6),D7     (12 BIT A/D)+6.5V=RT WING DOWN,-6.5V=LT DOWN
+C'000056  1D7C 0000 0245  491.           MOVE.B    #0,IAIL(A6)                   START A/D CONVERSION
+C'00005C  0847 000F       492.           BCHG      #15,D7                        COMPLEMENT SIGN BIT
+C'000060  CFFA FFBC       493.           MULS      FRC12,D7                      1/.65* DEL AIL AT 2-27
+C'000064  E087            494.           ASR.L     #8,D7               2-19
+C'000066  EA87            495.           ASR.L     #5,D7               2-14
+C'000068  6B0A            496.           BMI.S     TEMP
+C'00006A  9E7A FFC8       497.           SUB.W     FRC19,D7            (AIL-.05) AT 2-14
+C'00006E  6A0C            498.           BPL.S     TEMP1               BRANCH IF AILERON IS GREATER THAN .05
+C'000070  4247            499.           CLR.W     D7                  DEAD BAND AILERON
+C'000072  6008            500.           BRA.S     TEMP1
+C'000074  DE7A FFBE       501.  TEMP     ADD.W     FRC19,D7            (AIL+.05) AT 2-14
+C'000078  6B02            502.           BMI.S     TEMP1               BRANCH IF AILERON IS LESS THAN -.05
+C'00007A  4247            503.           CLR.W     D7                  DEADBAND AILERON
+C'00007C  31C7 1504       504.  TEMP1    MOVE.W    D7,FDELAIL          DEADBANDED AILERON at 2-14
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page 10
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+C'000080  6A02            505.           BPL.S     NEXT
+C'000082  4447            506.           NEG.W     D7                    ABSOLUTE VALUE(DEL AIL)AT 2-14
+C'000084  BE7A FF9A       507.  NEXT     CMP.W     FRC13,D7              (ABSOLUTE VALUE-.01) AT 2-14
+C'000088  6A0C            508.           BPL.S     NEXT1                 BRANCH IF ABS DEL AIL>.01
+C'00008A  4A38 1577       509.           TST.B     FMODE1                1=MODE1 SELECTED
+C'00008E  6606            510.           BNE.S     NEXT1                 BRANCH IF MODE1 IS SELECTED
+C'000090  4A38 1579       511.           TST.B     FMODE3                1=MODE 3 SEL
+C'000094  6604            512.           BNE.S     NEXT2                 BRANCH IF MODE 3 IS SELECTED
+C'000096  21C1 14A2       513.  NEXT1    MOVE.L    D1,FPHIFRZ            FROZEN BANK ANGLE AT 2-22
+C'00009A  92B8 14A2       514.  NEXT2    SUB.L     FPHIFRZ,D1            (BANK-FROZEN BANK) AT 2-22
+C'00009E  E081            515.           ASR.L     #8,D1                 1/256*(BANK-FROZEN BANK) AT 2-22
+C'0000A0  2438 14BA       516.           MOVE.L    FROLLHLD,D2           ROLL INTEGRATER(N-1) AT 2-22
+C'0000A4  9481            517.           SUB.L     D1,D2
+C'0000A6  4A38 1579       518.           TST.B     FMODE3                1=MODE 3 SEL
+C'0000AA  6602            519.           BNE.S     NEXT3
+C'0000AC  4282            520.           CLR.L     D2
+C'0000AE  21C2 14BA       521.  NEXT3    MOVE.L    D2,FROLLHLD           ROLL INTEGRATER(N) AT 2-22
+                          522.  **************************************************************************
+                          523.  *                  COMPUTE ROLL ACCELERATION                             *
+                          524.  *                                                                        *
+                          525.  *                                                                        *
+                          526.  *        PA DOT=338(( Q*[+.0398DEL SA-.001814*BETA+.0000523*VP*ROUGH AIR *
+                          527.  *                   +4*K1*ROLL HOLD +K1*(FROZEN BANK-BANK)]              *
+                          528.  *                    +VP*(.000057*RA-.000084*PA)                         *
+                          529.  *                         (-------LIMIT 1 -------)                       *
+                          530.  *                    +WOG*(-4.8SIN PHI-.0179*PA) ))                      *
+                          531.  *                            LIMIT 1=.25                                 *
+                          532.  *        WHERE:K1=4 IF MODE 3 IS ON,ZERO OTHERWISE                       *
+                          533.  *                           -200<PA DOT<200                              *
+                          534.  **************************************************************************
+C'0000B2  3E38 1504       535.           MOVE.W    FDELAIL,D7       DEL AIL AT 2-14 (POSITIVE=RT BANK COMMAND)
+C'0000B6  CFFA FF48       536.           MULS      FRC1,D7          338*.0398(DEL SA) AT 2-23
+C'0000BA  3C3A FF46       537.           MOVE.W    FRC2,D6          338*.00181 AT 2-14
+C'0000BE  CDF8 1482       538.           MULS      FBETA,D6         338*.001814(BETA)AT 2-23
+C'0000C2  9E86            539.           SUB.L     D6,D7            338*(.0398*DEL SA-.001814*BETA)AT 2-23
+C'0000C4  E887            540.           ASR.L     #4,D7            2-19
+C'0000C6  DEB8 14BA       541.           ADD.L     FROLLHLD,D7      8*ROLL HOLD AT 2-19
+C'0000CA  4280            542.           CLR.L     D0
+C'0000CC  4A38 1579       543.           TST.B     FMODE3           1=MODE 3 SEL
+C'0000D0  670A            544.           BEQ.S     NEXT4               BRANCH IF NOT MODE 3
+C'0000D2  2038 14A2       545.           MOVE.L    FPHIFRZ,D0          FROZEN BANK ANGLE AT 2-22
+C'0000D6  90B8 149E       546.           SUB.L     FPHI,D0             FROZEN BANK ANGLE -BANK ANGLE AT 2-22
+C'0000DA  E480            547.           ASR.L     #2,D0               2*(---)AT 2-19
+C'0000DC  DE80            548.  NEXT4    ADD.L     D0,D7               2-19
+C'0000DE  3A38 1530       549.           MOVE.W    FRUFAIR,D5       VP* ROUGH AIR AT 2-6
+C'0000E2  CBFA FF38       550.           MULS      FRC11,D5         338*.0000523*VP*ROUGH AIR AT 2-19
+C'0000E6  DE85            551.           ADD.L     D5,D7        338*(-.0398DEL SA-.00181BETA+ROUGH AIR)AT 2-19
+C'0000E8  E087            552.           ASR.L     #8,D7            2-11
+C'0000EA  E487            553.           ASR.L     #2,D7            2-9          MAX=40.83*512=20905
+C'0000EC  CFF8 1526       554.           MULS      FQ,D7            Q(-----) AT 2-15
+C'0000F0  383C 0074       555.           MOVE.W    #116,D4          338*.000084 AT 2-12
+C'0000F4  C9F8 149A       556.           MULS      FPA,D4           338*.000084*PA AT 2-18        MAX=446568
+C'0000F8  3A3C 004F       557.           MOVE.W    #79,D5           338*.000057 AT 2-12
+C'0000FC  CBF8 14AE       558.           MULS      FRA,D5           338*.000057*RA AT 2-21
+C'000100  E685            559.           ASR.L     #3,D5            2-18
+C'000102  9A84            560.           SUB.L     D4,D5            K*RA-K*PA AT 2-18             MAX=196
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page 11
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+C'000104  EA85            561.           ASR.L     #5,D5            2-13
+C'000106  CBF8 14E6       562.           MULS      FVP,D5           VP*(---) AT 2-19
+C'00010A  E885            563.           ASR.L     #4,D5            2-15                    MAX=1459*(2-11)
+C'00010C  DE85            564.           ADD.L     D5,D7            Q(--)+VP(--)AT 2-15       MAX=14075*(2-11)
+C'00010E  E887            565.           ASR.L     #4,D7            2-11
+C'000110  4284            566.           CLR.L     D4               ZERO IN D4
+C'000112  4A38 157B       567.           TST.B     FWOG             1=ON GROUND
+C'000116  6728            568.           BEQ.S     NEXT6            BRANCH IF IN AIR
+C'000118  3A3A FEEC       569.           MOVE.W    FRC4,D5          4.8*338 AT 2-3
+C'00011C  CBF8 1536       570.           MULS      FSINPHI,D5       338*4.8*SIN PHI AT 2-18
+C'000120  383A FEF8       571.           MOVE.W    FRC10,D4         338*.0179 AT 2-12
+C'000124  C9F8 149A       572.           MULS      FPA,D4           338*.0179*PA AT 2-18
+C'000128  D885            573.           ADD.L     D5,D4            (KSIN PHI+K*PA) AT 2-18
+C'00012A  EE84            574.           ASR.L     #7,D4            2-11
+C'00012C  B8BA FEF4       575.           CMP.L     FRC14,D4         (----)-84.5 AT 2-11
+C'000130  6B04            576.           BMI.S     NEXT5            (KSIN+K*PA)<84.5
+C'000132  283A FEEE       577.           MOVE.L    FRC14,D4         LIMIT IN D4 AT 2-11
+C'000136  B8BA FEEE       578.  NEXT5    CMP.L     FRC15,D4         (---)+84.5 AT 2-11
+C'00013A  6A04            579.           BPL.S     NEXT6            BRANCH IF (----)>-84.5
+C'00013C  283A FEE8       580.           MOVE.L    FRC15,D4         LIMIT IN D4 AT 2-11
+C'000140  9E84            581.  NEXT6    SUB.L     D4,D7            PADOT AT 2-11
+C'000142  BEBA FEE6       582.           CMP.L     FRC16,D7         Q*(--)+VP*(---)-200 AT 2-11
+C'000146  6B04            583.           BMI.S     NEXT7            BRANCH IF <200
+C'000148  2E3A FEE0       584.           MOVE.L    FRC16,D7         LIMIT IN D6 AT 2-11
+C'00014C  BEBA FEE0       585.  NEXT7    CMP.L     FRC17,D7         Q*(---)+VP+(---)+200 AT 2-11
+C'000150  6A04            586.           BPL.S     NEXT8            BRANCH IF >-200
+C'000152  2E3A FEDA       587.           MOVE.L    FRC17,D7         LIMIT IN D6 AT 2-11
+C'000156  EA87            588.  NEXT8    ASR.L     #5,D7            2-6
+C'000158  3838 1520       589.           MOVE.W    FPADOT,D4         PA DOT(N-1)AT 2-6
+C'00015C  31C7 1520       590.           MOVE.W    D7,FPADOT        PADOT(N)AT 2-6
+                          591.  ************************************************************
+                          592.  *        PA=INTEGRAL(PA DOT*DT)                            *
+                          593.  *             -60<PA<60                                    *
+                          594.  *        PA=0 IF MODE 1 IS ACTIVATED                       *
+                          595.  *        NOTE: PA IS STORED AS A LONG WORD AT 2-22 BUT CAN *
+                          596.  *              ALSO BE USED AS A WORD AT 2-6               *
+                          597.  ************************************************************
+C'000160  9E44            598.           SUB.W     D4,D7                   PA(N)-PA(N-1)AT 2-6
+C'000162  E247            599.           ASR.W     #1,D7                   1/2(PADOT(N)-PADOT(N-1) AT 2-6
+C'000164  DE78 1520       600.           ADD.W     FPADOT,D7               3/2PADOT(N)-1/2PADOT(N-1)AT 2-6
+C'000168  CFFA FEC8       601.           MULS      FRC18,D7               .05(----) AT 2-22
+C'00016C  DEB8 149A       602.           ADD.L     FPA,D7                  PA(N) AT 2-22
+C'000170  BEBA FEA0       603.           CMP.L     FRC8,D7                 PA -60  AT 2-22
+C'000174  6B04            604.           BMI.S     NEXT9                   BRANCH IF PA <60
+C'000176  2E3A FE9A       605.           MOVE.L    FRC8,D7                 60 AT 2-22
+C'00017A  BEBA FE9A       606.  NEXT9    CMP.L     FRC9,D7                 PA +60   AT 2-22
+C'00017E  6A04            607.           BPL.S     NEXT10                  BRANCH IF PA >-60
+C'000180  2E3A FE94       608.           MOVE.L    FRC9,D7                -60 AT 2-22
+C'000184  4280            609.  NEXT10   CLR.L     D0                      ZERO IN D0
+C'000186  082E 0002 062D  610.           BTST.B    #IMODE1,IINSTMDI(A6)    1=MODE 1 SELECTED
+C'00018C  56F8 1577       611.           SNE.B     FMODE1                  STORE MODE 1 BOOLEAN
+C'000190  6702            612.           BEQ.S     NEXT11                  BRANCH IF MODE 1 IS NOT SELECTED
+C'000192  2E00            613.           MOVE.L    D0,D7                   ZERO IN D4
+C'000194  21C7 149A       614.  NEXT11   MOVE.L    D7,FPA                LIMITED PA AT 2-22(LONG WORD)2-6(WORD)
+                          615.  **********************************************************************
+                          616.  *        PHI DOT=(PA+PSI DOT*SIN THETA)*K                            *
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page 12
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+                          617.  *                      K=ZERO IF MODE 1 IS ACTIVATED                 *
+                          618.  *                      K=1 OTHER WISE                                *
+                          619.  *                  -60<PHI DOT<60                                    *
+                          620.  **********************************************************************
+C'000198  3C38 1524       621.           MOVE.W    FPSIDOT,D6              SI DOT AT 2-8
+C'00019C  CDF8 153C       622.           MULS      FSINTHET,D6             SI*SIN THETA AT 2-23
+C'0001A0  E286            623.           ASR.L     #1,D6                   2-22
+C'0001A2  DC87            624.           ADD.L     D7,D6                   PHI DOT AT 2-22
+C'0001A4  BCBA FE6C       625.           CMP.L     FRC8,D6                 PHI DOT -60 AT 2-22
+C'0001A8  6B04            626.           BMI.S     NEXT12                  BRANCH IF PHI DOT<60
+C'0001AA  2C3A FE66       627.           MOVE.L    FRC8,D6                 LIMIT IN D6 AT 2-22
+C'0001AE  BCBA FE66       628.  NEXT12   CMP.L     FRC9,D6                 PHI DOT+60 AT 2-22
+C'0001B2  6A04            629.           BPL.S     NEXT13                  BRANCH IF PHI DOT>-60
+C'0001B4  2C3A FE60       630.           MOVE.L    FRC9,D6                 LIMIT IN D6 AT 2-22
+C'0001B8  E086            631.  NEXT13   ASR.L     #8,D6                   2-14
+C'0001BA  EC86            632.           ASR.L     #6,D6                   2-8
+C'0001BC  4A38 1577       633.           TST.B     FMODE1                  1=MODE 1 IS ACTIVATED
+C'0001C0  6702            634.           BEQ.S     NEXT14                  BRANCH IF NOT MODE 1
+C'0001C2  4286            635.           CLR.L     D6                      ZERO IN D6
+C'0001C4  3E38 152A       636.  NEXT14   MOVE.W    FPHIDOT,D7              PHI DOT(N-1)AT 2-8
+C'0001C8  31C6 152A       637.           MOVE.W    D6,FPHIDOT              PHIDOT(N)AT 2-8
+                          638.  ************************************************************
+                          639.  *        PHI=INTEGRAL(PHI DOT*DT)*K                        *
+                          640.  *              K=0 IF MODE 1 IS ACTIVATED                  *
+                          641.  *              K=1 OTHERWISE                               *
+                          642.  *             -75<PHI<75                                   *
+                          643.  *       NOTE:PHI IS STORED AS A LONG WORD AT 2-22 BUT IT   *
+                          644.  *            CAN ALSO BE USED AS A WORD AT 2-6             *
+                          645.  ************************************************************
+C'0001CC  9C47            646.           SUB.W     D7,D6            PHI DOT(N)-PHI DOT(N-1) AT 2-8
+C'0001CE  E246            647.           ASR.W     #1,D6            1/2(---) AT 2-8
+C'0001D0  DC78 152A       648.           ADD.W     FPHIDOT,D6       3/2PHI DOT(N)-1/2PHI DOT(N-1)AT 2-8
+C'0001D4  CDFA FE5C       649.           MULS      FRC18,D6        .05(---)AT 2-24
+C'0001D8  E486            650.           ASR.L     #2,D6            2-22
+C'0001DA  DCB8 149E       651.           ADD.L     FPHI,D6          PHI AT 2-22
+C'0001DE  BCBA FE2A       652.           CMP.L     FRC6,D6          PHI-75 AT 2-22
+C'0001E2  6B04            653.           BMI.S     NEXT15           BRANCH IF PHI <75
+C'0001E4  2C3A FE24       654.           MOVE.L    FRC6,D6          LIMIT IN D7 AT 2-22
+C'0001E8  BCBA FE24       655.  NEXT15   CMP.L     FRC7,D6          PHI+75 AT 2-22
+C'0001EC  6A04            656.           BPL.S     NEXT16           BRANCH IF PHI >-75
+C'0001EE  2C3A FE1E       657.           MOVE.L    FRC7,D6         -75 IN D6  AT 2-22
+C'0001F2  4A38 1577       658.  NEXT16   TST.B     FMODE1           1=MODE 1
+C'0001F6  6702            659.           BEQ.S     NEXT17           BRANCH IF NOT MODE 1
+C'0001F8  4286            660.           CLR.L     D6               ZERO IN D6
+C'0001FA  21C6 149E       661.  NEXT17   MOVE.L    D6,FPHI          PHI LIMITED AT 2-22(LONG) 2-6(WORD)
+                          662.  ************************************************************
+                          663.  *                                                          *
+                          664.  *           STORE INDICATER SINE/COSINE BANK ANGLE         *
+                          665.  *                                                          *
+                          666.  ************************************************************
+C'0001FE  3038 151A       667.           MOVE.W    FISINPHI,D0           SINE(INDICATER BANK ANGLE)AT 2-15
+C'000202  0840 000F       668.           BCHG      #15,D0                COMPLEMENT SIGN BIT
+C'000206  3238 1518       669.           MOVE.W    FICOSPHI,D1           COSINE(INDICATER BANK ANGLE)AT 2-15
+C'00020A  0841 000F       670.           BCHG      #15,D1                COMPLEMENT SIGN BIT
+C'00020E  082E 0006 0619  671.           BTST.B    #IATGFAIL,IFAIL1(A6)  1=GYRO FAILED
+C'000214  6608            672.           BNE.S     NEXT18                BRANCH IF FAILED
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:20:57     ...Page 13
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+C'000216  018E 02C5       673.           MOVEP.W   D0,OATTROLS(A6)       STORE SIN INDICATER BANK ANGLE
+C'00021A  038E 02C1       674.           MOVEP.W   D1,OATTROLC(A6)       STORE COS INDICATER BANK ANGLE
+C'00021E  4E71            675.  NEXT18   NOP
+C'000220  4E40            676.           TRAP      #0                    RETURN TO EXEC
+C'000222                  677.           END
+    0 Errors
+Run on May 7, 2025  15:20:57     ...Page 13
+D:ROLL.LTX , D:ROLL.PRN , D:ROLL.SYM = D:ROLL.SA
+   ...
+
+C'000216  018E 02C5       673.           MOVEP.W   D0,OATTROLS(A6)       STORE SIN INDICATER BANK ANGLE
+C'00021A  038E 02C1       674.           MOVEP.W   D1,OATTROLC(A6)       STORE COS INDICATER BANK ANGLE

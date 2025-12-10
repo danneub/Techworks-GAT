@@ -1,0 +1,23 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:51:49     ...Page  1
+D:IVINIT1.LTX , D:IVINIT1.PRN , D:IVINIT1.SYM = D:IVINIT1.SA
+   ...
+
+                            1.  **********************************************************************
+                            2.  *                                                                    *
+                            3.  *        IVINIT    INTERRUPT VECTOR INITIALIZER ROUTINE              *
+                            4.  *                                                                    *
+                            5.  **********************************************************************
+                            6.           XDEF      IVINIT
+                            7.           XREF      INT4                INTERRUPT #4 RECIEVER (DEBUG KEYBOAD)
+                            8.           XREF      INIT4               INTERRUPT #4 INITIALIZER
+C'000000                    9.           SECTION   12
+     C'00000000            10.  IVINIT   EQU       *
+C'000000  4EB9'00000000    11.           JSR       INIT4               INITIALIZE HANDLER FOR IV #4
+C'000006  21FC'00000000    12.           MOVE.L    #INT4,$70           LOAD ADDRESS FOR IV #4
+          0070
+C'00000E  4E75             13.           RTS
+C'000010                   14.           END
+    0 Errors
+              8.           XREF      INIT4               INTERRUPT #4 INITIALIZER
+C'000000                    9.           SECTION   12
+     C'00000000            10.

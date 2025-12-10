@@ -1,0 +1,530 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:20     ...Page  1
+D:NAVRCV.LTX , D:NAVRCV.PRN , D:NAVRCV.SYM = D:NAVRCV.SA
+   ...
+
+                            1.  ****************************************************************************
+                            2.  *
+                            3.  *        NAV RECEIVER SUBROUTINE
+                            4.  *
+                            5.  *        PROGRAMMER : L.T. HARRISON
+                            6.  *        DATE       : 16 JUNE 1983
+                            7.  *
+                            8.  *
+                            9.  *        REG A1 CONTAINS ADDRESS OF RADIO BUFFER FOR STATION IN QUESTION
+                           10.  *
+                           11.  ****************************************************************************
+                           12.           XDEF      NAVRCV
+                           13.           XREF      MSC1
+                           14.           XREF      DSMUL
+                           15.           XREF      AEPC
+                           16.           XREF      SQRT
+                           17.           XREF      NATAN2
+                           18.  *
+                           19.           INCLUDE   NSYM.SA
+     # 00001594            20:  NADF1FRQ  EQU   $00001594 L 001 L H   ADF 1 FREQUENCY
+     # 00001598            21:  NADF1STA  EQU   $00001598 L 001 L H   ADF 1 STATION BUFFER ADDRESS
+     # 0000159C            22:  NA1IDNT1  EQU   $0000159C L 001 L H   ADF 1 IDENT WORD 1
+     # 000015A0            23:  NA1IDNT2  EQU   $000015A0 L 001 L H   ADF 1 IDENT WORD 2
+     # 000015A4            24:  NADF2FRQ  EQU   $000015A4 L 001 L H   ADF 2 FREQUENCY
+     # 000015A8            25:  NADF2STA  EQU   $000015A8 L 001 L H   ADF 2 STATION BUFFER ADDRESS
+     # 000015AC            26:  NA2IDNT1  EQU   $000015AC L 001 L H   ADF 2 IDENT WORD 1
+     # 000015B0            27:  NA2IDNT2  EQU   $000015B0 L 001 L H   ADF 2 IDENT WORD 2
+     # 000015B4            28:  NAV1FREQ  EQU   $000015B4 L 001 L H   NAV 1 FREQUENCY               HZ
+     # 000015B8            29:  NAV2FREQ  EQU   $000015B8 L 001 L H   NAV 2 FREQUENCY               HZ
+     # 000015BC            30:  NAV1STA   EQU   $000015BC L 001 L H   NAV 1 STATION BUFFER ADDRESS
+     # 000015C0            31:  NAV2STA   EQU   $000015C0 L 001 L H   NAV 2 STATION BUFFER ADDRESS
+     # 000015C4            32:  NDIST2    EQU   $000015C4 L 001 L S24 DISTANCE FROM CLOSEST FIELD   DEG2
+     # 000015C8            33:  NGLAT     EQU   $000015C8 L 001 L S23 AIRCRAFT LATITUDE             DEG       +
+     # 000015CC            34:  NGLON     EQU   $000015CC L 001 L S23 AIRCRAFT LONGITUDE            DEG       +
+     # 000015D0            35:  NV1IDNT1  EQU   $000015D0 L 001 L H   NAV 1 IDENT WORD 1
+     # 000015D4            36:  NV1IDNT2  EQU   $000015D4 L 001 L H   NAV 1 IDENT WORD 2
+     # 000015D8            37:  NV2IDNT1  EQU   $000015D8 L 001 L H   NAV 2 IDENT WORD 1
+     # 000015DC            38:  NV2IDNT2  EQU   $000015DC L 001 L H   NAV 2 IDENT WORD 2
+     # 000015E0            39:  ND1IDNT1  EQU   $000015E0 L 001 L H   DME 1 IDENT WORD 1
+     # 000015E4            40:  ND1IDNT2  EQU   $000015E4 L 001 L H   DME 1 IDENT WORD 2
+     # 000015E8            41:  ND2IDNT1  EQU   $000015E8 L 001 L H   DME 2 IDENT WORD 1
+     # 000015EC            42:  ND2IDNT2  EQU   $000015EC L 001 L H   DME 2 IDENT WORD 2
+     # 000015F0            43:  NADF1ERR  EQU   $000015F0 L 001 L H   ADF 1 FREQUENCY ERROR         HZ        +
+     # 000015F4            44:  NADF2ERR  EQU   $000015F4 L 001 L H   ADF 2 FREQUENCY ERROR         HZ        +
+     # 000015F8            45:  NRAGAS    EQU   $000015F8 L 001 L S08 DIST ALONG RNWY HEADING       FEET      +
+     # 000015FC            46:  NRBGAS    EQU   $000015FC L 001 L S08 DIST ACROSS RNWY HEADING      FEET      +
+     # 00001600            47:  NRGAS2    EQU   $00001600 L 001 L S11 GROUND RANGE TO STATION SQUARED N.M.**2 +
+     # 00001604            48:  NRRAS2    EQU   $00001604 L 001 L S11 SLANT RANGE TO STATION SQUARED N.M.**2  +
+     # 00001608            49:  NSACF     EQU   $00001608 L 001 L H   CLOSEST AIRPORT ADDRESS
+     # 0000160C            50:  NMKRSA    EQU   $0000160C L 001 L H   ADDRESS OF NEAREST MARKER BEACON
+     # 00001610            51:  NDME1STA  EQU   $00001610 L 001 L H   DME1 STATION ADDRESS
+     # 00001614            52:  NDME2STA  EQU   $00001614 L 001 L H   DME2 STATION ADDRESS
+     # 00001618            53:  NAPTPSA   EQU   $00001618 L 001 L H   NEAREST AIRPORT PRESELECT STATION ADDR
+     # 0000161C            54:  NAPTRNG2  EQU   $0000161C L 001 L S24 NEAREST AIRPORT RANGE SQUARED
+     # 00001620            55:  NMKRRNG2  EQU   $00001620 L 001 L S24 NEAREST MARKER RANGE SQUARED
+     # 00001624            56:  NTABNAV1  EQU   $00001624 L 001 L H   STATION ADDR OF GOOD STA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:20     ...Page  2
+D:NAVRCV.LTX , D:NAVRCV.PRN , D:NAVRCV.SYM = D:NAVRCV.SA
+   ...
+
+     # 00001628            57:  NTABNAV2  EQU   $00001628 L 001 L H   STATION ADDR OF GOOD STA
+     # 0000162C            58:  NCENLAT   EQU   $0000162C L 001 L S23 MAP CENTER LAT
+     # 00001630            59:  NCENLON   EQU   $00001630 L 001 L S23 MAP CENTER LON
+     # 00001634            60:  NRSLEW    EQU   $00001634 L 001 L S23 CHART RECORDER SLEW RATE
+     # 00001638            61:  NRXGASL   EQU   $00001638 L 001 L S23 NRXGASL IS DELTA LAT IN LONG WORD
+     # 0000163C            62:  NRYGASL   EQU   $0000163C L 001 L S23 NRYGASL IS DELTA LON IN LONG WORD
+     # 00001640            63:  N3KBAND   EQU   $00001640 L 001 L H   3000 * ADF BAND NUMBER
+     # 00001644            64:  NENGFREQ  EQU   $00001644 L 001 L H
+     # 00001648            65:  NSPARE1   EQU   $00001648 L 001 L H   NAV SPARE LONG WORD 1
+     # 0000164C            66:  NSPARE2   EQU   $0000164C L 001 L H   NAV SPARE LONG WORD 2
+     # 00001650            67:  NSPARE3   EQU   $00001650 L 001 L H   NAV SPARE LONG WORD 3
+     # 00001654            68:  NSPARE4   EQU   $00001654 L 001 L H   NAV SPARE LONG WORD 4
+     # 00001658            69:  NSPARE5   EQU   $00001658 L 001 L H   NAV SPARE LONG WORD 5
+     # 0000165C            70:  NSPARE6   EQU   $0000165C L 001 L H   NAV SPARE LONG WORD 6
+     # 00001660            71:  NSPARE7   EQU   $00001660 L 001 L H   NAV SPARE LONG WORD 7
+     # 00001664            72:  NSPARE8   EQU   $00001664 L 001 L H   NAV SPARE LONG WORD 8
+     # 00001668            73:  NADF1BRG  EQU   $00001668 W 001 L S06 ADF MAG BEARING TO STATION    DEG
+     # 0000166A            74:  NADF1CTR  EQU   $0000166A W 001 L H   ADF TONE KFG COUNTER          .1 SEC
+     # 0000166C            75:  NADF1DEV  EQU   $0000166C W 001 L S06 ADF 1 DEVIATION               DEG
+     # 0000166E            76:  NADF1RNG  EQU   $0000166E W 001 L S00 ADF 1 STATION RANGE           NAUTICAL MI
+     # 00001670            77:  NADF2RNG  EQU   $00001670 W 001 L S00 ADF 2 STATION RANGE           NAUTICAL MI
+     # 00001672            78:  NADF2BRG  EQU   $00001672 W 001 L S06 ADF 2 MAG BEARING TO STATION  DEG
+     # 00001674            79:  NADF2CTR  EQU   $00001674 W 001 L H   ADF 2 TONE KFG COUNTER        .1 SEC
+     # 00001676            80:  NADF2DEV  EQU   $00001676 W 001 L S06 ADF 2 DEVIATION               DEG
+     # 00001678            81:  NAV1BRG   EQU   $00001678 W 001 L S06 NAV 1 BEARING TO STATION      DEG
+     # 0000167A            82:  NAV2BRG   EQU   $0000167A W 001 L S06 NAV 2 BEARING TO STATION      DEG
+     # 0000167C            83:  NAV1CTR   EQU   $0000167C W 001 L H   NAV 1 KFG COUNTER             .1 SEC
+     # 0000167E            84:  NAV2CTR   EQU   $0000167E W 001 L H   NAV 2 KFG COUNTER             .1 SEC
+     # 00001680            85:  NAV1OBS   EQU   $00001680 W 001 L S06 NAV 1 OMNIBEARING SELECT      DEG
+     # 00001682            86:  NAV2OBS   EQU   $00001682 W 001 L S06 NAV 2 OMNIBEARING SELECT      DEG
+     # 00001684            87:  NCDI1DEG  EQU   $00001684 W 001 L S06 NAV 1 COURSE DEVIATION        DEG
+     # 00001686            88:  NCDI2DEG  EQU   $00001686 W 001 L S06 NAV 2 COURSE DEVIATION        DEG
+     # 00001688            89:  NGCLAT    EQU   $00001688 W 001 L S15 COSINE OF LATITUDE
+     # 0000168A            90:  NGCLATIN  EQU   $0000168A W 001 L S07 INVERSE OF NGCLAT
+     # 0000168C            91:  NGFE      EQU   $0000168C W 001 L S00 FIELD ELEVATION               FEET
+     # 0000168E            92:  NGGA      EQU   $0000168E W 001 L S00 NAV GEOMETRIC ALTITUDE        FEET
+     # 00001690            93:  NGS       EQU   $00001690 W 001 L S04 NAV GROUND SPEED              KNOTS     +
+     # 00001692            94:  NHRA      EQU   $00001692 W 001 L S00 NAV HEIGHT ABOVE GROUND       FEET      +
+     # 00001694            95:  NGSD1DEG  EQU   $00001694 W 001 L S06 AIRCRAFT GLIDESLOPE           DEG       +
+     # 00001696            96:  NIMCTR    EQU   $00001696 W 001 L H   IM COUNTER                    .1SEC     +
+     # 00001698            97:  NMAGVAR   EQU   $00001698 W 001 L S06 MAGNETIC VARIATION            DEG       +
+     # 0000169A            98:  NMMCTR    EQU   $0000169A W 001 L H   MM COUNTER KFG                .1SEC     +
+     # 0000169C            99:  NOMCTR    EQU   $0000169C W 001 L H   OM COUNTER KFG                .1SEC     +
+     # 0000169E           100:  NPSIGA    EQU   $0000169E W 001 L S06 NAV AIRCRAFT TRUE HEADING      DEG      +
+     # 000016A0           101:  NPSIMH    EQU   $000016A0 W 001 L S06 NAV AIRCRAFT MAG HEADING       DEG      +
+     # 000016A2           102:  NPSIIH    EQU   $000016A2 W 001 L S06 NAV AIRCRAFT INDICATED HEADING DEG      +
+     # 000016A4           103:  NUEW      EQU   $000016A4 W 001 L S04 N-S VELOCITY WITH WIND         FPS      +
+     # 000016A6           104:  NVEW      EQU   $000016A6 W 001 L S04 E-W VELOCITY WITH WIND         FPS      +
+     # 000016A8           105:  NADF1RAW  EQU   $000016A8 W 001 L H   ADF N-1 RAW FREQUENCY                   +
+     # 000016AA           106:  NRASIN    EQU   $000016AA W 001 L S15 SINE OF AVERAGE LATITUDE                +
+     # 000016AC           107:  NRACOS    EQU   $000016AC W 001 L S15 COSINE OF AVERAGE LATITUDE              +
+     # 000016AE           108:  NRXGAS    EQU   $000016AE W 001 L S12 DELTA LAT BETWEEN STATION & A/C DEG     +
+     # 000016B0           109:  NRYGAS    EQU   $000016B0 W 001 L S12 DELTA LON BETWEEN STATION & A/C DEG     +
+     # 000016B2           110:  NRBRG     EQU   $000016B2 W 001 L S06 MAGNETIC BEARING TO STATION   DEG       +
+     # 000016B4           111:  NRRGAS    EQU   $000016B4 W 001 L S06 GROUND RANGE TO STATION       N.M.      +
+     # 000016B6           112:  NRZGAS    EQU   $000016B6 W 001 L S00 HEIGHT ABOVE STATION          FEET      +
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:20     ...Page  3
+D:NAVRCV.LTX , D:NAVRCV.PRN , D:NAVRCV.SYM = D:NAVRCV.SA
+   ...
+
+     # 000016B8           113:  NRRRAS    EQU   $000016B8 W 001 L S06 SLANT RANGE TO STATION        N.M.      +
+     # 000016BA           114:  NGBIAS    EQU   $000016BA W 001 L S06 GROUND BIAS
+     # 000016BC           115:  NSPSIB    EQU   $000016BC W 001 L S15 SIN BIAS HEADING
+     # 000016BE           116:  NCPSIB    EQU   $000016BE W 001 L S15 COS BIAS HEADING
+     # 000016C0           117:  NGVNS     EQU   $000016C0 W 001 L S04 N-S GROUND VELOCITY
+     # 000016C2           118:  NGVEW     EQU   $000016C2 W 001 L S04 E-W GROUND VELOCITY
+     # 000016C4           119:  NDME1CTR  EQU   $000016C4 W 001 L H   DME1 COUNTER
+     # 000016C6           120:  NDME2CTR  EQU   $000016C6 W 001 L H   DME2 COUNTER
+     # 000016C8           121:  NVTC1CTR  EQU   $000016C8 W 001 L H   VTC 1 COUNTER
+     # 000016CA           122:  NVTC2CTR  EQU   $000016CA W 001 L H   VTC 2 COUNTER
+     # 000016CC           123:  NK1       EQU   $000016CC W 001 L H   CONSTANT USED IN NAV1
+     # 000016CE           124:  NK2       EQU   $000016CE W 001 L H   CONSTANT USED IN NAV1
+     # 000016D0           125:  NK3       EQU   $000016D0 W 001 L H   CONSTANT USED IN NAV1
+     # 000016D2           126:  NE        EQU   $000016D2 W 001 L H   TEMP STORE USED IN NAV1
+     # 000016D4           127:  NCRS1COS  EQU   $000016D4 W 001 L S15 NAV 1 SEL COURSE COSINE
+     # 000016D6           128:  NCRS1SIN  EQU   $000016D6 W 001 L S15 NAV 1 SEL COURSE SINE
+     # 000016D8           129:  NCRS2COS  EQU   $000016D8 W 001 L S15 NAV 2 SEL COURSE COSINE
+     # 000016DA           130:  NCRS2SIN  EQU   $000016DA W 001 L S15 NAV 2 SEL COURSE SINE
+     # 000016DC           131:  NSYNCS    EQU   $000016DC W 001 L S15 COMPASS SYNC POT SINE
+     # 000016DE           132:  NSYNCC    EQU   $000016DE W 001 L S15 COMPASS SYNC POT COSINE
+     # 000016E0           133:  NSYNCDEG  EQU   $000016E0 W 001 L S06 COMPASS SYNC POT DEGREES
+     # 000016E2           134:  NRSCALE   EQU   $000016E2 W 001 L S00 CHART RECORDER SCALE
+     # 000016E4           135:  USETHD    EQU   $000016E4 W 001 L S06 SET NEW HEADING
+     # 000016E6           136:  NCONRAD   EQU   $000016E6 W 001 L S06 CONE OF CONFUSION RADIUS IN NM          +
+     # 000016E8           137:  NAV1GS    EQU   $000016E8 W 001 L S15 NAV1 GLIDE SLOPE AO                     +
+     # 000016EA           138:  NAV2GS    EQU   $000016EA W 001 L S15 NAV2 GLIDE SLOPE AO                     +
+     # 000016EC           139:  NAV1LR    EQU   $000016EC W 001 L S15 NAV1 CDI NEEDLE AO                      +
+     # 000016EE           140:  NAV2LR    EQU   $000016EE W 001 L S15 NAV2 CDI NEEDLE AO                      +
+     # 000016F0           141:  NGSTAN    EQU   $000016F0 W 001 L S12 GLIDE SLOPE TAN
+     # 000016F2           142:  NBASEREG  EQU   $000016F2 W 001 L S06 BASE REGISTER FOR NATAN2 ROUTINE
+     # 000016F4           143:  NITCOUNT  EQU   $000016F4 W 001 L H   ITERATION COUNTER
+     # 000016F6           144:  NSPAREW1  EQU   $000016F6 W 001 L H   NAV SPARE WORD 1
+     # 000016F8           145:  NSPAREW2  EQU   $000016F8 W 001 L H   NAV SPARE WORD 2
+     # 000016FA           146:  NSPAREW3  EQU   $000016FA W 001 L H   NAV SPARE WORD 3
+     # 000016FC           147:  NSPAREW4  EQU   $000016FC W 001 L H   NAV SPARE WORD 4
+     # 000016FE           148:  NSPAREW5  EQU   $000016FE W 001 L H   NAV SPARE WORD 5
+     # 00001700           149:  NSPAREW6  EQU   $00001700 W 001 L H   NAV SPARE WORD 6
+     # 00001702           150:  NSPAREW7  EQU   $00001702 W 001 L H   NAV SPARE WORD 7
+     # 00001704           151:  NSPAREW8  EQU   $00001704 W 001 L H   NAV SPARE WORD 8
+     # 00001706           152:  NICOM1SQ  EQU   $00001706 W 001 L H   TEMP STORE OF ICOM1SQ INPUT
+     # 00001708           153:  NICOM2SQ  EQU   $00001708 W 001 L H   TEMP STORE OF ICOM2SQ INPUT
+     # 0000170A           154:  NMKRLVL   EQU   $0000170A B 001 L H   MARKER LEVEL
+     # 0000170B           155:  NLF1LOS   EQU   $0000170B B 001 L H   ADF 1 IN LINE OF SIGHT
+     # 0000170C           156:  NADF1TUN  EQU   $0000170C B 001 L H   ADF 1 STATION ID ENABLE
+     # 0000170D           157:  NADF2TUN  EQU   $0000170D B 001 L H   ADF 2 STATION ID ENABLE
+     # 0000170E           158:  NAV1TUN   EQU   $0000170E B 001 L H   NAV 1 STATION ID ENABLE
+     # 0000170F           159:  NAV2TUN   EQU   $0000170F B 001 L H   NAV 2 STATION ID ENABLE
+     # 00001710           160:  NAVFRZ    EQU   $00001710 B 001 L H   NAV FREEZE
+     # 00001711           161:  NBWOW     EQU   $00001711 B 001 L H   NAV WEIGHT ON WHEELS
+     # 00001712           162:  NIMTONE   EQU   $00001712 B 001 L H   IM TONE ENABLE
+     # 00001713           163:  NIN1GSF   EQU   $00001713 B 001 L H   NAV 1 GLIDESLOPE FLAG
+     # 00001714           164:  NINIT     EQU   $00001714 B 001 L H   NAV INITIALIZATION FLAG
+     # 00001715           165:  NMMTONE   EQU   $00001715 B 001 L H   MM TONE ENABLE
+     # 00001716           166:  NOMTONE   EQU   $00001716 B 001 L H   OM TONE ENABLE
+     # 00001717           167:  NRWR1     EQU   $00001717 B 001 L H   IN RANGE 1 FLAG
+     # 00001718           168:  NRWR2     EQU   $00001718 B 001 L H   IN RANGE 2 FLAG
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:20     ...Page  4
+D:NAVRCV.LTX , D:NAVRCV.PRN , D:NAVRCV.SYM = D:NAVRCV.SA
+   ...
+
+     # 00001719           169:  NRWR3     EQU   $00001719 B 001 L H   IN RANGE 3 FLAG
+     # 0000171A           170:  NRLOS     EQU   $0000171A B 001 L H   IN LINE OF SIGHT FLAG
+     # 0000171B           171:  NMKRVL    EQU   $0000171B B 001 L H   MARKER BEACON STATION VALIDITY
+     # 0000171C           172:  NDME1TUN  EQU   $0000171C B 001 L H   DME1 TUNED FLAG
+     # 0000171D           173:  NDME2TUN  EQU   $0000171D B 001 L H   DME2 TUNED FLAG
+     # 0000171E           174:  NIMKEY    EQU   $0000171E B 001 L H   INNER MARKER KEY
+     # 0000171F           175:  NAMRA     EQU   $0000171F B 001 L H   INNER MARKER RANGE
+     # 00001720           176:  NMMRA     EQU   $00001720 B 001 L H   MIDDLE MARKER RANGE
+     # 00001721           177:  NOMRA     EQU   $00001721 B 001 L H   OUTER MARKER RANGE
+     # 00001722           178:  NVTC1     EQU   $00001722 B 001 L H
+     # 00001723           179:  NVTC2     EQU   $00001723 B 001 L H
+     # 00001724           180:  NAV1VOL   EQU   $00001724 B 001 L H   NAV1 VOLUME
+     # 00001725           181:  NAV2VOL   EQU   $00001725 B 001 L H   NAV2 VOLUME
+     # 00001726           182:  NLF1VOL   EQU   $00001726 B 001 L H
+     # 00001727           183:  NCOM1OP   EQU   $00001727 B 001 L H   COMM1 OPERABLE FLAG
+     # 00001728           184:  NCOM2OP   EQU   $00001728 B 001 L H   COMM2 OPERABLE FLAG
+     # 00001729           185:  NMKRSNS   EQU   $00001729 B 001 L H   MARKER SENSE
+     # 0000172A           186:  NIPFLAG   EQU   $0000172A B 001 L H   INITIAL POS FLAG
+     # 0000172B           187:  UHDSET    EQU   $0000172B B 001 L H   INITIAL POS HEADING FLAG
+     # 0000172C           188:  NMMKEY    EQU   $0000172C B 001 L H   MIDDLE MARKER KEY
+     # 0000172D           189:  NOMKEY    EQU   $0000172D B 001 L H   OUTER MARKER KEY
+     # 0000172E           190:  NAV1KY    EQU   $0000172E B 001 L H   NAV 1 KEY
+     # 0000172F           191:  NAV2KY    EQU   $0000172F B 001 L H   NAV 2 KEY
+     # 00001730           192:  NDM1KY    EQU   $00001730 B 001 L H   DME 1 KEY
+     # 00001731           193:  NDM2KY    EQU   $00001731 B 001 L H   DME 2 KEY
+     # 00001732           194:  NLF1KY    EQU   $00001732 B 001 L H   ADF 1 KEY
+     # 00001733           195:  NLF2KY    EQU   $00001733 B 001 L H   ADF 1 KEY
+     # 00001734           196:  NNV1VOL   EQU   $00001734 B 001 L H   TEMP STORE OF ONV1VOL
+     # 00001735           197:  NNV2VOL   EQU   $00001735 B 001 L H   TEMP STORE OF ONV2VOL
+     # 00001736           198:  NCDI1DO   EQU   $00001736 B 001 L H   TEMP STORE OF OCDI1DO
+     # 00001737           199:  NCDI2DO   EQU   $00001737 B 001 L H   TEMP STORE OF OCDI2DO
+     # 00001738           200:  NDMECTL   EQU   $00001738 B 001 L H
+     # 00001739           201:  NENGAMP   EQU   $00001739 B 001 L H
+     # 0000173A           202:  NPROPAMP  EQU   $0000173A B 001 L H
+     # 0000173B           203:  NRUMBLE   EQU   $0000173B B 001 L H   RUMBLE
+     # 0000173C           204:  NSTALL    EQU   $0000173C B 001 L H   STALL WARNING
+     # 0000173D           205:  NCOM1SQ   EQU   $0000173D B 001 L H   TEMP STORE OF OCOM1SQ
+     # 0000173E           206:  NCOM2SQ   EQU   $0000173E B 001 L H   TEMP STORE OF OCOM2SQ
+     # 0000173F           207:  NCOM1VOL  EQU   $0000173F B 001 L H TEMP STORE OF OCOM1VOL
+     # 00001740           208:  NCOM2VOL  EQU   $00001740 B 001 L H TEMP STORE OF OCOM2VOL
+     # 00001741           209:  NASCONT1  EQU   $00001741 B 001 L H TEMP STORE OF OASCONT1
+     # 00001742           210:  NASCONT2  EQU   $00001742 B 001 L H TEMP STORE OF OASCONT2
+     # 00001743           211:  NASCONT3  EQU   $00001743 B 001 L H TEMP STORE OF OASCONT3
+     # 00001744           212:  NMKRDOB   EQU   $00001744 B 001 L H TEMP STORE FOR OMKRDO
+     # 00001745           213:  NDS1DO15  EQU   $00001745 B 001 L H TEMP STORE FOR ODS1DO15 ON C006-4
+     # 00001746           214:  NSPAREB1  EQU   $00001746 B 001 L H   SPARE BYTE 1
+     # 00001747           215:  NSPAREB2  EQU   $00001747 B 001 L H   SPARE BYTE 2
+     # 00001748           216:  NSPAREB3  EQU   $00001748 B 001 L H   SPARE BYTE 3
+     # 00001749           217:  NSPAREB4  EQU   $00001749 B 001 L H   SPARE BYTE 4
+     # 0000174A           218:  NSPAREB5  EQU   $0000174A B 001 L H   SPARE BYTE 5
+     # 0000174B           219:  NSPAREB6  EQU   $0000174B B 001 L H   SPARE BYTE 6
+     # 0000174C           220:  NSPAREB7  EQU   $0000174C B 001 L H   SPARE BYTE 7
+     # 0000174D           221:  NSPAREB8  EQU   $0000174D B 001 L H   SPARE BYTE 8
+     # 0000174E           222:  NSPAREB9  EQU   $0000174E B 001 L H   SPARE BYTE 9
+     # 0000174F           223:  NSPAREBA  EQU   $0000174F B 001 L H   SPARE BYTE 10
+                          224.  *
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:20     ...Page  5
+D:NAVRCV.LTX , D:NAVRCV.PRN , D:NAVRCV.SYM = D:NAVRCV.SA
+   ...
+
+C'000000                  225.           SECTION   12
+C'000000  5901            226.  TFTPDG   DC.W      22785               -04       FEET PER DEGREE
+                          227.  *
+     C'00000002           228.  NAVRCV   EQU       *
+                          229.  *
+                          230.  *                  COMPUTE SIN/COS OF AVERAGE LATITUDE
+                          231.  *                  A1 = NAV1STA
+                          232.  *
+C'000002  2029 001A       233.           MOVE.L    26(A1),D0           +23       STATION LATITUDE
+C'000006  D0B8 15C8       234.           ADD.L     NGLAT,D0            +23       ADD A/C LATITUDE
+C'00000A  E280            235.           ASR.L     #1,D0               +23       DIVIDE BY 2
+C'00000C  EA80            236.           ASR.L     #5,D0               +23-5=+18 RESCALE
+C'00000E  EA80            237.           ASR.L     #5,D0               +18-5=+13 RESCALE
+C'000010  EE80            238.           ASR.L     #7,D0               +13-7=+06 RESCALE
+C'000012  4EB9'00000000   239.           JSR       AEPC                +06       CONVERT TO +/-180 DEG
+C'000018  4EB9'00000000   240.           JSR       MSC1               +06       TAKE SIN AND COS
+C'00001E  31C0 16AA       241.           MOVE.W    D0,NRASIN           +15       SINE OF AVG LATITUDE
+C'000022  31C1 16AC       242.           MOVE.W    D1,NRACOS           +15       COSINE OF AVG LATITUDE
+                          243.  *
+                          244.  *                  DELTA LAT/LON COMPUTATIONS
+                          245.  *
+C'000026  2029 001A       246.           MOVE.L    26(A1),D0           +23       STATION LATITUDE
+C'00002A  90B8 15C8       247.           SUB.L     NGLAT,D0            +23       SUBTRACT A/C LATITUDE
+                          248.  *    NOTE:  NRXGASL   AT +23
+C'00002E  21C0 1638       249.           MOVE.L    D0,NRXGASL          +23       NRXGASL    LONG WORD
+                          250.  *
+C'000032  EA80            251.           ASR.L     #5,D0               +23-05+18 RESCALE
+C'000034  EC80            252.           ASR.L     #6,D0               +18-06+12 RESCALE
+C'000036  31C0 16AE       253.           MOVE.W    D0,NRXGAS           +12       SAVE DELTA LATITUDE IN  DEG
+                          254.  *
+C'00003A  2029 001E       255.           MOVE.L    30(A1),D0           +23       STATION LONGITUDE
+C'00003E  90B8 15CC       256.           SUB.L     NGLON,D0            +23       SUBTRACT A/C LONGITUDE
+C'000042  2600            257.           MOVE.L    D0,D3               +23
+                          258.  *
+                          259.  *        TEST DSMUL & NATAN1
+                          260.  *
+C'000044  2003            261.           MOVE.L    D3,D0               +23       D0.L=(STA LON - A/C LON)
+C'000046  E380            262.           ASL.L     #1,D0         +23+01+24
+C'000048  3238 16AC       263.           MOVE.W    NRACOS,D1           +15       D1.W = MULTIPLIER
+C'00004C  4EB9'00000000   264.           JSR       DSMUL      +24+15-16+23       YGASL AT +23
+C'000052  21C0 163C       265.           MOVE.L    D0,NRYGASL          +23       YGASL AT +23
+                          266.  *   NOTE:  NRYGASL   AT +23
+C'000056  E080            267.           ASR.L     #8,D0         +23-08+15       RESCALE
+C'000058  E680            268.           ASR.L     #3,D0         +15-03+12       RESCALE
+C'00005A  31C0 16B0       269.           MOVE.W    D0,NRYGAS           +12       YGAS IN WORD            DEG
+                          270.  *
+                          271.  *     NRBRG = (ATAN(NRYGASL/NRXGASL) _ 36(A1))  =  -DEV FOR ILS STATIONS
+                          272.  *                                             = A/C TO STA BEARING FOR VOR STA
+                          273.  *
+C'00005E  2038 1638       274.           MOVE.L    NRXGASL,D0          +23       D0.L=DELTA LAT= COS(ANGLE)
+C'000062  2238 163C       275.           MOVE.L    NRYGASL,D1          +23       D1.L=DELTA LON= SIN(ANGLE)
+C'000066  4EB9'00000000   276.           JSR       NATAN2              +06       D0.W = ANGLE (FROM ATAN.SA)
+C'00006C  31C0 16F8       277.           MOVE.W    D0,NSPAREW2         +06       TEMP STORE FOR DEBUG
+                          278.  *
+C'000070  9078 1698       279.           SUB.W     NMAGVAR,D0          +06       SUBTRACT MAGNETIC VARIATION
+C'000074  4EB9'00000000   280.           JSR       AEPC                +06       LIMIT TO +/- 180 DEG
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:20     ...Page  6
+D:NAVRCV.LTX , D:NAVRCV.PRN , D:NAVRCV.SYM = D:NAVRCV.SA
+   ...
+
+                          281.  *                                                D0 = A/C TO STA BEARING
+                          282.  *
+C'00007A  9069 0024       283.           SUB.W     36(A1),D0           +06       D0 =(D0 - RNWY HEADING)FOR ILS
+                          284.  *                                                   =(D0 - MAG VAR) FOR VOR STA
+C'00007E  4EB9'00000000   285.           JSR       AEPC
+C'000084  31C0 16B2       286.           MOVE.W    D0,NRBRG            +06       MAG BEARING TO STATION
+                          287.  *
+                          288.  *            AGAS, BGAS, AND BEARING COMPUTATIONS
+                          289.  *
+C'000088  3029 0028       290.           MOVE.W    40(A1),D0           +15       COSINE OF APPROACH BRG
+C'00008C  C1F8 16AE       291.           MULS      NRXGAS,D0           +15+12=27 DELTA LAT ALONG RNWY BRG
+C'000090  E080            292.           ASR.L     #8,D0               +27-08=19 RESCALE
+C'000092  EC80            293.           ASR.L     #6,D0               +19-06+13 RESCALE
+C'000094  3229 0026       294.           MOVE.W    38(A1),D1           +15       SINE OF APPROACH BRG
+C'000098  C3F8 16B0       295.           MULS      NRYGAS,D1           +15+12=27 DELTA LON ALONG RNWY BRG
+C'00009C  E081            296.           ASR.L     #8,D1               +27-08=19
+C'00009E  EC81            297.           ASR.L     #6,D1               +19-06+13 RESCALE
+C'0000A0  D081            298.           ADD.L     D1,D0               +13       SUM OF THE DELTAS
+C'0000A2  E280            299.           ASR.L     #1,D0               +12       RESCALE
+C'0000A4  C1FA FF5A       300.           MULS      TFTPDG,D0           +12-04+08 CONVERT DEGREES TO FEET
+C'0000A8  21C0 1658       301.           MOVE.L    D0,NSPARE5          +08       TEMP STORE OLD AGAS
+                          302.  *        MOVE.L    D0,NRAGAS           +08       DIST. ALONG RNWY HEADING
+                          303.  *
+                          304.  *
+C'0000AC  3029 0028       305.           MOVE.W    40(A1),D0           +15       COSINE OF APPROACH BEARING
+C'0000B0  C1F8 16B0       306.           MULS      NRYGAS,D0           +15+12+27 DELTA LON ACROSS RNWY BRG
+C'0000B4  E080            307.           ASR.L     #8,D0               +27-08=19 RESCALE
+C'0000B6  EC80            308.           ASR.L     #6,D0               +19-06+13 RESCALE
+                          309.  *
+C'0000B8  3229 0026       310.           MOVE.W    38(A1),D1           +15       SINE OF APPROACH BEARING
+C'0000BC  C3F8 16AE       311.           MULS      NRXGAS,D1           +15+12=27 DELTA LAT ACCROSS RNWY BRG
+C'0000C0  E081            312.           ASR.L     #8,D1               +27-08=19 RESCALE
+C'0000C2  EC81            313.           ASR.L     #6,D1               +19-06+13 RESCALE
+C'0000C4  9081            314.           SUB.L     D1,D0               +13       DIST IN DEGREES
+C'0000C6  E280            315.           ASR.L     #1,D0               +13-01+12 RESCALE FOR MULTIPLY
+C'0000C8  C1FA FF36       316.           MULS      TFTPDG,D0           +12-04+08 CONVERT DEGREES TO FEET
+C'0000CC  21C0 165C       317.           MOVE.L    D0,NSPARE6          +08       TEMP STORE OLD BGAS
+                          318.  *        MOVE.L    D0,NRBGAS           +08       DIST. ACROSS RNWY HEADING
+                          319.  *
+                          320.  *        USE XGASL & YGASL & DSMUL TO GET NEW AGAS & BGAS
+                          321.  *
+                          322.  *        NRAGAS =(XGASL * COS(RNWY APPR) + YGASL * SIN(RNWY APPR))*TFTPDG  FT
+                          323.  *        NRBGAS =(YGASL * COS(RNWY APPR) - XGASL * SIN(RNWY APPR))*TFTPDG  FT
+                          324.  *              FIRST   LIMIT XGASL & YGASL TO +/- 1 DEG
+                          325.  *
+C'0000D0  2038 1638       326.           MOVE.L    NRXGASL,D0          +23
+C'0000D4  B0BC 00800000   327.           CMP.L     #8388608,D0         .         XGASL > 1 DEG ?
+C'0000DA  6E10            328.           BGT.S     LMDEG1
+C'0000DC  B0BC FF800000   329.           CMP.L     #-8388608,D0        +23       XGASL < -1 DEG ?
+C'0000E2  6E0E            330.           BGT.S     LMDEG2
+C'0000E4  203C FF800000   331.           MOVE.L    #-8388608,D0        +23       LIMIT TO -1 DEG
+C'0000EA  6006            332.           BRA.S     LMDEG2
+C'0000EC  203C 00800000   333.  LMDEG1   MOVE.L    #8388608,D0         +23       LIMIT TP +1 DEG
+C'0000F2  2600            334.  LMDEG2   MOVE.L    D0,D3               +23       SAVE IT
+                          335.  *
+C'0000F4  2038 163C       336.           MOVE.L    NRYGASL,D0          +23
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:20     ...Page  7
+D:NAVRCV.LTX , D:NAVRCV.PRN , D:NAVRCV.SYM = D:NAVRCV.SA
+   ...
+
+C'0000F8  B0BC 00800000   337.           CMP.L     #8388608,D0         .         YGASL > 1 DEG ?
+C'0000FE  6E10            338.           BGT.S     LMDEG3
+C'000100  B0BC FF800000   339.           CMP.L     #-8388608,D0        +23       YGASL < -1 DEG ?
+C'000106  6E0E            340.           BGT.S     LMDEG4
+C'000108  203C FF800000   341.           MOVE.L    #-8388608,D0        +23       LIMIT TO -1 DEG
+C'00010E  6006            342.           BRA.S     LMDEG4
+C'000110  203C 00800000   343.  LMDEG3   MOVE.L    #8388608,D0         +23       LIMIT TP +1 DEG
+C'000116  2800            344.  LMDEG4   MOVE.L    D0,D4               +23       SAVE IT
+                          345.  *
+C'000118  2003            346.           MOVE.L    D3,D0               +23       -1<= XGASL <= +1    DEG
+C'00011A  3229 0028       347.           MOVE.W    40(A1),D1           +15       COS(RNWY APP BEARING)
+C'00011E  4EB9'00000000   348.           JSR       DSMUL      +23+15-16+22
+C'000124  2400            349.           MOVE.L    D0,D2               +22       SAVE IT
+                          350.  *
+C'000126  2004            351.           MOVE.L    D4,D0               +23       -1<= YGASL <= +1    DEG
+C'000128  3229 0026       352.           MOVE.W    38(A1),D1           +15       SIN(RNWY APP BEARING)
+C'00012C  4EB9'00000000   353.           JSR       DSMUL      +23+15-16+22       D0.L = PRODUCT
+                          354.  *
+C'000132  D082            355.           ADD.L     D2,D0               +22       SUM OF DELTAS       DEG
+C'000134  E180            356.           ASL.L     #8,D0         +22+08+30       SUM <= 1.4          DEG
+C'000136  323A FEC8       357.           MOVE.W    TFTPDG,D1           -04       FEET PER DEG CONSTANT
+C'00013A  4EB9'00000000   358.           JSR       DSMUL      +30-04-16+10       NEW AGAS
+C'000140  E480            359.           ASR.L     #2,D0         +10-02+08       SCALE CHANGE
+C'000142  21C0 15F8       360.           MOVE.L    D0,NRAGAS           +08       NEW AGAS
+                          361.  *        MOVE.L    D0,NSPARE5          +10       SAVE NEW AGAS
+                          362.  *
+                          363.  *    CALCULATE   NEW BGAS
+C'000146  2003            364.           MOVE.L    D3,D0               +23       -1<= XGASL <= +1    DEG
+C'000148  3229 0026       365.           MOVE.W    38(A1),D1           +15       SIN(RNWY APP BEARING)
+C'00014C  4EB9'00000000   366.           JSR       DSMUL      +23+15-16+22
+C'000152  2400            367.           MOVE.L    D0,D2                         SAVE TEMP
+                          368.  *
+C'000154  2004            369.           MOVE.L    D4,D0               +23       -1<= YGASL <= +1
+C'000156  3229 0028       370.           MOVE.W    40(A1),D1           +15       COS(RNWY APP BEARING)
+C'00015A  4EB9'00000000   371.           JSR       DSMUL      +23+15-16+22
+C'000160  9082            372.           SUB.L     D2,D0               +22       NEW BGAS IN DEG
+                          373.  *
+C'000162  E180            374.           ASL.L     #8,D0         +22+08+30       SCALE CHANGE
+C'000164  323A FE9A       375.           MOVE.W    TFTPDG,D1           -04       FT PER DEG CONSTANT
+C'000168  4EB9'00000000   376.           JSR       DSMUL      +30-04-16+10       NEW NRBGAS IN FT
+C'00016E  E480            377.           ASR.L     #2,D0         +10-02+08       SCALE CHANGE
+C'000170  21C0 15FC       378.           MOVE.L    D0,NRBGAS           +08       NEW BGAS
+                          379.  *        MOVE.L    D0,NSPARE6          +10       SAVE IT
+                          380.  *
+                          381.  **    NRBRG = (ATAN(NRYGAS/NRXGAS) _ 36(A1))  =  -DEV FOR ILS STATIONS
+                          382.  *                                             = A/C TO STA BEARING FOR VOR STA
+                          383.  *
+                          384.  **       MOVE.W    NRXGAS,D0           +12       D0.W= GET DELTA LATITUDE
+                          385.  *        MOVE.W    NRYGAS,D1           +12       D1.W= GET DELTA LONGITUDE
+                          386.  *        BSR       NATAN               .         CALC ATAN(YGAS/XGAS)
+                          387.  *        SUB.W     NMAGVAR,D0          +06       SUBTRACT MAGNETIC VARIATION
+                          388.  *        BSR       AEPC                +06       LIMIT TO +/- 180 DEG
+                          389.  *                                                D0 = A/C TO STA BEARING
+                          390.  *
+                          391.  *        SUB.W     36(A1),D0           +06       D0 =(D0 - RNWY HEADING)FOR ILS
+                          392.  *                                                   =(D0 - MAG VAR) FOR VOR STA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:20     ...Page  8
+D:NAVRCV.LTX , D:NAVRCV.PRN , D:NAVRCV.SYM = D:NAVRCV.SA
+   ...
+
+                          393.  *        BSR       AEPC
+                          394.  *        MOVE.W    D0,NRBRG            +06       MAG BEARING TO STATION
+                          395.  **
+                          396.  *                  GROUND RANGE TO STATION SQUARED
+                          397.  *
+C'000174  3038 16AE       398.           MOVE.W    NRXGAS,D0           +12       DELTA LATITUDE
+C'000178  C1FC 000F       399.           MULS      #15,D0              +12-02+10 MULT BY 60 NM/DEG
+C'00017C  E680            400.           ASR.L     #3,D0               +10-03+07 RESCALE TO WORD
+C'00017E  C1C0            401.           MULS      D0,D0               +07+07+14 DELTA LATITUDE SQUARED
+                          402.  *
+C'000180  3238 16B0       403.           MOVE.W    NRYGAS,D1           +12       DELTA LONGITUDE
+C'000184  C3FC 000F       404.           MULS      #15,D1              +12-02+10 MULT BY 60 NM/DEG
+C'000188  E681            405.           ASR.L     #3,D1               +10-03+07 RESCALE TO WORD
+C'00018A  C3C1            406.           MULS      D1,D1               +07+07+14 DELTA LONGITUDE SQUARED
+                          407.  *
+C'00018C  D081            408.           ADD.L     D1,D0               +14       SUM OF THE SQUARES
+C'00018E  E680            409.           ASR.L     #3,D0               +14-03+11 RESCALE
+C'000190  21C0 1600       410.           MOVE.L    D0,NRGAS2           +11       SAVE RGAS**2
+                          411.  *
+                          412.  *                  GROUND RANGE TO STATION
+                          413.  *
+C'000194  4EB9'00000000   414.           JSR       SQRT                .         CALL SQUARE ROOT FUNCTION
+C'00019A  31C0 16B4       415.           MOVE.W    D0,NRRGAS           +06       SAVE RANGE TO STATION
+                          416.  *
+                          417.  *                  HEIGHT ABOVE STATION
+                          418.  *
+C'00019E  3038 168E       419.           MOVE.W    NGGA,D0             +00       HEIGHT ABOVE SEA LEVEL
+C'0001A2  9069 0012       420.           SUB.W     18(A1),D0           +00       SUBTRACT STATION ELEVATION
+C'0001A6  31C0 16B6       421.           MOVE.W    D0,NRZGAS           +00       SAVE HEIGHT ABOVE STATION
+                          422.  *
+                          423.  *                  SLANT RANGE TO STATION SQUARED
+                          424.  *
+C'0001AA  48C0            425.           EXT.L     D0                  +00       SIGN EXTEND INTO LONG WORD
+C'0001AC  EF80            426.           ASL.L     #7,D0               +00+07+07 RESCALE
+C'0001AE  81FC 17BC       427.           DIVS      #6076,D0            +07-00+07 CONVERT FROM FEET TO N.M.
+C'0001B2  C1C0            428.           MULS      D0,D0               +07+07+14 HEIGHT ABOVE STATION SQUARED
+C'0001B4  E680            429.           ASR.L     #3,D0               +14-03+11 RESCALE
+C'0001B6  D0B8 1600       430.           ADD.L     NRGAS2,D0           +11       ADD GROUND RANGE SQUARED
+C'0001BA  21C0 1604       431.           MOVE.L    D0,NRRAS2           +11       SAVE SLANT RANGE SQUARED
+                          432.  *
+                          433.  *                  SLANT RANGE
+                          434.  *
+C'0001BE  4EB9'00000000   435.           JSR       SQRT                .         CALL SQUARE ROOT FUNCTION
+C'0001C4  31C0 16B8       436.           MOVE.W    D0,NRRRAS           +06       SLANT RANGE TO STATION
+                          437.  *
+                          438.  *                  STATION WITHIN RANGE COMPUTATIONS
+                          439.  *
+C'0001C8  EC40            440.           ASR.W     #6,D0               +00       NORMALIZE SCALE
+C'0001CA  51F8 1717       441.           SF.B      NRWR1               .         CLEAR FLAG
+C'0001CE  51F8 1718       442.           SF.B      NRWR2               .         CLEAR FLAG
+C'0001D2  51F8 1719       443.           SF.B      NRWR3               .         CLEAR FLAG
+C'0001D6  B069 0014       444.           CMP.W     20(A1),D0           .         IN RANGE 1?
+C'0001DA  6C04            445.           BGE.S     OUT1                .         NO. THEN CHECK RANGE 2
+C'0001DC  50F8 1717       446.           ST.B      NRWR1               .         YES. IN RANGE 1
+     C'000001E0           447.  OUT1     EQU       *
+C'0001E0  B069 0016       448.           CMP.W     22(A1),D0           .         IN RANGE 2?
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:20     ...Page  9
+D:NAVRCV.LTX , D:NAVRCV.PRN , D:NAVRCV.SYM = D:NAVRCV.SA
+   ...
+
+C'0001E4  6C04            449.           BGE.S     OUT2                .         NO. THEN CHECK RANGE 3
+C'0001E6  50F8 1718       450.           ST.B      NRWR2               .         YES. IN RANGE 2
+     C'000001EA           451.  OUT2     EQU       *
+C'0001EA  B069 0018       452.           CMP.W     24(A1),D0           .         IN RANGE 3?
+C'0001EE  6C04            453.           BGE.S     OUT3                .         NO. THEN GO TO NEXT SECTION
+C'0001F0  50F8 1719       454.           ST.B      NRWR3               .         YES. IN RANGE 3
+     C'000001F4           455.  OUT3     EQU       *
+                          456.  *
+                          457.  *
+                          458.  *                  WITHIN LINE OF SIGHT COMPUTATION
+                          459.  *
+                          460.  *       IF NRZGAS IN FEET > (NRRSA2 X .75  -  672)  THEN NRLOS=1
+                          461.  *       NRZGAS IN FEET,  NRRSA2 IN (NM)*2
+                          462.  *
+                          463.  *
+C'0001F4  2038 1604       464.  XX1      MOVE.L    NRRAS2,D0           +11       GET SLANT RANGE SQUARED IN NM
+C'0001F8  E480            465.           ASR.L     #2,D0               +11       D0=D0/4
+C'0001FA  2400            466.           MOVE.L    D0,D2               +11       TEMP STORE
+C'0001FC  D082            467.           ADD.L     D2,D0               +11       D0=2D0/4
+C'0001FE  D082            468.           ADD.L     D2,D0               +11       D0=3D0/4  = NRRAS2 X3/4 IN NM
+C'000200  2600            469.           MOVE.L    D0,D3               +11       D3=NRRAS2 X3/4  IN NM
+                          470.  *
+C'000202  90BC 00150000   471.           SUB.L     #1376256,D0         +11       D0=(D0 - 672) IN NM
+                          472.  *
+C'000208  3238 16B6       473.           MOVE.W    NRZGAS,D1           +00       HEIGHT ABOVE STATION IN FEET
+C'00020C  48C1            474.           EXT.L     D1                  +00       CONVERT TO LONG WORD
+C'00020E  E181            475.           ASL.L     #8,D1               +08       CHANGE SCALE
+C'000210  E781            476.           ASL.L     #3,D1               +11       CHANGE SCALE
+                          477.  *
+                          478.  *        DIVS      #6076,D1      +11-00+11       CONVERT NRZGAS FROM FEET TO NM
+                          479.  *        EXT.L     D1                  +11       CONVERT TO LONG WORD (IN NM)
+                          480.  *
+C'000212  51F8 171A       481.           SF.B      NRLOS               .         CLEAR IN L.O.S. FLAG
+C'000216  B081            482.           CMP.L     D1,D0               +11       HIGHER THAN HORIZON LINE
+C'000218  6E04            483.           BGT.S     LOS                 .         IF NOT, OUT OF SIGHT
+C'00021A  50F8 171A       484.           ST.B      NRLOS               .         YES, IN LINE OF SIGHT
+     C'0000021E           485.  LOS      EQU       *
+C'00021E  4E75            486.           RTS
+C'000220                  487.           END
+    0 Errors
+    .         CLEAR IN L.O.S. FLAG
+C'000216  B081            482.           CMP.L     D1,D0               +11       HIGHER THAN HORIZON LINE
+C'000218  6E04            483.           BGT.S     LOS                 .         IF NOT, OUT OF SIGHT
+C'00021A  50F8 171A       484.           ST.B      NRLOS               .         YES, IN LINE OF SIGHT
+     C'0000021E           485.  LOS      EQU       *
+C'00021E  4E7

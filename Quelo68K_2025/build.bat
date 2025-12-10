@@ -1,0 +1,61 @@
+﻿=/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+=/*    Build whole Primary Trainer load                           *
+=/*  Link modules and build S-Record file ready for 'DOWN-LOADING *
+=/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+m68k  LCPU1.SA
+m68k  EXEC.SA
+m68k  DEBUG.SA
+m68k  TDATA1.SA
+m68k  IVINIT1.SA
+m68k  LIST1.SA
+m68k  NAME1.SA
+m68k  LOOKUP0.SA
+m68k  LOOKUP1.SA
+m68k  MATH.SA
+m68k  ENGINE.SA
+m68k  LIFT.SA
+m68k  SPEED.SA
+m68k  CLIMB.SA
+m68k  PITCH.SA
+m68k  ROLL.SA
+m68k  TURN.SA
+m68k  MOTION.SA
+m68k  NMATH.SA
+m68k  NAVRCV.SA
+m68k  NAV1.SA
+m68k  RMNKFG.SA
+m68k  COMM.SA
+m68k  NAVFREQ.SA
+m68k  GATVIS.SA
+m68k  VISIO.SA
+
+
+a68k -b  LCPU1.RO=LCPU1.A68
+a68k -b  EXEC.RO=EXEC.A68
+a68k -b  DEBUG.RO=DEBUG.A68
+a68k -b  TDATA1.RO=TDATA1.A68
+a68k -b  IVINIT1.RO=IVINIT1.A68
+a68k -b  LIST1.RO=LIST1.A68
+a68k -b  NAME1.RO=NAME1.A68
+a68k -b  LOOKUP0.RO=LOOKUP0.A68
+a68k -b  LOOKUP1.RO=LOOKUP1.A68
+a68k -b  MATH.RO=MATH.A68
+a68k -b  ENGINE.RO=ENGINE.A68
+a68k -b  LIFT.RO=LIFT.A68
+a68k -b  SPEED.RO=SPEED.A68
+a68k -b  CLIMB.RO=CLIMB.A68
+a68k -b  PITCH.RO=PITCH.A68
+a68k -b  ROLL.RO=ROLL.A68
+a68k -b  TURN.RO=TURN.A68
+a68k -b  MOTION.RO=MOTION.A68
+a68k -b  NMATH.RO=NMATH.A68
+a68k -b  NAVRCV.RO=NAVRCV.A68
+a68k -b  NAV1.RO=NAV1.A68
+a68k -b  RMNKFG.RO=RMNKFG.A68
+a68k -b  COMM.RO=COMM.A68
+a68k -b  NAVFREQ.RO=NAVFREQ.A68
+a68k -b  GATVIS.RO=GATVIS.A68
+a68k -b  VISIO.RO=VISIO.A68
+
+
+qlink -LSIEX QLOAD1.CF

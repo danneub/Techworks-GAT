@@ -1,0 +1,501 @@
+	 OPT	   MEX,CEX,NOPCS
+	 SECTION   12
+**********************************************************************
+*								     *
+*	 MSC1	   SIN/COS   INPUT:  -180,+180			     *
+*								     *
+*		   D0=INPUT ANGLE IN DEG. AT 2-6 (+-180)	     *
+*		   D0,D1= OUTPUT VALUE AT 2-15			     *
+*								     *
+**********************************************************************
+	 XDEF	   MSC1
+MSC1	 EQU	   *
+	 MOVE.L    D0,-(A7)	       SAVE INPUT
+	 JSR	   MCOS1	       CALL COS
+	 MOVE.L    D0,D1	       COPY ANSWER OF COS
+	 MOVE.L    (A7)+,D0	       RESTORE INPUT
+	 MOVE.L    D1,-(A7)	       SAVE ANSWER OF COS
+	 JSR	   MSIN1	       CALL SIN
+	 MOVE.L    (A7)+,D1	       RESTORE ANSWER OF COS
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 MSIN1	   SIN	     INPUT:  -180,+180			     *
+*								     *
+*		   D0=INPUT ANGLE IN DEG. AT 2-6 (+-180)	     *
+*		   D0=OUTPUT VALUE AT 2-15			     *
+*								     *
+**********************************************************************
+	 XDEF	   MSIN1
+MSIN1	 EQU	   *
+	 MOVE.L    D1,-(A7)	       SAVE D1
+	 EXT.L	   D0		       EXTEND TO LONG
+	 TST.W	   D0		       TEST INPUT
+	 BPL.S	   INPOS	       BRANCH IF INPUT POSITIVE
+*
+	 ADD.L	   #23040,D0	       ADD 360 TO INPUT
+*
+INPOS	 EQU	   *
+	 MOVEQ.L   #0,D1	       SET QUAD TO 0
+*
+SINLP	 EQU	   *
+	 CMP.L	   #5760,D0	       COMPARE TO 90 DEGREES
+	 BLE.S	   SINX1	       BRANCH IF LESS OR EQUAL
+*
+	 ADDQ.L    #1,D1	       INCREMENT QUAD
+	 SUB.L	   #5760,D0	       SUBTRACT 90 DEGRESS
+	 BRA.S	   SINLP
+*
+SINX1	 AND.B	   #$03,D1	       AND QUAD
+	 CMP.B	   #2,D1	       COMPARE TO 2
+	 BGE.S	   SINX2	       BRANCH IF GREATER OR EQUAL
+*
+	 TST.B	   D1		       TEST QUAD
+	 BNE.S	   SINX3	       BRANCH IF NOT ZERO
+*
+	 JSR	   LFISIN	       CALL LFI SIN
+	 BRA.S	   ENDSIN1	       BRANCH TO END
+*
+SINX3	 EQU	   *
+	 ADD.W	   #-5760,D0	       ADD -90 DEGREES
+	 NEG.W	   D0		       NEGATE
+	 JSR	   LFISIN	       CALL LFI SIN
+	 BRA.S	   ENDSIN1	       BRANCH TO END
+*
+SINX2	 EQU	   *
+	 CMP.B	   #2,D1	       COMPARE QUAD TO 2
+	 BNE.S	   SINX4	       BRANCH IF NOT EQUAL
+*
+	 JSR	   LFISIN	       CALL LFI SIN
+	 NEG.W	   D0		       NEGATE ANSWER
+	 BRA.S	   ENDSIN1	       BRANCH TO END
+*
+SINX4	 EQU	   *
+	 ADD.W	   #-5760,D0	       ADD -90 DEGREES
+	 NEG.W	   D0		       NEGATE
+	 JSR	   LFISIN	       CALL LFI SIN
+	 NEG.W	   D0		       NEGATE ANSWER
+*
+ENDSIN1  EQU	   *
+	 MOVE.L    (A7)+,D1	       RESTORE D1
+	 RTS			       RETURN
+	 PAGE
+**********************************************************************
+*								     *
+*	 MCOS1	   COS	     INPUT:  -180,+180			     *
+*								     *
+*		   D0=INPUT ANGLE IN DEG. AT 2-6 (+-180)	     *
+*		   D0=OUTPUT VALUE AT 2-15			     *
+*								     *
+**********************************************************************
+	 XDEF	   MCOS1
+MCOS1	 EQU	   *
+	 ADD.W	   #5760,D0	       ADD 90 DEGREES
+	 JSR	   MSIN1	       CALL SIN
+	 RTS			       RETURN
+	 PAGE
+**********************************************************************
+*								     *
+*	 LFISIN    SIN	     INPUT:  0,+90			     *
+*								     *
+*		   D0=INPUT ANGLE IN DEG. AT 2-6 (0-360)	     *
+*		   D0=OUTPUT VALUE AT 2-15			     *
+*								     *
+**********************************************************************
+LFISIN	 EQU	   *
+	 MOVE.L    #SINDATA,A0	       LOAD ADDESS OF DATA TABLE
+	 MOVE.L    D0,D1	       SAVE INPUT ANGLE
+	 AND.L	   #$0000FFC0,D0       MASK OFF FRACTIONAL BIT
+	 LSR.L	   #5,D0	       INTEGER PART OF ANGLE * 2
+	 ADD.L	   D0,A0	       CALCULATE ADDRESS IN TABLE
+	 MOVE.W    2(A0),D2	       GET BREAK POINT + 1 DATA VALUE
+	 AND.L	   #$0000003F,D1       MASK OFF INTEGER PART
+	 MULS	   D1,D2	       FRACTION*TABLE+1
+	 MOVE.W    #$0040,D0	       LOAD 1 AT 2-6
+	 SUB.W	   D1,D0	       COMPLEMENT FRACTION
+	 MOVE.W    D0,D1	       SWAP DATA
+	 MOVE.W    (A0),D0	       GET TABLE VALUE
+	 MULS	   D1,D0	       COMPLEMENTED FRACTION*TABLE
+	 ADD.L	   D2,D0	       ADD VALUES
+	 ASR.L	   #6,D0	       RETURN TO 2-15
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 SINDATA						     *
+*								     *
+**********************************************************************
+SINDATA  EQU	   *
+	 DC.W		  0	       SIN(  0) AT 2 X 15
+	 DC.W		572	       SIN(  1) AT 2 X 15
+	 DC.W	       1144	       SIN(  2) AT 2 X 15
+	 DC.W	       1715	       SIN(  3) AT 2 X 15
+	 DC.W	       2286	       SIN(  4) AT 2 X 15
+	 DC.W	       2856	       SIN(  5) AT 2 X 15
+	 DC.W	       3425	       SIN(  6) AT 2 X 15
+	 DC.W	       3993	       SIN(  7) AT 2 X 15
+	 DC.W	       4560	       SIN(  8) AT 2 X 15
+	 DC.W	       5126	       SIN(  9) AT 2 X 15
+	 DC.W	       5690	       SIN( 10) AT 2 X 15
+	 DC.W	       6252	       SIN( 11) AT 2 X 15
+	 DC.W	       6812	       SIN( 12) AT 2 X 15
+	 DC.W	       7371	       SIN( 13) AT 2 X 15
+	 DC.W	       7927	       SIN( 14) AT 2 X 15
+	 DC.W	       8480	       SIN( 15) AT 2 X 15
+	 DC.W	       9031	       SIN( 16) AT 2 X 15
+	 DC.W	       9580	       SIN( 17) AT 2 X 15
+	 DC.W	      10125	       SIN( 18) AT 2 X 15
+	 DC.W	      10667	       SIN( 19) AT 2 X 15
+	 DC.W	      11207	       SIN( 20) AT 2 X 15
+	 DC.W	      11742	       SIN( 21) AT 2 X 15
+	 DC.W	      12274	       SIN( 22) AT 2 X 15
+	 DC.W	      12803	       SIN( 23) AT 2 X 15
+	 DC.W	      13327	       SIN( 24) AT 2 X 15
+	 DC.W	      13847	       SIN( 25) AT 2 X 15
+	 DC.W	      14364	       SIN( 26) AT 2 X 15
+	 DC.W	      14875	       SIN( 27) AT 2 X 15
+	 DC.W	      15383	       SIN( 28) AT 2 X 15
+	 DC.W	      15885	       SIN( 29) AT 2 X 15
+	 DC.W	      16383	       SIN( 30) AT 2 X 15
+	 DC.W	      16876	       SIN( 31) AT 2 X 15
+	 DC.W	      17363	       SIN( 32) AT 2 X 15
+	 DC.W	      17846	       SIN( 33) AT 2 X 15
+	 DC.W	      18322	       SIN( 34) AT 2 X 15
+	 DC.W	      18794	       SIN( 35) AT 2 X 15
+	 DC.W	      19259	       SIN( 36) AT 2 X 15
+	 DC.W	      19719	       SIN( 37) AT 2 X 15
+	 DC.W	      20173	       SIN( 38) AT 2 X 15
+	 DC.W	      20620	       SIN( 39) AT 2 X 15
+	 DC.W	      21062	       SIN( 40) AT 2 X 15
+	 DC.W	      21496	       SIN( 41) AT 2 X 15
+	 DC.W	      21925	       SIN( 42) AT 2 X 15
+	 DC.W	      22346	       SIN( 43) AT 2 X 15
+	 DC.W	      22761	       SIN( 44) AT 2 X 15
+	 DC.W	      23169	       SIN( 45) AT 2 X 15
+	 DC.W	      23570	       SIN( 46) AT 2 X 15
+	 DC.W	      23964	       SIN( 47) AT 2 X 15
+	 DC.W	      24350	       SIN( 48) AT 2 X 15
+	 DC.W	      24729	       SIN( 49) AT 2 X 15
+	 DC.W	      25100	       SIN( 50) AT 2 X 15
+	 DC.W	      25464	       SIN( 51) AT 2 X 15
+	 DC.W	      25820	       SIN( 52) AT 2 X 15
+	 DC.W	      26168	       SIN( 53) AT 2 X 15
+	 DC.W	      26509	       SIN( 54) AT 2 X 15
+	 DC.W	      26841	       SIN( 55) AT 2 X 15
+	 DC.W	      27165	       SIN( 56) AT 2 X 15
+	 DC.W	      27480	       SIN( 57) AT 2 X 15
+	 DC.W	      27788	       SIN( 58) AT 2 X 15
+	 DC.W	      28086	       SIN( 59) AT 2 X 15
+	 DC.W	      28377	       SIN( 60) AT 2 X 15
+	 DC.W	      28658	       SIN( 61) AT 2 X 15
+	 DC.W	      28931	       SIN( 62) AT 2 X 15
+	 DC.W	      29195	       SIN( 63) AT 2 X 15
+	 DC.W	      29451	       SIN( 64) AT 2 X 15
+	 DC.W	      29697	       SIN( 65) AT 2 X 15
+	 DC.W	      29934	       SIN( 66) AT 2 X 15
+	 DC.W	      30162	       SIN( 67) AT 2 X 15
+	 DC.W	      30381	       SIN( 68) AT 2 X 15
+	 DC.W	      30591	       SIN( 69) AT 2 X 15
+	 DC.W	      30791	       SIN( 70) AT 2 X 15
+	 DC.W	      30982	       SIN( 71) AT 2 X 15
+	 DC.W	      31163	       SIN( 72) AT 2 X 15
+	 DC.W	      31335	       SIN( 73) AT 2 X 15
+	 DC.W	      31498	       SIN( 74) AT 2 X 15
+	 DC.W	      31651	       SIN( 75) AT 2 X 15
+	 DC.W	      31794	       SIN( 76) AT 2 X 15
+	 DC.W	      31927	       SIN( 77) AT 2 X 15
+	 DC.W	      32051	       SIN( 78) AT 2 X 15
+	 DC.W	      32165	       SIN( 79) AT 2 X 15
+	 DC.W	      32270	       SIN( 80) AT 2 X 15
+	 DC.W	      32364	       SIN( 81) AT 2 X 15
+	 DC.W	      32449	       SIN( 82) AT 2 X 15
+	 DC.W	      32523	       SIN( 83) AT 2 X 15
+	 DC.W	      32588	       SIN( 84) AT 2 X 15
+	 DC.W	      32643	       SIN( 85) AT 2 X 15
+	 DC.W	      32688	       SIN( 86) AT 2 X 15
+	 DC.W	      32723	       SIN( 87) AT 2 X 15
+	 DC.W	      32748	       SIN( 88) AT 2 X 15
+	 DC.W	      32763	       SIN( 89) AT 2 X 15
+	 DC.W	      32767	       SIN( 90) AT 2 X 15
+	 DC.W	      32763	       SIN( 91) AT 2 X 15
+	 PAGE
+**********************************************************************
+*								     *
+*	 MULSL	   32 * 32 MULTIPLY				     *
+*								     *
+*	 INPUT:    D0.L = OPERAND 1				     *
+*		   D1.L = OPERAND 2				     *
+*								     *
+*	 OUTPUT:   D0.L = LOWER 32 BITS OF RESULT		     *
+*		   D1.L = UPPER 32 BITS OF RESULT		     *
+*								     *
+**********************************************************************
+	 XDEF	   MULSL
+MULSL	 EQU	   *
+	 MOVEM.L   D3-D7,-(SP)	       SAVE D3-D7
+	 MOVE.L    D0,D3	       A B
+	 MOVE.L    D0,D4	       A B
+	 MOVE.L    D1,D5	       C D
+	 MOVE.L    D0,D6	       A B
+	 MOVE.L    #0,D7	       CLEAR
+	 SWAP	   D4		       B A
+	 SWAP	   D5		       D C
+	 MULU	   D1,D0	       D * B -> D1 E F
+	 MULU	   D4,D1	       A * D -> D2 G H
+	 MULU	   D5,D3	       C * B -> D3 I J
+	 MULU	   D5,D4	       A * C -> D4 K L
+	 SWAP	   D0		       F E
+	 ADD.W	   D1,D0	       H + E -> D1
+	 ADDX.L    D7,D4
+	 ADD.W	   D3,D0
+	 ADDX.L    D7,D4
+	 SWAP	   D0
+	 CLR.W	   D1
+	 CLR.W	   D3
+	 SWAP	   D1
+	 SWAP	   D3
+	 ADD.L	   D3,D1
+	 ADD.L	   D4,D1
+	 SWAP	   D5
+	 TST.L	   D6
+	 BPL.S	   CHK2
+	 SUB.L	   D5,D1
+CHK2	 TST.L	   D5
+	 BPL.S	   DONE
+	 SUB.L	   D6,D1
+DONE	 MOVEM.L   (SP)+,D3-D7	       RESTORE D3-D7
+	 RTS			       RETURN
+	 PAGE
+**********************************************************************
+*								     *
+*	 DSMUL	   32 * 16 MULTIPLY				     *
+*								     *
+*	 INPUT:    D0.L = OPERAND 1				     *
+*		   D1.W = OPERAND 2				     *
+*								     *
+*	 OUTPUT:   D0.L = RESULT				     *
+*								     *
+**********************************************************************
+	 XDEF	   DSMUL
+DSMUL	 EQU	   *
+	 LSL.L	   #8,D1	       EXTEND TO LONG
+	 LSL.L	   #8,D1	       EXTEND TO LONG
+	 BSR	   MULSL	       MULTIPLY LONG
+	 MOVE.L    D1,D0	       STORE UPPER 32 BITS
+	 RTS			       RETURN
+	 PAGE
+**********************************************************************
+*								     *
+*	 32 BIT SQUARE ROOT FUNCTION				     *
+*								     *
+*	 INPUT:    D0.L - N			 SCALE +S	     *
+*	 OUTPUT:   D0.W - SQUARE ROOT OF N	 SCALE +S/2	     *
+*								     *
+**********************************************************************
+	 XDEF	   SQRT
+SQRT	 EQU	   *
+	 MOVEM.L   D1-D3,-(SP)			 SAVE REGISTERS
+	 MOVE.W    #16-1,D2			 LOAD COUNTER
+	 MOVEQ.L   #1,D1			 FIRST QUESS
+	 MOVEQ.L   #0,D3			 INITIALIZE TO ZERO
+ARG	 ASL.L	   #1,D0			 BEGIN
+	 ROXL.L    #1,D3			 MOVE NEXT TWO MOST
+	 ASL.L	   #1,D0			 SIGNIFICANT BITS TO
+	 ROXL.L    #1,D3			 ACCUMULATOR
+	 CMP.L	   D1,D3			 TEST QUESS WITH ACC.
+	 BMI.S	   MI				 BRANCH IF QUESS > ACC.
+*
+	 SUB.L	   D1,D3			 QUESS < ACC.
+	 ASL.L	   #1,D1			 ADJUST QUESS
+	 ADDQ.L    #3,D1			 QUESS = (QUESS*2)+3
+	 BRA.S	   EX				 BRANCH TO LOOP CONTROL
+MI	 ASL.L	   #1,D1			 QUESS > ACC.
+	 SUBQ.L    #1,D1			 QUESS = (QUESS*2)-1
+EX	 DBRA	   D2,ARG			 LOOP CONTROL
+	 ASR.L	   #2,D1			 ADJUST ANSWER
+	 MOVE.L    D1,D0			 STORE ANSWER
+	 MOVEM.L   (SP)+,D1-D3			 RESTORE REGISTERS
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 64 BIT SQUARE ROOT FUNCTION				     *
+*								     *
+*	 INPUT:    D0.L - LOWER 32 BITS 	 SCALE +S	     *
+*		   D1.L - UPPER 32 BITS 			     *
+*	 OUTPUT:   D0.L - SQUARE ROOT OF N	 SCALE +S/2	     *
+*								     *
+**********************************************************************
+	 XDEF	   SQRTL
+SQRTL	 EQU	   *
+	 MOVE.L    D2,-(SP)			 SAVE D2
+	 BSR	   SQRT 			 SQUARE ROOT OF LOWER 32
+	 MOVE.W    D0,D2			 SAVE SQRT(LOWER 32)
+	 MOVE.L    D1,D0			 MOVE UPPER 32
+	 BSR	   SQRT 			 SQUARE ROOT OF UPPER 32
+	 SWAP	   D0				 SHIFT OVER 16 BITS
+	 MOVE.W    D2,D0			 LOAD LOWER PART
+	 MOVE.L    (SP)+,D2			 RESTORE D2
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 32 BIT DIVIDE		       DIVIDEND / DIVISOR	     *
+*								     *
+*	 INPUT:    D0.L - DIVISOR      DENOMINATOR		     *
+*		   D1.L - DIVIDEND     NUMERATOR		     *
+*								     *
+*	 OUTPUT:   D0.W - REMANDER				     *
+*		   D1.L - QUOTIENT				     *
+*								     *
+**********************************************************************
+	 XDEF	   DIVSL
+DIVSL	 EQU	   *
+	 TST.L	   D0				 CHECK DENOMINATOR < 0
+	 BPL.S	   DIV00			 BRANCH IF GREATER
+	 NEG.L	   D0				 MAKE DENOMINATOR POSITIVE
+	 BSR.S	   DIV00			 DIVIDE AS A POSITIVE
+	 NEG.L	   D1				 NEGATE QUOTIENT
+	 RTS
+*
+	 XDEF	   DIV00
+DIV00	 EQU	   *
+	 TST.L	   D1				 CHECK NUMERATOR < 0
+	 BPL.S	   DIVUL			 BRANCH IF BOTH ARE POSITIVE
+	 NEG.L	   D1				 MAKE NUMERATOR POSITIVE
+	 BSR.S	   DIVUL			 PERFORM DIVISION
+	 NEG.W	   D0				 NEGATE REMAINDER
+	 NEG.L	   D1				 NEGATE QUOTIENT
+	 RTS
+*
+	 XDEF	   DIVUL
+DIVUL	 EQU	   *
+	 MOVEM.L   D2-D3,-(SP)			 SAVE REGISTERS
+	 CLR.L	   D3				 CLEAR TEMP
+	 DIVU	   D0,D1			 YZ DIVIDED BY X
+	 BVC.S	   FORMAT			 BRANCH IF OVERFLOW CLEAR
+	 MOVE.L    D1,D2			 SAVE DIVIDEND
+	 CLR.W	   D1				 D1 CHANGES FROM YZ TO Y0
+	 SWAP	   D1				 D1 CHANGES FROM Y0 TO 0Y
+	 DIVU	   D0,D1			 Y DIVIDED BY X = R1Q1 IN D1
+	 MOVE.W    D1,D3			 SAVE Q1
+	 MOVE.W    D2,D1			 D1 CHANGES FROM R1Q1 TO R1Z
+	 DIVU	   D0,D1			 R1Z DIVIDED BY X = R0Q0 IN D1
+FORMAT	 MOVE.L    D1,D0			 D0 BECOMES RQ OR R0Q0
+	 SWAP	   D1				 D1 BECOMES QR OR Q0R0
+	 MOVE.W    D3,D1			 D1 BECOMES Q1 OR Q0Q1
+	 CLR.W	   D0				 D0 BECOMES R0 OR R000
+	 SWAP	   D0				 D0 BECOMES OR OR 00R0
+	 MOVEM.L   (SP)+,D2-D3			 RESTORE REGISTERS
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 CVTS2F    CONVERT A SCALED NUMBER (LONG) TO IEEE FLOAT (32) *
+*								     *
+*		   INPUT:    D0=B-SCALED NUMBER (LONG)		     *
+*			     D1=SCALE (8-31)			     *
+*								     *
+*		   OUTPUT:   D0=IEEE SINGLE PRECISION FLOATING POINT *
+*				NUMBER				     *
+*								     *
+*		   NOTE:     D6 IS DESTROYED			     *
+*								     *
+**********************************************************************
+	 XDEF	   CVTS2F
+CVTS2F	 EQU	   *
+	 TST.L	   D0		       TEST FOR ZERO
+	 BEQ.S	   L4		       BRANCH IF ZERO
+	 MOVE.L    D0,-(A7)	       SAVE FOR SIGN
+	 BPL.S	   L0		       BRANCH IF POSITIVE
+	 NEG.L	   D0		       MAKE IT POSITIVE
+L0	 ASL.L	   #1,D0	       SHIFT OUT SIGN BIT
+	 TST.L	   D0		       TEST FOR ZERO
+	 BNE.S	   L1		       BRANCH IF NOT ZERO
+	 NOT.L	   D0		       TURN ON ALL BITS
+L1	 MOVE.L    #0,D6	       CLEAR D6
+	 MOVE.B    #$9D,D6	       LOAD EXPONENT
+	 SUB.B	   D1,D6	       ADJUST TO SCALE
+L2	 BTST.L    #31,D0	       TEST BIT 31
+	 BNE.S	   L3		       BRANCH IF BIT 31 IS A ONE
+	 ASL.L	   #1,D0	       SHIFT OUT ZERO BIT
+	 SUBQ.B    #1,D6	       CORRECT EXPONENT
+	 BRA.S	   L2		       LOOP UNTIL BIT 31 IS A ONE
+L3	 ASL.L	   #1,D0	       SHIFT OUT IMPLIED ONE
+	 LSR.L	   #1,D0	       POSITION FRACTION
+	 LSR.L	   #8,D0	       POSITION FRACTION
+	 ASL.L	   #8,D6	       POSITION EXPONENT
+	 ASL.L	   #8,D6	       POSITION EXPONENT
+	 ASL.L	   #7,D6	       POSITION EXPONENT
+	 OR.L	   D6,D0	       OR EXPONENT & FRACTION INTO ONE
+	 MOVE.L    (A7)+,D2	       LOAD SIGN
+	 BPL.S	   L4		       BRANCH IF POSITIVE
+	 BSET.L    #31,D0	       SET SIGN BIT
+L4	 RTS			       RETURN
+	 PAGE
+**********************************************************************
+*								     *
+*	 CVTF2S    CONVERT A IEEE FLOATING POINT TO LONG B-SCALED    *
+*		   INTEGER					     *
+*								     *
+*		   INPUT:    D0=IEEE SINGLE PRECISION FLOATING POINT *
+*				NUMBER				     *
+*			     D1=SCALE (8-31)			     *
+*								     *
+*		   OUTPUT:   D0=B-SCALED NUMBER 		     *
+*								     *
+*		   NOTE:     D6 IS DESTROYED			     *
+*			     D7 IS DESTROYED			     *
+*								     *
+**********************************************************************
+	 XDEF	   CVTF2S
+CVTF2S	 EQU	   *
+	 TST.L	   D0		       TEST INPUT FOR ZERO
+	 BEQ.S	   L10		       BRANCH IF ZERO
+	 BTST.L    #31,D0	       TEST SIGN BIT
+	 BEQ.S	   L5		       BRANCH IF POSITIVE
+	 ST.B	   -(A7)	       SET SIGN FLAG
+	 BRA.S	   L6		       CONTINUE
+L5	 SF.B	   -(A7)	       CLEAR SIGN FLAG
+L6	 LSL.L	   #1,D0	       SHIFT OUT SIGN FLAG
+	 MOVE.L    D0,D6	       COPY EXPONENT & FRACTION
+	 LSR.L	   #8,D6	       POSITION EXPONENT
+	 LSR.L	   #8,D6	       POSITION EXPONENT
+	 LSR.L	   #8,D6	       POSITION EXPONENT
+	 LSL.L	   #8,D0	       POSITION FRACTION
+	 LSR.L	   #1,D0	       MAKE ROOM FOR IMPLIED BIT
+	 BSET.L    #31,D0	       SET IMPLIED 1 BIT
+	 ADD.B	   D1,D6	       ADD SCALE TO EXPONENT
+	 MOVEQ.L   #0,D7	       CLEAR SHIFT COUNTER
+L7	 CMP.B	   #$9D,D6	       COMPARE TO MAX EXPONENT
+	 BEQ.S	   L8		       BRANCH WHEN EQUAL
+	 ADD.B	   #1,D6	       INCREMENT EXPONENT
+	 LSR.L	   #1,D0	       SHIFT FRACTION
+	 ADDQ.L    #1,D7	       INCREMENT SHIFT COUNTER
+	 BRA.S	   L7		       LOOP UNTIL EXPONENT = $9D
+L8	 LSR.L	   #1,D0	       MAKE ROOM FOR SIGN BIT
+L9	 MOVE.B    (A7)+,D6	       LOAD SIGN FLAG
+	 BEQ.S	   L10		       BRANCH IF FALSE
+	 CMP.L	   #8,D7	       TEST SHIFT COUNTER
+	 BLT.S	   L11		       BRANCH IF LESS THAN 8 SHIFTS
+	 NEG.L	   D0		       NEGATE SCALED NUMBER
+L10	 RTS			       RETURN
+L11	 NEG.L	   D7		       NEGATE SHIFT COUNTER
+	 ADDQ.L    #8,D7	       ADD 8 TO -SHIFT COUNTER
+	 LSR.L	   D7,D0	       SHIFT DATA BY 8+ -SHIFT COUNTER
+	 NEG.L	   D0		       NEGATE NUMBER
+	 LSL.L	   D7,D0	       SHFIT DATA BY 8+ -SHIFT COUNTER
+L12	 RTS			       RETURN
+~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:42
+	 END
+
+	 CMP.L	   #8,D7	       TEST SHIFT COUNTER
+	 BLT.S	   L11		       BRANCH IF LESS THAN 8 SHIFTS
+	 NEG.L	   D0		       NEGATE SCALED NUMBER
+L10	 RTS			       RETURN
+L11	 NEG.L	   D7		       NEGATE SHIFT COUNTER
+	 ADDQ.L    #8,D7	       ADD 8 TO -SHIFT COUNTER
+	 LSR.L	   D7,D0	       SHIFT DATA BY 8+ -SHIFT COUNTER
+	 NEG.L	   D0		       NEGATE NUMBER
+	 LSL.L	   D7,D0	       SHFIT DAT

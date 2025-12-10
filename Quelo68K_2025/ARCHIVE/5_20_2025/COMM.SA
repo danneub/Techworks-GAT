@@ -1,0 +1,427 @@
+	 OPT	   CEX,MEX,NOPCS
+	 XDEF	   COMM
+	 XREF	   CONATT
+	 SECTION   12
+*****************************************************
+*
+*		 COMM AND AUDIO MODULE
+*
+*	 THIS MODULE CAN RUN AT A SLOW RATE
+*
+*****************************************************
+	 INCLUDE   NSYM.SA
+	 INCLUDE   FSYM.SA
+	 INCLUDE   ESYM.SA
+	 INCLUDE   IO.SA
+*
+COMM	 EQU	   *
+	 MOVE.L    #$FE6000,A6	       LOAD I/O BASE ADDR
+*
+	 BTST.B    #IMSTSW,IMPSDI1(A6) MASTER SW ON ?
+	 BEQ	   CLRCOMM	       TURN OFF COM1VOL & COM2VOL
+*
+********************************************************
+*
+*	       COMM1 SQUELCH CONTROL
+*
+*    OCOM1SQ = ( 5 *(ICOM1SQ - .3))	LIMIT 0<>.999
+*
+********************************************************
+	 MOVEP.W   ICOM1SQ(A6),D0      READ SQUELCH INPUT	     +15
+	 MOVE.B    D0,ICOM1SQ(A6)      START NEXT A/D CONVERSION
+	 BCHG.L    #15,D0	       CHANGE TO 2'S COMPLEMENT      +15
+	 TST.W	   D0		       TEST FOR VALID INPUT
+	 BPL.S	   COM1SQU0	       BRANCH IF VALID
+	 MOVE.W    #00,D0	       LIMIT TO 00
+*
+COM1SQU0 MOVE.W    D0,NICOM1SQ	       STORE COM1 SQUELCH INPUT FOR LATER
+	 SUBI.W    #9830,D0	       D0 = D0 - .3		     +15
+	 BMI.S	   COM1SQU2	       JUMP IF D0 IS NEG
+*
+	 MULS	   #5,D0	       NO:  MULT BY 5		     +15
+	 CMP.L	   #32767,D0	       CHECK FOR > .999 	     +15
+	 BMI.S	   COM1SQU3	       BRANCH IF IN RANGE
+	 MOVE.L    #32767,D0	       LIMIT TO .999		     +15
+	 BRA.S	   COM1SQU3
+*
+COM1SQU2 MOVE.L    #00,D0	       SET AT MIN ATTEN
+*
+COM1SQU3 EQU	   *
+	 ASR.L	   #7,D0	       CHANGE TO BYTE		     +08
+	 MOVE.B    D0,NCOM1SQ	       STORE FOR DEBUG
+	 MOVE.B    D0,OCOM1SQ(A6)      OUTPUT OCOM1SQ
+*
+*******************************************************
+*
+*		COMM2 SQUELCH CONTROL
+*
+*   OCOM2SQ = ( 5 *(ICOM2SQ - .3))	 LIMIT 0<>.999
+*
+*******************************************************
+	 MOVEP.W   ICOM2SQ(A6),D0      READ SQUELCH INPUT	     +15
+	 MOVE.B    D0,ICOM2SQ(A6)      START NEXT A/D CONVERSION
+	 BCHG.L    #15,D0	       CHANGE TO 2'S COMPLEMENT      +15
+	 TST.W	   D0		       TEST FOR VALID INPUT
+	 BPL.S	   COM2SQU0
+	 MOVE.W    #00,D0	       MAKE D0=0
+*
+COM2SQU0 MOVE.W    D0,NICOM2SQ	       STORE FOR LATER USE	     +15
+	 SUBI.W    #9830,D0	       D0 = D0 - .3		     +15
+	 BMI.S	   COM2SQU2	       BRANCH IF NEGATIVE
+*
+	 MULS	   #5,D0	       MULT BY 5		     +15
+	 CMP.L	   #32767,D0	       D0 > .999 ?		     +15
+	 BMI.S	   COM2SQU3	       BRANCH IF IN RANGE
+	 MOVE.L    #32767,D0	       LIMIT TO .999		     +15
+	 BRA.S	   COM2SQU3
+*
+COM2SQU2 MOVE.L    #00,D0	       SET AT MIN ATTEN
+*
+COM2SQU3 ASR.L	   #7,D0	       CHANGE TO BYTE		     +08
+	 MOVE.B    D0,NCOM2SQ	       STORE FOR DEBUG
+	 MOVE.B    D0,OCOM2SQ(A6)      OUTPUT OCOM2SQ
+	 PAGE
+**********************************************************
+*
+*		COMM1 INST VOICE LEVEL
+*
+*    OCOM1IVL = ( 5 *(ICOM1SQ - .4))	   LIMIT 0<>.999
+*
+**********************************************************
+	 MOVE.W    NICOM1SQ,D0	       GET STORED SQUELCH INPUT      +15
+	 SUBI.W    #13107,D0	       D0 = D0 - .4		     +15
+	 BMI.S	   COM1IVL2	       JUMP IF D0 IS NEG
+*
+	 MULS	   #5,D0	       MULT BY 5		     +15
+	 CMP.L	   #32767,D0	       CHECK FOR > .999 	     +15
+	 BMI.S	   COM1IVL3	       BRANCH IF IN RANGE
+	 MOVE.W    #32767,D0	       LIMIT TO .999		     +15
+	 BRA.S	   COM1IVL3
+*
+COM1IVL2 MOVE.L    #00,D0	       SET AT MIN ATTEN 	     +15
+*
+COM1IVL3 ASR.L	   #7,D0	       CHANGE TO BYTE		     +08
+	 MOVE.B    D0,OCOM1IVL(A6)     OUTPUT OCOM1IVL		     +08
+*
+***********************************************************
+*
+*		 COMM2 INST VOICE LEVEL
+*
+*    OCOM2IVL = ( 5 *(ICOM2SQ - .4))	   LIMIT 0<>.999
+*
+**********************************************************
+	 MOVE.W    NICOM2SQ,D0	       READ SQUELCH INPUT	     +15
+	 SUBI.W    #13107,D0	       D0 = D0 - .4		     +15
+	 BMI.S	   COM2IVL2	       JUMP IF D0 IS NEG
+*
+	 MULS	   #5,D0	       MULT BY 5		     +15
+	 CMP.L	   #32767,D0	       CHECK IF > .999		     +15
+	 BMI.S	   COM2IVL3
+	 MOVE.W    #32767,D0	       LIMIT TO .999		     +15
+	 BRA.S	   COM2IVL3
+*
+COM2IVL2 MOVE.L    #00,D0	       SET AT MIN ATTEN 	     +15
+*
+COM2IVL3 ASR.L	   #7,D0	       CHANGE IT TO BYTE	     +08
+	 MOVE.B    D0,OCOM2IVL(A6)     OUTPUT OCOM2IVL		     +08
+	 PAGE
+***************************************
+*
+*	 COMM1 VOLUME LEVEL
+*
+*    IF   COMM1 IS OPERABLE
+*	 THEN  OCOM1VOL = ICOM1VOL
+*	 ELSE  OCOM1VOL = .999
+*
+***************************************
+*
+*
+	 ST	   NCOM1OP	       COMM1 IS ALWAYS OPERABLE FOR NOW
+*
+	 TST.B	   NCOM1OP	       IS COMM1 OPERABLE?
+	 BNE.S	   COM1OP	       YES: BRANCH
+*				       NO:
+	 MOVE.B    #$FF,D0	       SET MAX ATTENUATION
+	 BRA.S	   COM1VOL
+COM1OP	 EQU	   *
+	 MOVEP.W   ICOM1VOL(A6),D0     READ INPUT     OFFSET BINARY	+15
+	 MOVE.B    D0,ICOM1VOL(A6)     START NEXT A/D CONVERSION
+	 TST.W	   D0		       CHECK FOR VALID INPUT
+	 BMI.S	   COM1VOL1	       BRANCH IF OK
+	 MOVE.W    #0,D0	       MAKE IT ZERO IF NEGATIVE
+COM1VOL1 ASR.W	   #7,D0	       SHIFT TO LOWER BYTE
+COM1VOL  MOVE.B    D0,NCOM1VOL	       TEMP STORE FOR DEBUG
+	 MOVE.B    D0,OCOM1VOL(A6)     OUTPUT
+*
+***************************************
+*
+*	 COMM2 VOLUME LEVEL
+*
+*    IF   COMM2 IS OPERABLE
+*	 THEN  OCOM2VOL = ICOM2VOL
+*	 ELSE  OCOM2VOL = .999
+*
+***************************************
+	 ST	   NCOM2OP	       COMM2 IS ALWAYS OPERABLE FOR NOW
+*
+	 TST.B	   NCOM2OP	       IS COMM2 OPERABLE?
+	 BNE.S	   COM2OP	       YES: BRANCH
+*				       NO:
+	 MOVE.B    #$FF,D0	       SET MAX ATTENUATION
+	 BRA.S	   COM2VOL
+COM2OP	 EQU	   *
+	 MOVEP.W   ICOM2VOL(A6),D0     READ INPUT    OFFSET BINARY	+15
+	 MOVE.B    D0,ICOM2VOL(A6)     START NEXT A/D CONVERSION
+	 TST.W	   D0		       CHECK FOR VALID INPUT
+	 BMI.S	   COM2VOL1	       BRANCH IF VALID
+	 MOVE.W    #0,D0	       MAKE IT ZERO IF NEGATIVE
+COM2VOL1 ASR.W	   #7,D0	       SHIFT TO LOWER BYTE
+COM2VOL  MOVE.B    D0,NCOM2VOL	       TEMP STORE FOR DEBUG
+	 MOVE.B    D0,OCOM2VOL(A6)     OUTPUT
+*
+	 BRA.S	   COMCONT
+*
+CLRCOMM  MOVE.B    #$FF,OCOM1VOL(A6)   TURN OFF COM1 VOL
+	 MOVE.B    #$FF,OCOM2VOL(A6)   TURN OFF COM2 VOL
+	 MOVE.B    #$FF,OCOM1SQ(A6)    TURN OFF SQ1 CONTROL
+	 MOVE.B    #$FF,OCOM2SQ(A6)    TURN OFF SQ2 CONTROL
+*
+COMCONT  EQU	   *
+*
+	 PAGE
+***************************************
+*
+*	 COMM STUDENT XMIT
+*
+*      OC1SXMIT = ISMICPTT & IXRCOM1
+*      OC2SXMIT = ISMICPTT & IXRCOM1(NOT)
+*
+***************************************
+	 BTST.B    #ISMICPTT,IMICPTT(A6)
+	 BEQ.S	   CRECV	       RECV MODE IF STUDENT MIKE PTT IS OFF
+*
+	 BSET.B    #OC1SXMIT,NASCONT2  SET COMM1 STUDENT XMIT
+	 BSET.B    #OC2SXMIT,NASCONT2  SET COMM2 STUDENT XMIT
+	 BRA.S	   CONTIN1
+*
+CRECV	 BCLR.B    #OC1SXMIT,NASCONT2  CLR COMM1 STUDENT XMIT
+	 BCLR.B    #OC2SXMIT,NASCONT2  SET COMM2 STUDENT XMIT
+*
+CONTIN1  EQU	   *
+	 PAGE
+***************************************************
+*
+*	 STUDENT MIKE COMM LEVEL
+*
+*	 OSMIKEVL = .25
+*
+***************************************************
+	 MOVE.W    #$00,D0	       LOAD OUTPUT ATTEN OF .25      +08
+	 MOVE.B    D0,OSMIKEVL(A6)     OUTPUT
+*
+***************************************************
+*
+*	 STUDENT AND INSTRUCTOR VOLUME LEVEL
+*
+*		OSLISTVL = .25
+*		OILISTVL = .25
+*
+**************************************************
+*					OUTPUT ATTEN OF .25 IS IN D0  +08
+	 MOVE.B    D0,OSLISTVL(A6)     OUTPUT
+	 MOVE.B    D0,OILISTVL(A6)     OUTPUT
+*
+**************************************************
+*
+*	 STUDENT AND INSTRUCTOR INTERPHONE LEVEL
+*
+*	 OSINPHVL = .999    (BOTH OFF - NO INTERPHONE)
+*	 OIINPHVL = .999
+*
+**************************************************
+	 MOVE.B    #$FF,D0	       LOAD OUTPUT ATTEN OF .999     +08
+	 MOVE.B    D0,OSINPHVL(A6)     OUTPUT
+	 MOVE.B    D0,OIINPHVL(A6)     OUTPUT
+*
+	 PAGE
+*****************************************
+*	 STUDENT SELECT CONTROL
+*****************************************
+	 BTST.B    #IXRCOM1,IMPSDI2(A6)   TEST IF RADIO 1 SELECTED
+	 BNE.S	   COMM1	       BRANCH & SET UP COMM 1 RECR
+	 BSET.B    #OSSCOM1N,NASCONT1  UNSELECT COMM1 RECR
+	 BCLR.B    #OSSCOM2N,NASCONT1  SELECT COMM2 RECR
+	 BRA.S	   CONTIN2
+*
+*
+COMM1	 BCLR.B    #OSSCOM1N,NASCONT1  STUDENT SELECT COMM1 (NOT)
+	 BSET.B    #OSSCOM2N,NASCONT1  STUDENT SELECT COMM2 (NOT)
+*
+CONTIN2   BSET.B    #OSSINPHN,NASCONT1 STUDENT SELECT INTERPHONE (NOT)
+*
+	 BSET.B    #OSSADF2N,NASCONT1  STUDENT SELECT ADF2 (NOT)
+	 BSET.B    #OSSDME1N,NASCONT2  STUDENT SELECT DME1 (NOT)
+	 BSET.B    #OSSDME2N,NASCONT2  STUDENT SELECT DME2 (NOT)
+	 BSET.B    #OSSSPA1N,NASCONT2  STUDENT SELECT SPARE1 (NOT)
+	 BSET.B    #OSSSPA2N,NASCONT2  STUDENT SELECT SPARE2 (NOT)
+*
+*    OSSMKRN = IADF1MKR (NOT)
+*
+	 BSET.B    #OSSMKRN,NASCONT1   SET STUDENT SELECT MKR (NOT)
+	 BTST.B    #IADF1MKR,IADF1DI(A6) JUMP IF INPUT BIT IS NOT SET
+	 BEQ.S	   SET0
+	 BCLR.B    #OSSMKRN,NASCONT1   CLR STUDENT SELECT MKR (NOT)
+SET0	 EQU	   *
+*
+*    OSSNAV1N = IMONNAV1 (NOT)
+*
+	 BSET.B    #OSSNAV1N,NASCONT1  SET STUDENT SELECT NAV1 (NOT)
+	 BTST.B    #IMONNAV1,IMPSDI2(A6) JUMP IF INPUT BIT IS NOT SET
+	 BEQ.S	   SET1
+	 BCLR.B    #OSSNAV1N,NASCONT1  CLR STUDENT SELECT NAV1 (NOT)
+SET1	 EQU	   *
+*
+*    OSSNAV2N = IMONNAV2 (NOT)
+*
+	 BSET.B    #OSSNAV2N,NASCONT1  SET STUDENT SELECT NAV2 (NOT)
+	 BTST.B    #IMONNAV2,IMPSDI2(A6) JUMP IF INPUT BIT IS NOT SET
+	 BEQ.S	   SET2
+	 BCLR.B    #OSSNAV2N,NASCONT1  CLR STUDENT SELECT NAV2 (NOT)
+SET2	 EQU	   *
+*
+*    OSSADF1N = IMONADF1 (NOT)
+*
+	 BSET.B    #OSSADF1N,NASCONT1  SET STUDENT SELECT ADF1 (NOT)
+	 BTST.B    #IMONADF1,IMPSDI2(A6) JUMP IF INPUT BIT IS NOT SET
+	 BEQ.S	   SET3
+	 BCLR.B    #OSSADF1N,NASCONT1  CLR STUDENT SELECT ADF1 (NOT)
+SET3	 EQU	   *
+	 PAGE
+*****************************************
+*	 INSTRUCTOR SELECT CONTROL
+*****************************************
+*
+	 BCLR.B    #OISCOM1N,NASCONT3  CLR INSTRUCTOR SELECT COMM1 (NOT)
+	 BCLR.B    #OISCOM2N,NASCONT3  CLR INSTRUCTOR SELECT COMM2 (NOT)
+	 BCLR.B    #OISSTN,NASCONT3    CLR INSTRUCTOR SELECT SIDE TONE (NO
+	 BSET.B    #OISMONTN,NASCONT3  SET INSTRUCTOR SELECT MONITOR (NOT)
+	 BSET.B    #OISINPHN,NASCONT3  SET INSTRUCTOR SELECT INTERPHONE (N
+	 BSET.B    #OISSPA1N,NASCONT3  SET INSTRUCTOR SELECT SPARE 1 (NOT)
+	 BSET.B    #OISSPA2N,NASCONT3  SET INSTRUCTOR SELECT SPARE 2 (NOT)
+	 BSET.B    #OISSPA3N,NASCONT3  SET INSTRUCTOR SELECT SPARE 3 (NOT)
+*
+****************************************
+*     OUTPUT CONTROL DO BYTES
+****************************************
+	 MOVE.B    NASCONT1,OASCONT1(A6)
+	 MOVE.B    NASCONT2,OASCONT2(A6)
+	 MOVE.B    NASCONT3,OASCONT3(A6)
+	 PAGE
+*************************************************************************
+*
+*		   AURAL CUES
+*
+*************************************************************************
+	 MOVE.W    ENRPM,D0	       +03	 ENG RPM
+	 EXT.L	   D0		       +03	 ENG RPM
+	 ASL.L	   #1,D0	       +03	 * 2
+	 DIVS	   #3,D0	       +03
+	 BCHG.L    #15,D0			 OFFSET BINARY
+	 ROR.W	   #8,D0			 GET HIGH ORDER BYTE
+	 MOVE.B    D0,OFUNCTA(A6)		 OUTPUT BYTE
+	 ROL.W	   #8,D0			 GET LOW ORDER BYTE
+	 MOVE.B    D0,OFUNCT1(A6)		 OUTPUT BYTE
+*
+	 MOVE.W    #2900,D0	       +00	 MAX RPM
+	 ASL.W	   #3,D0	       +03	 RESCALE
+	 MOVE.W    D0,D1	       +03	 SAVE FOR LATER
+	 SUB.W	   ENRPM,D0	       +03	 DELTA RPM
+	 BPL.S	   CON
+*
+	 MOVE.W    #0,D0
+	 BRA.S	   OUT
+*
+CON	 EQU	   *
+	 MULS	   #112,D0	       +03+00+03 DELTA RPM * 112
+	 DIVS	   D1,D0	       +03-03+00 ENGINE NOISE AMPLITUDE
+*
+OUT	 EQU	   *
+	 MOVE.B    D0,OATTEN1(A6)
+*
+	 MOVE.B    #$20,D0	       .	 K2
+	 TST.B	   EFIRED
+	 BNE.S	   NXT1
+*
+	 MOVE.W    #6099,D1	       +06	 95.3 FT/SEC
+	 CMP.W	   FVCAL,D1	       +06	 AIRSPEED
+	 BLT.S	   NXT1
+*
+	 MOVE.B    #$FF,D0	       .	 MUTE
+*
+NXT1	 EQU	   *
+	 MOVE.B    D0,OATTEN10(A6)     .	 PROP AMPLITUDE
+*
+	 MOVE.W    #22400,D0	       +06	 MAX AIRSPEED 350 FT/SEC
+	 MOVE.W    D0,D1	       +06	 SAVE FOR LATER
+	 SUB.W	   FVCAL,D0	       +06	 DELTA AIRSPEED
+	 CLR.L	   D2		       +00
+	 MOVE.B    #$40,D2	       +00	 100 FT/SEC
+	 MULS	   D2,D0	       +06+00+06
+	 DIVS	   D1,D0	       +00
+	 MOVE.B    D0,OATTEN11(A6)
+*
+	 MOVE.B    #$80,OFUNCTA(A6)
+	 MOVE.B    #$00,OFUNCT5(A6)    .	 SPARE 2
+*
+	 MOVE.B    #$FF,OATTEN5(A6)    .	 SPARE 2
+*
+	 MOVE.B    #$B0,OFUNCTA(A6)
+	 MOVE.B    #$00,OFUNCT6(A6)    .	 STALL WARN FREQ
+*
+	 MOVE.B    #$20,D0
+	 MOVE.W    #12,D1	       +00	 12 DEGREES
+	 ASL.W	   #8,D1	       +08	 RESCALE
+	 ASL.W	   #1,D1	       +09	 RESCALE
+	 CMP.W	   FALPHA,D1	       +09
+	 BLT.S	   NXT2
+*
+	 MOVE.B    #$FF,D0	       .	 MUTE
+*
+NXT2	 EQU	   *
+	 MOVE.B    D0,NSTALL	       .	 SAVE FOR DEBUG
+	 MOVE.B    D0,OATTEN6(A6)      .	 STALL WARN AMPLITUDE
+*
+*	 TIRE SCREECH WHEN WHEELS TOUCH GROUND
+*
+	 TST.B	   FWOG 			 TEST WHEELS ON GROUND
+	 BEQ.S	   AIR				 BRANCH IF IN AIR
+
+	 SUBQ.W    #1,NITCOUNT			 DEC ITERATION COUNT
+	 BPL.S	   SND				 BRANCH WHILE POSITIVE
+*
+	 MOVE.W    #0,NITCOUNT			 HOLD COUNTER TO ZERO
+	 BRA.S	   MUTE 			 MUTE SOUND WHILE ON GROUND
+*
+SND	 EQU	   *
+	 MOVE.B    #$80+$40,OFUNCTA(A6) 	 FREQ = 1 KHZ
+	 MOVE.B    #$00,OFUNCT8(A6)		 FREQ = 1 KHZ
+	 MOVE.B    #$00,OATTEN8(A6)		 TIRE SCREECH FULL VOL
+	 BRA.S	   VOL
+*
+AIR	 EQU	   *
+	 MOVE.W    #2,NITCOUNT			 RESET COUNT WHILE IN AIR
+*
+MUTE	 EQU	   *
+	 MOVE.B    #$FF,OATTEN8(A6)		 TIRE SCREECH VOL MUTE
+	 MOVE.B    #$7E,OFUNCTA(A6)		 FREQ = 0 KHZ
+	 MOVE.B    #$00,OFUNCT8(A6)		 SLIGHT NEGATIVE
+*
+VOL	 EQU	   *
+	 MOVE.W    FENGVOL,D0	       +15	 INST ENG SOUND CONTROL BTC
+	 BCHG.L    #15,D0	       +15	 FROM BTC TO BOB (OLD CONATT)
+	 BSR	   CONATT
+*
+	 MOVE.B    D0,OATTEN9(A6)      +08	 INST. VOLUME O/P BYTE
+	 TRAP	   #0
+	 END
+

@@ -1,0 +1,72 @@
+
+*	 VISIO	   VISUAL I/O HANDLER				     *
+*								     *
+**********************************************************************
+	 XDEF	   VISIO
+*
+	 INCLUDE   VSYM.SA
+*
+	 SECTION   12
+VISIO	 EQU	   *
+	 TST.B	   VISON	       TEST VISUAL FLAG
+	 BEQ.S	   VISOFF	       BRANCH IF FALSE
+*
+	 LEA	   SYNC1,A5	       LOAD ADDRESS OF BUFFER START
+	 LEA	   SYNC22+1,A6	       LOAD ADDRESS OF BUFFER END+1
+	 JSR	   DSPLN	       OUTPUT BUFFER
+*
+VISOFF	 TRAP	   #0		       RETURN
+	 PAGE
+**********************************************************************
+*								     *
+*	 DSPLN	   DISPLAY LINE TO PORT 1			     *
+*								     *
+*		   A5=START ADDRESS A6=END ADDRESS		     *
+*								     *
+**********************************************************************
+DSPLN	 EQU	   *
+	 MOVE.B    (A5)+,D0	       LOAD BYTE TO OUTPUT
+	 JSR	   DSPB 	       DISPLAY THE BYTE
+	 CMP.L	   A5,A6	       COMPARE TO END POINTER
+	 BNE.S	   DSPLN	       BRANCH IF NOT EQUAL
+	 RTS
+**********************************************************************
+*								     *
+*	 DSPB	   DISPLAY BYTE (D0=DATA)			     *
+*								     *
+**********************************************************************
+DSPB	 EQU	   *
+	 JSR	   TXSTAT	       TEST TX STATUS
+*
+	 TST.B	   D2		       TEST FOR ZERO
+	 BEQ.S	   DSPB 	       TRY AGAIN
+*
+	 JSR	   TXWRITE	       OUTPUT DATA
+*
+	 RTS			       RETURN
+**********************************************************************
+*								     *
+*	 LOW LEVEL SERIAL I/O SUPPORT ROUTINES			     *
+*								     *
+**********************************************************************
+ACIAC	 EQU	   $FE8001	       CONTROL PORT
+ACIAD	 EQU	   $FE8003	       DATA PORT
+**********************************************************************
+*								     *
+*	 TXSTAT    READ TX STATUS INFORMATION			     *
+*								     *
+**********************************************************************
+TXSTAT	 EQU	   *
+	 MOVE.B    ACIAC,D2	       READ STATUS
+	 AND.B	   #$02,D2	       MASK OFF ERROR BITS
+	 RTS			       RETURN
+**********************************************************************
+*								     *
+*	 TXWRITE   WRITE TX DATA				     *
+*								     *
+**********************************************************************
+TXWRITE  EQU	   *
+	 MOVE.B    D0,ACIAD	       WRITE DATA
+	 RTS			       RETURN
+	 END
+

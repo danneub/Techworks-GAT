@@ -1,0 +1,56 @@
+
+* =/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* =/*    Build whole Primary Trainer load                           *
+* =/*  Link modules and build S-Record file ready for 'DOWN-LOADING *
+* =/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* =/*
+* =LINK.LO        ,LOADl.LO,LOAD1.LK;IXMHUZ=128
+         LINK NAME1.RO
+         LINK LOOKUP0.RO
+         LINK LOOKUP1.RO
+         LINK TDATA1.RO
+         LINK IVINIT1.RO
+         LINK LIST1.RO
+         LINK MATH.RO
+         LINK ENGINE.RO
+         LINK LIFT.RO
+         LINK SPEED.RO
+         LINK CLIMB.RO
+         LINK PITCH.RO
+         LINK ROLL.RO
+         LINK TURN.RO
+         LINK MOTION.RO
+         LINK NMATH.RO
+         LINK NAVRCV.RO
+         LINK NAV1.RO
+         LINK RMNKFG.RO
+         LINK COMM.RO
+         LINK NAVFREQ.RO
+         LINK GATVIS.RO
+         LINK VISIO.RO
+         LINK LCPU1.RO
+         LINK EXEC.RO
+         LINK DEBUG.RO
+DATA.SEG:
+          org $0800
+          SECTION  1     
+STAK.SEG: 
+          org $0900
+          SECTION  2
+PROG.SEG
+         org $F04000
+         SECTION  12,0
+POOL.SEG
+         org $A000
+         SECTION  3
+         end
+         LINK LCPU1.RO
+         INPUT EXEC.RO
+         LINK DEBUG.RO
+
+END
+* =DEL LOAD1.MX
+* =BUILDS LOAD1
+* =COPY LOADl.MX,#CN11
+* =END
+

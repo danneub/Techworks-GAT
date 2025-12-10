@@ -1,0 +1,66 @@
+	plen	66,6,6
+
+lt32	idnt	2,1
+
+
+* 2.1	01/09/85  P. Adams	remove nopage and llen
+* 2.0				' '>>8
+* 1.9				remove short branches
+* 1.8	05/01/84  R. Curtiss	from  util.a68  1.7
+*
+*	Linker test module
+*
+
+*
+* Entry points
+*
+	xdef	line.out
+	xdef	string.out
+	xdef	spaces.out
+	xdef	cr.lf.out
+	xdef	char.out
+
+
+	section	4
+line.out     proc
+	bsr	string.out
+	bsr	cr.lf.out
+	rts
+	section	3
+string.out   proc
+	repeat
+	move.b	(a0)+,d0
+	break	if <eq>		end of string
+	bsr	char.out
+	endr
+	sub.l	#1,a0		a0 at string terminator
+	rts
+	section	2
+spaces.out   proc
+	move	d0,d1		space count
+	moveq	#' '>>8,d0	space character
+	repeat
+	tst	d1
+	break	if <le>		count d1 <= 0
+	bsr	char.out
+	sub	#1,d1
+	endr
+	rts
+	section	1
+cr.lf.out    proc
+	moveq	#$0d,d0		carriage return
+	bsr	char.out
+	moveq	#$0a,d0		linefeed
+	bsr	char.out
+	rts
+	section	3
+char.out    proc
+	repeat
+	move.b	$ffffff01,d4	get port status
+	and.b	#1,d4		TxRDY bit mask
+	until	<ne>
+	move.b	d0,$ffffff00	output data
+	rts
+
+	end
+

@@ -1,0 +1,189 @@
+	 OPT	   MEX,CEX,NOPCS
+	 XDEF	   GATVIS	       MAIN ENTRY POINT
+	 XREF	   CVTS2F	       CONVERT SCALED TO FLOAT
+	 XREF	   A1IPTAB	       ISEA STATION INIT DATA
+	 XREF	   AEPC 	       END POINT CHECK
+	 XREF	   MSC1 	       SIN/COS
+	 XREF	   DSMUL	       16 * 32 BIT MULTIPLY
+*
+	 INCLUDE   NSYM.SA
+	 INCLUDE   FSYM.SA
+	 INCLUDE   VSYM.SA
+	 INCLUDE   IO.SA
+*
+	 SECTION   12
+**********************************************************************
+*								     *
+*		      DIGITAL GAT VISUAL INTERFACE		     *
+*								     *
+*	 THIS MODULE:	    VISUAL SYNC 		 1 BYTE      *
+*			    VISUAL FLAG 1		 1 BYTE      *
+*			    DIGITAL HEADING		 2 BYTES     *
+*			    DIGITAL PITCH		 2 BYTES     *
+*			    DIGITAL ROLL		 2 BYTES     *
+*			    DIGITAL ALTITUDE		 4 BYTES     *
+*			    DIGITAL LONGITUDE		 4 BYTES     *
+*			    DIGITAL LATITUDE		 4 BYTES     *
+*			    VISUAL FLAG 2		 1 BYTE      *
+*			    VISUAL SYNC 		 1 BYTE      *
+*								     *
+**********************************************************************
+TFTPDG	 DC.W	   22785	       -04	 FEET PER DEGREE
+*
+GATVIS	 EQU	   *
+	 MOVE.L    #$FE6000,A6		   LOAD I/O BASE ADDRESS
+**********************************************************************
+*	  GENERATE START SYNC CHARACTER 			     *
+*	  GENERATE STOP  SYNC CHARACTER 			     *
+**********************************************************************
+	 MOVE.B    #$F0,SYNC1		 SET SYNC  1=$F0
+	 MOVE.B    #$0F,SYNC22		 SET SYNC 22=$0F
+**********************************************************************
+*	  RESET VISUAL PARAMETERS IF RESET SWITCH IS THROWN	     *
+**********************************************************************
+	 BTST.B    #IENGFIR,IINSTMDI(A6) 1=RESET VISUAL SYSTEM
+	 BEQ.S	   NORESET		 BRANCH IF NOT RESET
+*
+	 MOVE.L    #A1IPTAB,A0		 LOAD IP DATA ADDRESS ISEA
+	 CLR.L	   D6			 ZERO IN D6
+	 MOVE.L    D6,FTHETA		 INITIAL PITCH AT 2-0
+	 MOVE.L    D6,FPHI		 INITIAL ROLL AT 2-0
+	 MOVE.L    0(A0),NGLON		 SET LONGITUDE
+	 MOVE.L    4(A0),NGLAT		 SET LATITUDE
+	 ST.B	   UHDSET		 SET INITIAL HEADING FLAG TRUE
+	 MOVE.W    8(A0),USETHD 	 SET INITIAL HEADING
+	 MOVE.L    FHFP,D1		 FIELD PRESSURE ALTITUDE AT 2-17
+	 MOVE.L    D1,FHP		 ACFT PRESSURE ALTITUDE AT 2-17
+	 MOVE.L    FHF,D1		 FIELD ALTITUDE AT 2-17
+	 MOVE.L    D1,FHG		 ACFT GEOMETRIC ALTITUDE AT 2-17
+	 ST.B	   FWOG 		 SET ACFT ON GND
+NORESET  EQU	   *
+**********************************************************************
+*								     *
+*	 VISUAL HEADING      VISHDG = -100*AEPC(NPSIGA-RW_HDG)	     *
+*								     *
+**********************************************************************
+	 MOVE.L    NSACF,A0	       LOAD CLOSEST FIELD ADDRESS
+	 MOVE.W    36(A0),D0	       LOAD RUNWAY HEADING  2-6
+	 JSR	   AEPC 	       LIMIT TO +- 180
+	 MOVE.W    D0,D1	       COPY
+	 MOVE.W    NPSIGA,D0	       LOAD TRUE HEADING  2-6
+	 SUB.W	   D1,D0	       MAKE ADJUSTED HEADING
+	 JSR	   AEPC 	       LIMIT TO +- 180
+*
+	 MULS	   #-100,D0	       ADJUSTED HEADING * -100 2-6
+	 ASR.L	   #6,D0	       ADJUSTED HEADING * -100 2-0
+	 MOVE.W    D0,VISHDG	       ADJUSTED HEADING * -100 2-0
+**********************************************************************
+*								     *
+*	 VISUAL PITCH	     VISPITCH = 100*FTHETA		     *
+*								     *
+**********************************************************************
+	 MOVE.W    FTHETA,D1	       PITCH ANGLE AT 2-9
+	 MULS	   #100,D1	       PITCH ANGLE * 100 AT 2-9
+	 ASR.L	   #8,D1	       PITCH ANGLE * 100 AT 2-1
+	 ASR.L	   #1,D1	       PITCH ANGLE * 100 AT 2-0
+	 MOVE.W    D1,VISPITCH	       100*PITCH ANGLE AT 2-0
+**********************************************************************
+*								     *
+*	 VISUAL ROLL	     VISROLL = -100*FPHI		     *
+*								     *
+**********************************************************************
+	 MOVE.W    FPHI,D1	       ROLL ANGLE AT 2-6
+	 MULS	   #-100,D1	       ROLL ANGLE * -100 AT 2-6
+	 ASR.L	   #6,D1	       ROLL ANGLE * -100 AT 2-0
+	 MOVE.W    D1,VISROLL	       ROLL ANGLE * -100 AT 2-0
+**********************************************************************
+*								     *
+*	 VISUAL ALTITUDE     VISALT = CVTS2F(FHGGND,17) 	     *
+*								     *
+**********************************************************************
+	 MOVE.L    FHGGND,D0	       HT ABOVE GND AT 2-17
+	 MOVE.B    #17,D1	       SCALE 17
+	 JSR	   CVTS2F	       CONVERT TO FLOAT
+	 MOVE.L    D0,VISALT	       PILOT EYE HT ABOVE GND FLOAT
+**********************************************************************
+*	 CALCULATE AGAS AND BGAS				     *
+**********************************************************************
+	 MOVE.L    NSACF,A1			 LOAD ADDRESS CLOSEST FIELD
+	 MOVE.L    26(A1),D0	       +23	 STATION LATITUDE
+	 ADD.L	   NGLAT,D0	       +23	 ADD A/C LATITUDE
+	 ASR.L	   #1,D0	       +23	 DIVIDE BY 2
+	 ASR.L	   #5,D0	       +23-5=+18 RESCALE
+	 ASR.L	   #5,D0	       +18-5=+13 RESCALE
+	 ASR.L	   #7,D0	       +13-7=+06 RESCALE
+	 JSR	   AEPC 	       +06	 CONVERT TO +/-180 DEG
+*
+	 JSR	   MSC1 	       +06	 TAKE SIN AND COS
+*
+	 MOVE.W    D1,D6	       +15	 COSINE OF AVG LATITUDE
+*
+	 MOVE.L    26(A1),D0	       +23	 STATION LATITUDE
+	 SUB.L	   NGLAT,D0	       +23	 SUBTRACT A/C LATITUDE
+	 MOVE.L    D0,D3	       +23	 XGASL AT 2-23
+*
+	 MOVE.L    30(A1),D0	       +23	 STATION LONGITUDE
+	 SUB.L	   NGLON,D0	       +23	 SUBTRACT A/C LONGITUDE
+	 ASL.L	   #1,D0	 +23+01+24	 RESCALE
+	 MOVE.W    D6,D1	       +15	 MULTIPLIER
+	 JSR	   DSMUL      +24+15-16+23	 YGASL AT +23
+*
+	 MOVE.L    D0,D4	       +23	 YGASL AT +23
+*
+	 MOVE.W    40(A1),D1	       +15	 COS(RNWY APP BEARING)
+	 MOVE.L    D3,D0	       +23	 XGASL
+	 JSR	   DSMUL      +23+15-16+22	 COS(RNWY APP BEARING) * XGASL
+*
+	 MOVE.L    D0,D2	       +22	 SAVE IT
+	 MOVE.L    D4,D0	       +23	 YGASL
+	 MOVE.W    38(A1),D1	       +15	 SIN(RNWY APP BEARING)
+	 JSR	   DSMUL      +23+15-16+22	 SIN(RNWY APP BEARING) * YGASL
+*
+	 ADD.L	   D2,D0	       +22	 SUM OF DELTAS DEG
+	 ASL.L	   #8,D0	 +22+08+30	 SCALE
+	 MOVE.W    TFTPDG,D1	       -04	 FEET PER DEG CONSTANT
+	 JSR	   DSMUL      +30-04-16+10	 NEW AGAS
+*
+	 MOVE.W    42(A1),D1	       +00	 RUNWAY LENGTH IN FEET
+	 EXT.L	   D1		       +00	 MAKE LONG
+	 ASL.L	   #8,D1	       +08	 SCALE
+	 ASL.L	   #2,D1	       +10	 SCALE
+	 SUB.L	   D1,D0	       +10	 ADJUSTED AGAS
+	 MOVE.L    D0,VISY	       +10	 NEW AGAS
+*
+	 MOVE.L    D3,D0	       +23	 XGASL
+	 MOVE.W    38(A1),D1	       +15	 SIN(RNWY APP BEARING)
+	 JSR	   DSMUL      +23+15-16+22	 SIN(RNWY APP BEARING) * XGASL
+*
+	 MOVE.L    D0,D2			 SAVE TEMP
+	 MOVE.L    D4,D0	       +23	 YGASL
+	 MOVE.W    40(A1),D1	       +15	 COS(RNWY APP BEARING)
+	 JSR	   DSMUL      +23+15-16+22	 COS(RNWY APP BEARING) * YGASL
+*
+	 SUB.L	   D2,D0	       +22	 NEW BGAS IN DEG
+	 ASL.L	   #8,D0	 +22+08+30	 SCALE CHANGE
+	 MOVE.W    TFTPDG,D1	       -04	 FT PER DEG CONSTANT
+	 JSR	   DSMUL      +30-04-16+10	 NEW NRBGAS IN FT
+*
+	 MOVE.L    D0,VISX	       +10	 NEW BGAS
+**********************************************************************
+*  STORE VISUAL X POSITION  (FEET) (EAST/WEST)(POS=EAST)	     *
+**********************************************************************
+	 MOVE.L    VISX,D0	       BGAS AT 2-10
+	 NEG.L	   D0		       -BGAS AT 2-10
+	 MOVE.B    #10,D1	       LOAD SCALE
+	 JSR	   CVTS2F	       CONVERT TO FLOAT
+*
+	 MOVE.L    D0,VISXF	       X POSITION (FEET)
+**********************************************************************
+* STORE VISUAL Y POSITION  (FEET)  (NORTH/SOUTH) (POS=SOUTH)	     *
+**********************************************************************
+	 MOVE.L    VISY,D0	       AGAS AT 2-10
+	 ADD.L	   #-1024000,D0        SUBTRACT -1000 FEET FOR IRIS
+	 MOVE.B    #10,D1	       LOAD SCALE
+	 JSR	   CVTS2F	       CONVERT TO FLOAT
+*
+	 MOVE.L    D0,VISYF	       Y POSITION (FEET)
+	 TRAP	   #0		       RETURN TO EXEC
+	 END
+

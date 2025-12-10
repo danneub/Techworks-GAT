@@ -1,0 +1,529 @@
+ 
+          READ.ME                          68000 Assembler Package Notes
+ 
+ 
+ 
+                           68000 ASSEMBLER PACKAGE NOTES
+              
+                           Assembler Package Release 5.0
+              
+              
+              
+              This  "READ.ME"  file  is  provided  to  cover last minute
+              documentation additions, corrections and notes in general.
+              Try  "DIR *.DOC".   See  the  "CONTENTS.DOC"  file  for  a
+              listing  of  the  package contents.  Look for a "SUPP.DOC"
+              file for system dependent notes.  For CP/M  systems,  look
+              also  for  a  "DATE.DOC"  file  for  the  new DATE program
+              operational instructions. 
+              
+              
+              
+          The Future:
+              
+              Quelo appologizes for the delay in releasing 5.0.  We hope
+              that you find the quality of the product worth  the  wait.
+              Although we have no immediate plans for another release of
+              the  68000/68010  assembler,  there is a wish list already
+              started  for  additional  features.    If   you   have   a
+              suggestion, please feel free to submit it. 
+              
+              The  limited memory of CP/M-80 systems has been one of the
+              major obstacles to the development process,  because  each
+              added feature usually means more bytes of valuable memory.
+              It is unlikely that future releases will apply to CP/M-80,
+              unless  it  is  necessary to correct a bug which cannot be
+              fixed by patching. 
+              
+              
+              
+          New Product:
+              
+              Note that Quelo now has an  assembler  available  for  the
+              Mostek 68200 single chip processor with ROM, serial ports,
+              parallel  ports and counter timers.  The 68200 is a 16 bit
+              processor  designed  for  controller  applications.    The
+              instruction  set  resembles  the  68000  at  the  assembly
+              language level. 
+              
+              
+              
+          Suspected Problems:
+              
+              The Quelo software has been tested extensively, but it  is
+              impossible to completely test programs of such complexity.
+              Quelo  thanks  those  who suffered through problems of the
+              pre-release beta test version of the 5.0 release. 
+              
+              If you suspect a Quelo program of  having  a  bug,  please
+              note  the  program name and the revision information which
+              appears in the signon message.  Revision  information  has
+              the  following format: "sV.Rm".  "s" indicates the system,
+ 
+          (c) 1985 by QUELO                                           1
+ 
+ 
+ 
+ 
+          READ.ME                          68000 Assembler Package Notes
+ 
+ 
+ 
+              "V.R" is the version and "m" is a  minor  revision  letter
+              which  tracks  Quelo  internal  development  cycles.   The
+              system indicators are as follows:
+                  
+                  A  -  CP/M-80
+                  B  -  CP/M-86
+                  C  -  CP/M-68K
+                  D  -  PCDOS, MSDOS
+                  E  -  not used at this time
+                  F  -  UNOS (Charles River Data Systems)
+                  G  -  UNIX (Berkeley 4.2) (Masscomp)
+              
+              Also, please supply as much information  as  possible,  so
+              that the problem can be reproduced by Quelo.  A small test
+              case  which  illustrates  the  problem  is  best,  but  is
+              sometimes difficult to produce.  Depending on  the  nature
+              of the problem, a listing might be sufficient.  It is next
+              to  impossible  to  fix a program if the problem cannot be
+              reproduced at Quelo. 
+              
+              
+              
+          Defective Manuals:
+              
+              Spot checking  of  manual  sets  turned  up  a  rare,  but
+              occasional, blurred page.  If your manual set contains any
+              defective  pages,  Quelo  will  provide replacement pages.
+              Please identify the bad page by manual and page number. 
+              
+              The 4 manuals of the assembler package  are  separated  by
+              colored  sheets  of paper and are shrink-wrapped together.
+              The printing on the separation sheets  has  no  connection
+              with  Quelo.   The  sheets  we  saw  in  spot checking had
+              advertisements for automobile tires and wheels.  Quelo  is
+              NOT in the tire business; this is just our printer's sense
+              of humor showing through. 
+              
+              
+              
+          Maximum Number of Open Files:
+              
+              The  maximum number of files each program may need to have
+              open, simultaneously, varies from one program to  another.
+              It  is  possible for you to specify actions for some Quelo
+              programs to carry out that will make the program  need  to
+              have  more  files open than are allowed for in the version
+              of the program you have.  The maximum  allowed  number  of
+              simultaneously  open files depends on the operating system
+              under which your version of the Quelo programs runs.   See
+              the "SUPP.DOC" file. 
+              
+              The  largest  number of open files is shown below for each
+              program.  In addition to the number shown, files specified
+              for console input and  output  redirection  must  also  be
+              counted.   Note  that  inputs specified as CON: or outputs
+              specified as CON: or NUL: do  not  count  as  open  files,
+ 
+          (c) 1985 by QUELO                                           2
+ 
+ 
+ 
+ 
+          READ.ME                          68000 Assembler Package Notes
+ 
+ 
+ 
+              unless  console  input or output is redirected.  Output to
+              the LPT: device may or may not  count,  depending  on  the
+              particular version. 
+                  
+                  M68K      4
+                  A68K      5
+                  QLIB      6
+                  QLINK     6
+                  QSYM      2
+                  SPLIT     3
+                  IMAGE     3
+                  LTXDUMP   3
+                  DATE      0
+              
+              Redirection  is  accomplished  on the command line via "<"
+              for console input and ">" for console output.   For  those
+              persons familiar with C programming and/or UNIX, these are
+              "stdin"   and   "stdout"   respectively.    Console  input
+              redirection  has  little  practical  application  for  the
+              assembler  package,  but  console output redirection does.
+              Error messages are output to the console  and  redirection
+              provides  the  means for capturing the error messages in a
+              file. 
+              
+              At Quelo, redirection is  used  for  program  testing  and
+              debugging.                   For                  example:
+              "A68K -B CON:,CON:,CON:=XYZ >CONSOLE" sends all  three  of
+              the assembler outputs to the console and redirects console
+              output  to  the  file, "CONSOLE".  This is the only way to
+              combine  more  than  one  output  in  the  same  file,  as
+              "A68K -B XYZ.OUT,XYZ.OUT,XYZ.OUT=XYZ"  would  result in an
+              "I/O specification error".  Also, CON: specified  for  the
+              object  file  output  of the assembler is the clue for the
+              assembler to convert the  normally  binary  output  to  an
+              ASCII hex representation. 
+              
+              
+              
+          Blank File Name Extensions:
+              
+              It is not possible to have blank file name extensions. 
+              
+              
+              
+          A68K - Missing IDNT Default:
+              
+              When  no IDNT is specified, the object output file name is
+              used for the module name.  The  "d:"  drive  specification
+              and  ".LTX"  extension  are  discarded.   The  version and
+              revision numbers are set to 0. 
+              
+              
+              
+          A68K - Control Structure Nesting:
+              
+              Control structure  nesting  was  increased  from  about  8
+ 
+          (c) 1985 by QUELO                                           3
+ 
+ 
+ 
+ 
+          READ.ME                          68000 Assembler Package Notes
+ 
+ 
+ 
+              levels to about 10 levels.  If you need more nesting, move
+              some of the deeper nested levels to a subroutine. 
+              
+              
+              
+          A68K, M68K, QLINK - Expression Evaluation:
+              
+              These programs check for divide by zero conditions (divide
+              and  modulus) and shift counts outside the range 0..32 and
+              report these conditions as errors.  Multiply  overflow  is
+              NOT  checked.   Divide  by zero results will vary from one
+              system to another.  The result of using a negative modulus
+              will vary from one system to another. 
+              
+              
+              
+          A68K, QLINK - DS Directive Range Limits:
+              
+              The range of the DS directive operand has  been  increased
+              to  0..$7FFFFFFF.   The  range of the DCB directive repeat
+              count remains 0..$7FFF.  A negative number for  either  DS
+              or  DCB  results in a warning message and the directive is
+              ignored.  A DCB repeat count larger than $7FFF results  in
+              an error message and the directive is ignored. 
+              
+              
+              
+          68010 Instruction Assembly:
+              
+              The assembler does NOT recognize 68010 instructions unless
+              specifically  instructed  to by use of the "OPT   P=68010"
+              directive. 
+              
+              
+              
+          PC Relative Addressing Mode:
+              
+              The syntax  for  PC  relative  addressing  is  "e(PC)"  or
+              "e(PC,Ri)",  where  "e"  represents an expression which is
+              expected to represent  an  address.   The  assembler  will
+              ALWAYS  subtract  the current value of the program counter
+              from the expression to form the displacement WORD or  BYTE
+              which is part of the generated instruction. 
+              
+              If  you  try  to  specify the displacement value directly,
+              subtraction of the program counter will probably  yield  a
+              value  which  cannot  be  truncated  to  the  WORD or BYTE
+              required.  If you really need to  specify  a  displacement
+              directly, use the following: "*+2+d(PC)", where "d" is the
+              displacement   that   you   want  to  be  encoded  in  the
+              instruction.  The exception is the BTST  instruction  when
+              the  source  operand  is  immediate data.  In that case +4
+              replaces +2: "BTST   #2,*+4+d(PC)". 
+              
+              The best thing to do is use a label and let the  assembler
+              figure out the displacement. 
+ 
+          (c) 1985 by QUELO                                           4
+ 
+ 
+ 
+ 
+          READ.ME                          68000 Assembler Package Notes
+ 
+ 
+ 
+              
+                                    * - - - - - - - - - - - - - - -
+              0400  303A 0002               move    *+2+2(PC),D0
+              0404  303A 0002               move    xx1(PC),D0
+              0408                  xx1:
+                                    * - - - - - - - - - - - - - - -
+              0408  303B 1002               move    *+2+2(PC,D1),D0
+              040C  303B 1002               move    xx2(PC,D1),D0
+              0410                  xx2:
+                                    * - - - - - - - - - - - - - - -
+              0410  083A 0002 0002          btst    #2,*+4+2(PC)
+              0416  083A 0002 0002          btst    #2,xx3(PC)
+              041C                  xx3:
+                                    * - - - - - - - - - - - - - - -
+              041C  083B 0002 1002          btst    #2,*+4+2(PC,D1)
+              0422  083B 0002 1002          btst    #2,xx4(PC,D1)
+              0428                  xx4:
+              
+              
+              
+          A68K - The MOVEQ Instruction:
+              
+              Difficulty  arises when the immediate operand of the MOVEQ
+              instruction is a literal character.  This is  due  to  the
+              need  for  compatibility with the Motorola assembler.  'A'
+              is evaluated as $4100, which is too large a number  to  be
+              crammed  into  the  allotted  8  bit  field  of  the MOVEQ
+              instruction.  To get the desired result, the following  is
+              required: "MOVEQ   'A'>>8,D0". 
+              
+              This  problem  is due to the fact that the MOVEQ is a long
+              (32 bit) operation where the 8 bit operand field  is  sign
+              extended  to  32  bits  when  the instruction is executed.
+              Originally, A68K was "smart"  enough  to  deal  with  this
+              problem,  but  was  changed  to  be  consistent  with  the
+              Motorola assembler.  Note that "MOVE.B   #'A',D0" works as
+              you would expect, because the assembler uses the ".B" as a
+              cue not to left justify the character. 
+              
+              
+              
+          A68K, M68K, QLINK - END Directive Operand:
+              
+              When a comment is desired on  the  same  line  as  an  END
+              directive   which  has  no  start  address  specified  (no
+              operand), it is necessary to precede the comment  with  an
+              exclamation mark! 
+              
+              
+              
+          LTXDUMP, QLIB, QLINK - Debug Option:
+              
+              The  "-2"  command  line  option  has  been added to these
+              programs.  This option will  cause  the  program  to  show
+              binary  object file input in hex in the listing output for
+              program debugging.  Lines  of  this  format  will  appear:
+ 
+          (c) 1985 by QUELO                                           5
+ 
+ 
+ 
+ 
+          READ.ME                          68000 Assembler Package Notes
+ 
+ 
+ 
+              "nn> xxxxxxxx xxxx...".   "nn" is the number of bytes read
+              (in decimal) and "xx" hex digit pairs represent a byte  of
+              data  read.   A  space  separates  groups  of 4 bytes as a
+              visual aid. 
+              
+              
+              
+          QLINK - New Uppercase Option:
+              
+              The "-U" command option line option has been added to  the
+              linker.   This  option causes a conversion to uppercase of
+              all symbols input by the linker from  .LTX  object  files.
+              Ordinarily,  the  case  of  .LTX  object  file  symbols is
+              unaltered.  Note that the "-L" command  line  option  only
+              applies to symbols appearing in the link specification. 
+              
+              
+              
+          SPLIT - Initialization Value:
+              
+              The   split   program   now   prompts   the  user  for  an
+              initialization value, as well as the starting  and  ending
+              addresses.   The  initialization  value  is  used  for all
+              addresses not specifically loaded by the hex records. 
+              
+              
+              
+          QLIB - Available Space Reporting:
+              
+              The column heading lines output for the  MLIST  and  SLIST
+              commands include table space usage as follows: "101:2315".
+              The first number (101) is space used and the second number
+              is  space  remaining  (2315).  The librarian will abort if
+              all the space is used up. 
+              
+              
+              
+          The LTXDUMP Utility:
+              
+              This program is used  to  display  the  contents  of  .LTX
+              binary object files in human readable form.  The .LTX file
+              format  is  described  in  detail in the Quelo Linker Text
+              Manual, which is NOT supplied  as  part  of  the  standard
+              assembler package.  The manual is available from Quelo for
+              a nominal cost. 
+              
+              The command line for LTXDUMP is as follows:
+                  
+                  LTXDUMP <file name>                 ; short form
+                  
+                  LTXDUMP <dump file>,<symbol file>=<object file>
+                  
+                  Options Are:
+                      -1    show symbol table size
+                      -2    show object input in dump file in hex
+                      -S    write symbols to the symbol file
+ 
+          (c) 1985 by QUELO                                           6
+ 
+ 
+ 
+ 
+          READ.ME                          68000 Assembler Package Notes
+ 
+ 
+ 
+                      -Z    directly set symbol table size
+              
+              Try   assembling   the   SAMP1.A68   file  found  on  your
+              distribution disk and then use LTXDUMP to display it. 
+                  
+                  A68K -EL SAMP1
+                  LTXDUMP CON:=SAMP1
+              
+              Each object record is shown on a separate line, consisting
+              of a  record  type  identifier,  followed  by  the  record
+              contents.  Record types are as follows:
+                  
+                  HEADER:  IDNT directive information.
+                  LTPROC:  Processor identification and address size.
+                  LTASUM:  Absolute assembly summary.
+                  LTSSUM:  Relocatable section summary.
+                  LTGSYM:  Globally defined symbol.
+                  LTESYM:  Externally referenced symbol.
+                  LTLSYM:  Local symbol defined as an address.
+                  LTLOAD:  Indicates beginning of load information.
+                  LTMACRO: Postfix expression macro definition.
+                  LTSOURCE: Source code.
+                  LTORG:   Caused by the ORG directive.
+                  LTSECT:  Caused by the SECTION directive.
+                  LTPCINC: Caused by the DS directive or
+                           generated for boundary alignment.
+                  LTDATA:  Data ready for loading - no need for
+                           alteration by the linker.
+                  LTEXP:   Postfix expression - instructions to
+                           the linker for relocation and linking
+                           to externals.
+              
+              Postfix  expressions  are evaluated by the linker by using
+              an operand stack, much the way FORTH or a  Hewlett-Packard
+              calculator  works.   The  following are postfix expression
+              elements:
+                  
+                  SET_START  Set program start address.
+                  
+                  DUP      Duplicate top operand.
+                  OVER     Duplicate next lower operand.
+                  DROP     Drop top operand.
+                  SWAP     Swap operands.
+                  +        Add.
+                  -        Subtract.
+                  *        Multiply.
+                  /        Divide.
+                  %        Modulus.
+                  &        Bitwise AND.
+                  |        Bitwise inclusive OR.
+                  ^        Bitwise exclusive OR.
+                  ~        Unary NOT.
+                  NEG      Unary minus.
+                  L>>      Logical shift right.
+                  A>>      Arithmetic shift right.
+                  <<       Shift left.
+ 
+          (c) 1985 by QUELO                                           7
+ 
+ 
+ 
+ 
+          READ.ME                          68000 Assembler Package Notes
+ 
+ 
+ 
+                  
+                  ST(...)  Store operator.
+                           #$xxx - optional repeat count caused
+                                   by DCB directive.
+                           68K   - 68000 byte order.
+                           Z80   - Z80   byte order.
+                           am0   - no alignment check.
+                           am1   - expression value must be even.
+                           s     - signed truncation.
+                           u     - unsigned truncation.
+                           B     - byte object (8 bits).
+                           W     - word object (16 bits).
+                           L     - long object (32 bits).
+                  
+                  $xxx     Operand - constant in hex.
+                  <n>      Operand - section base reference.
+                                     n is the section number.
+                  [i]"ee"  Operand - external symbol reference.
+                                     ee is the symbol string.
+                                     i  is the symbol number.
+              
+              
+              
+          Binary File End Garbage:
+              
+              Since disk file space is generally written in fixed length
+              records and some operating systems  (CP/M  especially)  do
+              not have a mechanism for marking the end of useful data in
+              a binary file, the binary files written by the A68K, QLIB,
+              and IMAGE programs may have some extra garbage at the end.
+              This  is  not  a  problem  for the LTXDUMP, QLIB and QLINK
+              programs which read .LTX files, as an  "end-of-file"  code
+              is part of the formal linker text specification.  No Quelo
+              software reads the file produced by IMAGE. 
+              
+              
+              
+          Disk Full:
+              
+              Under  some  circumstances a "disk full" condition may not
+              be detected by the assembler package programs.  A check is
+              made for errors on each logical write operation, but  disk
+              output  is  buffered  and  an  error will not be generated
+              until the buffer is actually written to  disk.   The  last
+              buffer  load  for  a given output file will not be written
+              until  a  close  operation  is  performed.   Due   to   an
+              oversight,  the  assembler package does not check for file
+              close errors. 
+              
+              
+              
+              
+              
+              
+              
+              
+ 
+          (c) 1985 by QUELO                                           8
+ 
+ 
+ 
+

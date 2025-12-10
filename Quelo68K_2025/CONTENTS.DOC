@@ -1,0 +1,133 @@
+ 
+          CONTENTS.DOC                                  Package Contents
+ 
+ 
+ 
+                                  Package Contents
+              
+                           Assembler Package Release 5.0
+              
+              
+              
+          Documentation Disk Files:
+              
+              DISK1OF2.DOC  and  DISK2OF2.DOC  -  Identifies the disk on
+              which the file is found and the release of the software. 
+              
+              READ.ME - Additional User Information. 
+              
+              CONTENTS.DOC - Package Contents. 
+              
+              A80.DOC - Some documentation for the 8080 assembler. 
+              
+              SUPP.DOC - System dependent supplemental documentation. 
+              
+              DATE.DOC - Special "date"  file  maintenance  and  access.
+              This  applies  only to CP/M systems which do not support a
+              BDOS date-time function. 
+              
+              DATIME.C - Source  code  for  the  CP/M  date-time  access
+              module. 
+              
+              
+              
+          Sample Disk Files:
+              
+              MACRO.M68 - A sample for the macro pre-processor. 
+              
+              LT30.A68 - One of three modules to be assembled. 
+              
+              LT31.A68 - One of three modules to be assembled. 
+              
+              LT32.A68 - One of three modules to be assembled. 
+              
+              LT33.LNK  - A specification for linking LT30.LTX, LT31.LTX
+              and LT32.LTX. 
+              
+              QT33.LIB - A command file  for  building  a  library  from
+              LT30.LTX, LT31.LTX and LT32.LTX. 
+              
+              SAMP1.A68 - A sample for illustrating the LTXDUMP program. 
+              
+              A80TEST.MAC - A sample for the 8080 assembler. 
+              
+              
+              
+              
+              
+              
+              
+              
+              
+ 
+          (c) 1985 by QUELO                                           1
+ 
+ 
+ 
+ 
+          CONTENTS.DOC                                  Package Contents
+ 
+ 
+ 
+          Printed Documentation:
+              
+              Package Overview Manual. 
+              
+              68000/68010 Assembler and Macro Pre-Processor Manual. 
+              
+              Linker and Object Librarian Manual. 
+              
+              Symbol Report Generator Manual. 
+              
+              
+              
+          Executable Programs:
+              
+              The  file  name  extension  for executable programs varies
+              from one system to another.   Programs  for  CP/M-68K  are
+              provided  in  the  .REL relocatable format.  Use the RELOC
+              program provided with CP/M-68K  to  produce  the  smaller,
+              faster loading .68K form. 
+              
+                      A68K.COM  -  CP/M-80
+                      A68K.CMD  -  CP/M-86
+                      A68K.REL  -  CP/M-68K
+                      A68K.EXE  -  PCDOS, MSDOS
+              
+              A68K    - The Motorola compatible 68000/68010 assembler.
+              A80     - The 8080 assembler.
+              DATE    - The date setting program   (CP/M only).
+              IMAGE   - Builds memory image from S-records.
+              LTXDUMP - The relocatable object file dump utility.
+              M68K    - The Motorola compatible macro pre-processor.
+              QLIB    - The processor independent librarian.
+              QLINK   - The processor independent linker/locator.
+              QSYM    - The symbol report generator.
+              SPLIT   - Splits S-record file into even and odd bytes.
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+ 
+          (c) 1985 by QUELO                                           2
+ 
+ 
+ 
+

@@ -1,0 +1,56 @@
+	llen	79
+	nopage
+
+ltxsamp1  idnt	1,0	Quelo linker text sample
+
+* 1.0	02/14/85  R. Curtiss	initial coding
+*
+*	to assemble, use:  A68K -el ltxsamp1
+*	   then      use:  LTXDUMP -1 con:=ltxsamp1
+
+
+	xdef	global_symbol
+
+	xref	external_symbol
+
+	xref	#:ww	constant only
+	xref	#:xx	constant only
+	xref	yy	absolute or relocatable
+
+	org	$1234
+*			constant data
+	dc.b	$11
+*			initialized data block
+	dcb.w	3,$6666
+*			simple relocatable reference
+	dc.l	global_symbol
+*			external reference
+	dc.l	external_symbol+5
+*			constants in expressions
+	dc	xx+63
+	dc	xx+64
+	dc	xx+$fffffe00
+*			binary operators
+	dc	xx+ww
+	dc	xx-ww
+	dc	xx*ww
+	dc	xx^ww
+	dc	xx<<ww
+*			unary operators
+	dc	-xx
+*			complex expression
+	dc	xx*ww-xx/ww
+
+	section	0
+global_symbol	proc
+	move.b	xx(a1,d1),d0	bst
+	move	xx(a1),d0	wst
+	jsr	Local_Symbol
+
+	section	1
+Local_Symbol	proc
+	jsr	external_symbol
+	rts
+
+	end	global_symbol
+

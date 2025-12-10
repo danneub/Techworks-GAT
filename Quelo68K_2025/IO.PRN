@@ -1,0 +1,327 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:51:03     ...Page  1
+D:IO.LTX , D:IO.PRN , D:IO.SYM = D:IO.SA
+   ...
+
+     # 00000205             1.  OFUELLT      EQU    $00000205           LEFT FUEL QTY            0V=0,+10V=25 G
+     # 00000209             2.  OFUELRT      EQU    $00000209           RIGHT FUEL QTY           0V=0,+10V=25 G
+     # 00000211             3.  OOILP        EQU    $00000211           OIL PRESSURE             0V=0,+10V=100
+     # 00000215             4.  OCYLT        EQU    $00000215           CYL. HEAD TEMP.          0V=0,+10V=460
+     # 00000201             5.  OOILT        EQU    $00000201           OIL TEMP                 0V=0,+10V=260
+                            6.  *
+     # 00000221             7.  ITHR1        EQU    $00000221           THROTTLE                 +10V=FULL,+4.6
+     # 00000225             8.  IMIX1        EQU    $00000225           MIXTURE                  +3.3V=FULL RIC
+     # 00000229             9.  ICARBH1      EQU    $00000229           CARB. HEAT               -3.3V=ON,-10V=
+     # 00000231            10.  IPROP1       EQU    $00000231           PROP.                    -4.93V=MAX,-10
+                           11.  *
+     # 00000241            12.  IELEV        EQU    $00000241           ELEVATOR CONTROL          +7.33V=UP,-7V
+     # 00000245            13.  IAIL         EQU    $00000245           AILERON CONTROL           +6.5V=RT,-6.5
+     # 00000249            14.  IRUD         EQU    $00000249           RUDDER CONTROL            +3.5V=RT,-3.5
+     # 00000251            15.  IELEVT       EQU    $00000251           ELEVATOR TRIM             +7V=UP,-2.3V=
+                           16.  *
+     # 00000261            17.  OTURNP       EQU    $00000261           TURN NEEDLE               +10V=6 NW RT,
+     # 00000265            18.  OBALLP       EQU    $00000265           BALL                      +10V=1.6 BW R
+                           19.  *
+     # 00000271            20.  OIRCP        EQU    $00000271           R/C                       +10V=2000 FT
+                           21.  *
+     # 00000281            22.  OALTMP       EQU    $00000281           ALTIMETER                 0V=-1000 FT,-
+                           23.  *
+     # 00000291            24.  OIASP        EQU    $00000291           INDICATED AIRSPEED        0V=0 MPH,+10V
+                           25.  *
+     # 000002A1            26.  OIRPM        EQU    $000002A1           RPM                       0V=0 RPM,+10V
+                           27.  *
+     # 000002B1            28.  OIMAP1       EQU    $000002B1           MAP                       0V=29.92 IN H
+                           29.  *
+     # 000002C9            30.  OATTPIT      EQU    $000002C9           ATTITUDE PITCH            +10V=15 DEG U
+     # 000002C5            31.  OATTROLS     EQU    $000002C5           ATTITUDE ROLL SIN         +10V=SIN 90 D
+     # 000002C1            32.  OATTROLC     EQU    $000002C1           ATTITUDE ROLL COS         +10V=COS 0 DE
+                           33.  *
+     # 000002D1            34.  IMPSDI1      EQU    $000002D1           PANEL SWITCHES #1
+     # 00000007            35.  IMSTSW       EQU    7                   MASTER SWITCH ON
+     # 00000006            36.  IIGNST       EQU    6                   IGNITION SWITCH START
+     # 00000005            37.  IIGNBT       EQU    5                   IGNITION SWITCH BOTH
+     # 00000004            38.  IIGNRT       EQU    4                   IGNITION SWITCH RIGHT
+     # 00000003            39.  IIGNLT       EQU    3                   IGNITION SWITCH LEFT
+     # 00000002            40.  IRMI1ADF     EQU    2                   RMI #1 PTR ADF
+     # 00000000            41.  ILINKPWR     EQU    0                   1=LINKAGE POWER ON
+     # 000002D3            42.  IMPSDI2      EQU    $000002D3           PANEL SWITCHES #2
+     # 00000007            43.  IPARKBK      EQU    7                   PARKING BRAKE ON
+     # 00000006            44.  IFLAPUP      EQU    6                   FLAP SWITCH UP
+     # 00000005            45.  IFLAPHLF     EQU    5                   FLAP SWITCH 1/2
+     # 00000004            46.  IFLAPDN      EQU    4                   FLAP SWITCH DOWN
+     # 00000003            47.  IMONNAV1     EQU    3                   MONITOR NAV1
+     # 00000002            48.  IMONNAV2     EQU    2                   MONITOR NAV2
+     # 00000001            49.  IMONADF1     EQU    1                   MONITOR ADF1
+     # 00000000            50.  IXRCOM1      EQU    0                   XMIT/REC COMM1
+                           51.  *
+     # 0000040D            52.  INAV1F1      EQU    $0000040D           NAV1 FREQ WORD 1
+     # 00000007            53.  I117NAV1     EQU    7                   NAV1 117
+     # 00000006            54.  I116NAV1     EQU    6                   NAV1 116
+     # 00000005            55.  I115NAV1     EQU    5                   NAV1 115
+     # 00000004            56.  I114NAV1     EQU    4                   NAV1 114
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:51:03     ...Page  2
+D:IO.LTX , D:IO.PRN , D:IO.SYM = D:IO.SA
+   ...
+
+     # 00000003            57.  I113NAV1     EQU    3                   NAV1 113
+     # 00000002            58.  I112NAV1     EQU    2                   NAV1 112
+     # 00000001            59.  I111NAV1     EQU    1                   NAV1 111
+     # 00000000            60.  I110NAV1     EQU    0                   NAV1 110
+     # 00000411            61.  INAV1F2      EQU    $00000411           NAV1 FREQ WORD 2
+     # 00000007            62.  I109NAV1     EQU    7                   NAV1 109
+     # 00000006            63.  I108NAV1     EQU    6                   NAV1 108
+     # 00000005            64.  I9THNAV1     EQU    5                   NAV1 .9
+     # 00000004            65.  I8THNAV1     EQU    4                   NAV1 .8
+     # 00000003            66.  I7THNAV1     EQU    3                   NAV1 .7
+     # 00000002            67.  I6THNAV1     EQU    2                   NAV1 .6
+     # 00000001            68.  I5THNAV1     EQU    1                   NAV1 .5
+     # 00000000            69.  I4THNAV1     EQU    0                   NAV1 .4
+     # 00000413            70.  INAV1F3      EQU    $00000413           NAV1 FREQ WORD 3
+     # 00000007            71.  I3THNAV1     EQU    7                   NAV1 .3
+     # 00000006            72.  I2THNAV1     EQU    6                   NAV1 .2
+     # 00000005            73.  I1THNAV1     EQU    5                   NAV1 .1
+     # 00000004            74.  I0THNAV1     EQU    4                   NAV1 .0
+     # 00000003            75.  INAV1ILS     EQU    3                   NAV1 ILS SELECTED
+     # 00000002            76.  INAV1ON      EQU    2                   NAV1 POWER ON
+     # 00000001            77.  INAV1ID      EQU    1                   NAV1 ID ON
+     # 00000401            78.  INAV1VOL     EQU    $00000401           NAV1 VOLUME
+     # 00000409            79.  ICOM1SQ      EQU    $00000409           COMM1 SQUELCH
+     # 00000405            80.  ICOM1VOL     EQU    $00000405           COMM1 VOLUME
+                           81.  *
+     # 0000042D            82.  INAV2F1      EQU    $0000042D           NAV2 FREQ WORD 1
+     # 00000007            83.  I117NAV2     EQU    7                   NAV2 117
+     # 00000006            84.  I116NAV2     EQU    6                   NAV2 116
+     # 00000005            85.  I115NAV2     EQU    5                   NAV2 115
+     # 00000004            86.  I114NAV2     EQU    4                   NAV2 114
+     # 00000003            87.  I113NAV2     EQU    3                   NAV2 113
+     # 00000002            88.  I112NAV2     EQU    2                   NAV2 112
+     # 00000001            89.  I111NAV2     EQU    1                   NAV2 111
+     # 00000000            90.  I110NAV2     EQU    0                   NAV2 110
+     # 00000431            91.  INAV2F2      EQU    $00000431           NAV2 FREQ WORD 2
+     # 00000007            92.  I109NAV2     EQU    7                   NAV2 109
+     # 00000006            93.  I108NAV2     EQU    6                   NAV2 108
+     # 00000005            94.  I9THNAV2     EQU    5                   NAV2 .9
+     # 00000004            95.  I8THNAV2     EQU    4                   NAV2 .8
+     # 00000003            96.  I7THNAV2     EQU    3                   NAV2 .7
+     # 00000002            97.  I6THNAV2     EQU    2                   NAV2 .6
+     # 00000001            98.  I5THNAV2     EQU    1                   NAV2 .5
+     # 00000000            99.  I4THNAV2     EQU    0                   NAV2 .4
+     # 00000433           100.  INAV2F3      EQU    $00000433           NAV2 FREQ WORD 3
+     # 00000007           101.  I3THNAV2     EQU    7                   NAV2 .3
+     # 00000006           102.  I2THNAV2     EQU    6                   NAV2 .2
+     # 00000005           103.  I1THNAV2     EQU    5                   NAV2 .1
+     # 00000004           104.  I0THNAV2     EQU    4                   NAV2 .0
+     # 00000003           105.  INAV2ILS     EQU    3                   NAV2 ILS SELECTED
+     # 00000002           106.  INAV2ON      EQU    2                   NAV2 POWER ON
+     # 00000001           107.  INAV2ID      EQU    1                   NAV2 ID ON
+     # 00000421           108.  INAV2VOL     EQU    $00000421           NAV2 VOLUME
+     # 00000429           109.  ICOM2SQ      EQU    $00000429           COMM2 SQUELCH
+     # 00000425           110.  ICOM2VOL     EQU    $00000425           COMM2 VOL
+                          111.  *
+     # 00000449           112.  OADF1TM      EQU    $00000449           ADF1 TUNING METER
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:51:03     ...Page  3
+D:IO.LTX , D:IO.PRN , D:IO.SYM = D:IO.SA
+   ...
+
+     # 00000441           113.  IADF1VOL     EQU    $00000441           ADF1 VOLUME
+     # 00000445           114.  IADF1FRQ     EQU    $00000445           ADF1 FREQ
+     # 0000044D           115.  IADF1DI      EQU    $0000044D           ADF1 CONTROL DISCRETE IN
+     # 00000007           116.  IADF1B1      EQU    7                   ADF BAND 1 190 TO 430
+     # 00000006           117.  IADF1B2      EQU    6                   ADF BAND 2 420 TO 850
+     # 00000005           118.  IADF1B3      EQU    5                   ADF BAND 3 840 TO 1750
+     # 00000004           119.  IADF1TST     EQU    4                   ADF1 TEST
+     # 00000003           120.  IADF1REC     EQU    3                   ADF1 RECEIVE MODE
+     # 00000002           121.  IADF1ADF     EQU    2                   ADF1 ADF MODE
+     # 00000001           122.  IADF1MKR     EQU    1                   ADF1 MARKER ON
+                          123.  *
+     # 000004B5           124.  ORMIHS       EQU    $000004B5           RMI SIN MAG HEADING
+     # 000004B1           125.  ORMIHC       EQU    $000004B1           RMI COS MAG HEADING
+                          126.  *
+     # 00000451           127.  ONAV1LR      EQU    $00000451           NAV1 COURSE DEVIATION
+     # 00000459           128.  ONAV1GS      EQU    $00000459           NAV1 GLIDE SLOPE DEV.
+     # 00000455           129.  ONAV1TF      EQU    $00000455           NAV1 TO/OFF/FROM
+     # 00000461           130.  ICRS1SC      EQU    $00000461           COURSE SEL 1 SIN/COS
+     # 00000465           131.  OCDI1DO      EQU    $00000465           CDI 1 DISCRETE OUT
+     # 00000000           132.  OCRS1SEL     EQU    0                   COURSE SEL 1 EXCITATION
+     # 00000001           133.  ONAV1GSF     EQU    1                   NAV1 G/S FLAG 00V
+     # 00000467           134.  ICRS1DI      EQU    $00000467           CDI 1 DISCRETE IN
+     # 00000007           135.  INAV1TST     EQU    7                   NAV 1 TEST
+                          136.  *
+     # 00000471           137.  ONAV2LR      EQU    $00000471           NAV2 COURSE DEVIATION
+     # 00000479           138.  ONAV2GS      EQU    $00000479           NAV2 GLIDE SLOPE DEV.
+     # 00000475           139.  ONAV2TF      EQU    $00000475           NAV2 TO/OFF/FROM
+     # 00000481           140.  ICRS2SC      EQU    $00000481           COURSE SEL 2 SIN/COS
+     # 00000485           141.  OCDI2DO      EQU    $00000485           CDI 2 DISCRETE OUT
+     # 00000000           142.  OCRS2SEL     EQU    0                   COURSE SEL 2 EXCITATION
+     # 00000001           143.  ONAV2GSF     EQU    1                   NAV2 G/S FLAG 00V
+     # 00000487           144.  ICRS2DI      EQU    $00000487           CDI 2 DISCRETE IN
+     # 00000007           145.  INAV2TST     EQU    7                   NAV 2 TEST
+                          146.  *
+     # 000004A9           147.  ORMI1S       EQU    $000004A9           RMI SIN #1 PTR
+     # 000004A5           148.  ORMI1C       EQU    $000004A5           RMI COS #1 PTR
+     # 000004A1           149.  ORMI2S       EQU    $000004A1           RMI SIN #2 PTR
+     # 00000499           150.  ORMI2C       EQU    $00000499           RMI COS #2 PTR
+                          151.  *
+     # 00000601           152.  IINSTAI1     EQU    $00000601           INSTRUCTOR #1 AI
+     # 00000605           153.  IINSTAI2     EQU    $00000605           INSTRUCTOR #2 AI
+     # 00000609           154.  IAI1MPX      EQU    $00000609           MULTIPLEXER #1
+     # 0000060B           155.  IAI2MPX      EQU    $0000060B           MULTIPLEXER #2
+     # 0000061B           156.  IINSTDI1     EQU    $0000061B           INSTRUCTOR #1 DI
+     # 00000007           157.  IBFIELD      EQU    7                   B FIELD SELECTED
+     # 00000003           158.  IENGFAIL     EQU    3                   ENGINE FAIL
+     # 00000002           159.  IPITON       EQU    2                   PITCH MOTION ON
+     # 00000001           160.  IROLLON      EQU    1                   ROLL MOTION ON
+     # 00000000           161.  IYAWON       EQU    0                   YAW MOTION ON
+     # 00000619           162.  IFAIL1       EQU    $00000619           INSTRUCTER FAIL #1
+     # 00000007           163.  IDGFAIL      EQU    7                   DG FAIL
+     # 00000006           164.  IATGFAIL     EQU    6                   ATTITUDE IND FAIL
+     # 00000005           165.  IIASFAIL     EQU    5                   AIRSPEED IND FAIL
+     # 00000004           166.  IALTFAIL     EQU    4                   ALTIMETER FAIL
+     # 00000003           167.  IRCFAIL      EQU    3                   RATE OF CLIMB IND FAIL
+     # 00000002           168.  ITNFAIL      EQU    2                   TURN NEEDLE FAIL
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:51:03     ...Page  4
+D:IO.LTX , D:IO.PRN , D:IO.SYM = D:IO.SA
+   ...
+
+     # 00000001           169.  IVL2FAIL     EQU    1                   VOR/LOC 2  FAIL
+     # 00000000           170.  IVL1FAIL     EQU    0                   VOR/LOC 1  FAIL
+     # 0000061D           171.  IRCDRDI      EQU    $0000061D           RECORDER DI
+     # 00000007           172.  ISLEWN       EQU    7                   SLEW NORTH
+     # 00000006           173.  ISLEWS       EQU    6                   SLEW SOUTH
+     # 00000005           174.  ISLEWE       EQU    5                   SLEW EAST
+     # 00000004           175.  ISLEWW       EQU    4                   SLEW WEST
+     # 00000003           176.  IAPPR2       EQU    3                   APPROACH 2 SELECTED
+     # 00000002           177.  IAPPR1       EQU    2                   APPROACH 1 SELECTED
+     # 00000001           178.  ICCMODE      EQU    1                   CROSS COUNTRY SELECTED
+     # 00000000           179.  IPOSFRZ      EQU    0                   POSITION FREEZE
+     # 00000611           180.  ORCDNSD      EQU    $00000611           (A/0)+10V=7.5 IN NORTH,-10V=7.5 IN SOUT
+     # 00000615           181.  ORCDEWD      EQU    $00000615           (A/0)+10V=7.5 IN EAST,-10V=7.5 IN WEST
+     # 0000061F           182.  IFAIL2       EQU    $0000061F           INSTRUCTER FAIL #2
+     # 00000007           183.  IGSFAIL      EQU    7                   GLIDESLOPE FAIL
+     # 00000006           184.  ILF1FAIL     EQU    6                   ADF FAIL
+                          185.  *
+     # 00000621           186.  OMOTPITR     EQU    $00000621           MOTION PITCH RATE     +10V=30 DEG/SEC U
+     # 00000625           187.  OMOTROLR     EQU    $00000625           MOTION ROLL RATE      +10V=60 DEG/SEC R
+     # 00000629           188.  OMOTTRNR     EQU    $00000629           MOTION TURN RATE      +10V=30 DEG/SEC R
+     # 00000639           189.  ICPHDGS      EQU    $00000639           SIN COCKPIT HEADING   +10V=SINE 90 DEG
+     # 0000063D           190.  ICPHDGC      EQU    $0000063D           COS COCKPIT HEADING   +10V=COS 0 DEG
+     # 00000631           191.  ICPPITS      EQU    $00000631           SIN COCKPIT PITCH     +10V=SIN 90 DEG
+     # 00000635           192.  ICPROLS      EQU    $00000635           SIN COCKPIT ROLL      +10V=SIN 90 DEG
+     # 0000062D           193.  IINSTMDI     EQU    $0000062D           INSTRUCTER CONTROL DI     CARD A81
+     # 00000007           194.  IALTFRZ      EQU    7                   ALTITUDE FREEZE
+     # 00000006           195.  IALTSUP      EQU    6                   ALTITUDE SLEW UP
+     # 00000005           196.  IALTSDN      EQU    5                   ALTITUDE SLEW DOWN
+     # 00000004           197.  IFLTFRZ      EQU    4                   FLIGHT FREEZE
+     # 00000003           198.  IENGFIR      EQU    3                   ENGINE FIRED BYPASS
+     # 00000002           199.  IMODE1       EQU    2                   MODE 1
+     # 00000001           200.  IMODE2       EQU    1                   MODE 2
+     # 00000000           201.  IMODE3       EQU    0                   MODE 3
+                          202.  *
+     # 00000651           203.  ONV1RNKY     EQU    $00000651           NAV1 RNG ATT/KEY
+     # 00000655           204.  ONV1WNL      EQU    $00000655           NAV1 WHITE NOISE LEVEL
+     # 00000659           205.  ODM1RNKY     EQU    $00000659           DME1 RNG ATT/KEY
+     # 0000065D           206.  ONV1VOL      EQU    $0000065D           NAV1 VOLUME LEVEL
+     # 0000064D           207.  ODMECTL      EQU    $0000064D           NAV  DME CONTROL
+     # 00000007           208.  ODM1SEP      EQU    7                   NAV1 DME SEPARATE
+     # 00000006           209.  ODM2SEP      EQU    6                   NAV2 DME SEPARATE
+     # 00000653           210.  ONV2RNKY     EQU    $00000653           NAV2 RNG ATT/KEY
+     # 00000657           211.  ONV2WNL      EQU    $00000657           NAV2 WHITE NOISE LEVEL
+     # 0000065B           212.  ODM2RNKY     EQU    $0000065B           DME2 RNG ATT/KEY
+     # 0000065F           213.  ONV2VOL      EQU    $0000065F           NAV2 VOLUME LEVEL
+     # 00000641           214.  OLF1RNKY     EQU    $00000641           ADF1 RNG ATT/KEY
+     # 00000645           215.  OLF1WNL      EQU    $00000645           ADF1 WHITE NOISE LEVEL
+     # 00000649           216.  OLF1VOL      EQU    $00000649           ADF1 VOLUME LEVEL
+     # 00000643           217.  OLF2RNKY     EQU    $00000643           ADF2 RNG ATT/KEY
+     # 00000647           218.  OLF2WNL      EQU    $00000647           ADF2 WHITE NOISE LEVEL
+     # 0000064B           219.  OLF2VOL      EQU    $0000064B           ADF2 VOLUME LEVEL
+                          220.  *
+     # 00000663           221.  OOMRAKY      EQU    $00000663           OM RANGE/KEY
+     # 00000665           222.  OMMRAKY      EQU    $00000665           MM RANGE/KEY
+     # 00000667           223.  OAMRAKY      EQU    $00000667           AM RANGE/KEY
+     # 00000669           224.  OMKRTST      EQU    $00000669           MARKER TEST
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:51:03     ...Page  5
+D:IO.LTX , D:IO.PRN , D:IO.SYM = D:IO.SA
+   ...
+
+     # 0000066B           225.  OMKRVOL      EQU    $0000066B           MKR VOLUME
+     # 00000661           226.  OMKRDO       EQU    $00000661           MKR DISCRETE OUT
+     # 00000007           227.  OOMFAIL      EQU    7                   OM FAIL
+     # 00000006           228.  OOMRAATT     EQU    6                   OM RANGE ATT.
+     # 00000005           229.  OMMFAIL      EQU    5                   MM FAIL
+     # 00000004           230.  OMMRAATT     EQU    4                   MM RANGE ATT.
+     # 00000003           231.  OAMFAIL      EQU    3                   AM FAIL
+     # 00000002           232.  OAMRAATT     EQU    2                   AM RANGE ATT.
+     # 00000001           233.  OMKRLTST     EQU    1                   MKR LAMP TEST
+                          234.  *
+     # 0000068B           235.  OATTEN1      EQU    $0000068B           ATTEN 1 EXHAUST NOISE
+     # 00000681           236.  OFUNCTA      EQU    $00000681           CARD 23 HIGH BYTE
+     # 00000683           237.  OFUNCT1      EQU    $00000683           FUNCT 1 RPM
+     # 00000685           238.  OFUNCT5      EQU    $00000685           FUNCT 5 SPARE
+     # 0000068D           239.  OATTEN5      EQU    $0000068D           ATTEN 5 SPARE
+     # 00000687           240.  OFUNCT6      EQU    $00000687           FUNCT 6 STALL WARN
+     # 00000691           241.  OATTEN6      EQU    $00000691           ATTEN 6 STALL WARN
+     # 00000689           242.  OFUNCT8      EQU    $00000689           FUNCT 8 TIRE SCREECH
+     # 00000693           243.  OATTEN8      EQU    $00000693           ATTEN 8 TIRE SCREECH
+     # 00000695           244.  OATTEN9      EQU    $00000695           ATTEN 9 INST. VOL
+     # 00000697           245.  OATTEN10     EQU    $00000697           ATTEN 10 PROP HISS
+     # 00000699           246.  OATTEN11     EQU    $00000699           ATTEN 11 AERO HISS
+                          247.  *
+     # 000006E1           248.  OFUNCTB      EQU    $000006E1           CARD 24 HIGH BYTE
+     # 000006E3           249.  OFUNCT2      EQU    $000006E3           FUNCT 2 HISS
+     # 000006EB           250.  OATTEN2      EQU    $000006EB           ATTEN 2 HISS
+     # 000006E5           251.  OFUNCT3      EQU    $000006E5           FUNCT 3 RUMBLE
+     # 000006ED           252.  OATTEN3      EQU    $000006ED           ATTEN 3 RUMBLE
+     # 000006E7           253.  OFUNCT4      EQU    $000006E7           FUNCT 4 SPARE
+     # 000006F1           254.  OATTEN4      EQU    $000006F1           ATTEN 4 SPARE
+     # 000006E9           255.  OFUNCT7      EQU    $000006E9           FUNCT 7 AERO HISS
+     # 000006F3           256.  OATTEN7      EQU    $000006F3           ATTEN 7 AERO HISS
+                          257.  *
+     # 000006B1           258.  OCOM1SQ      EQU    $000006B1           COMM1 SQ CONTROL
+     # 000006B5           259.  OCOM1IVL     EQU    $000006B5           COMM1 INST. VOICE LEVEL
+     # 00000003           260.  OC1SXMIT     EQU    3                   COMM1 STUDENT XMIT
+     # 000006B9           261.  OCOM1VOL     EQU    $000006B9           COMM1 VOLUME LEVEL
+     # 000006B3           262.  OCOM2SQ      EQU    $000006B3           COMM2 SQ CONTROL
+     # 000006B7           263.  OCOM2IVL     EQU    $000006B7           COMM2 INST. VOICE LEVEL
+     # 00000002           264.  OC2SXMIT     EQU    2                   COMM2 STUDENT XMIT
+     # 000006BB           265.  OCOM2VOL     EQU    $000006BB           COMM2 VOLUME CONTROL
+     # 000006BD           266.  OSMIKEVL     EQU    $000006BD           STUDENT MIKE COMM LEVEL
+     # 000006CF           267.  IMICPTT      EQU    $000006CF           MIKE PTT
+     # 00000007           268.  ISMICPTT     EQU    7                   STUDENT MIKE PTT
+     # 00000006           269.  IIMICPTT     EQU    6                   INSTRUCTOR MIKE PTT
+     # 000006C1           270.  OSINPHVL     EQU    $000006C1           STUDENT INPH. LEVEL
+     # 000006C3           271.  OIINPHVL     EQU    $000006C3           INSTRUCTOR INPH. LEVEL
+     # 000006C5           272.  OSLISTVL     EQU    $000006C5           STUDENT VOLUME LEVEL
+     # 000006C9           273.  OASCONT1     EQU    $000006C9           AUDIO SELECT CONTROL 1
+     # 00000007           274.  OSSCOM1N     EQU    7                   STUDENT SEL COMM1 (NOT)
+     # 00000006           275.  OSSCOM2N     EQU    6                   STUDENT SEL COMM2 (NOT)
+     # 00000005           276.  OSSINPHN     EQU    5                   STUDENT SEL INPH.(NOT)
+     # 00000004           277.  OSSMKRN      EQU    4                   STUDENT SEL MARKER (NOT)
+     # 00000003           278.  OSSNAV1N     EQU    3                   STUDENT SEL NAV1   (NOT)
+     # 00000002           279.  OSSNAV2N     EQU    2                   STUDENT SEL NAV2   (NOT)
+     # 00000001           280.  OSSADF1N     EQU    1                   STUDENT SEL ADF1   (NOT)
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:51:03     ...Page  6
+D:IO.LTX , D:IO.PRN , D:IO.SYM = D:IO.SA
+   ...
+
+     # 00000000           281.  OSSADF2N     EQU    0                   STUDENT SEL ADF2   (NOT)
+     # 000006CB           282.  OASCONT2     EQU    $000006CB           AUDIO SELECT CONTROL 2
+     # 00000007           283.  OSSDME1N     EQU    7                   STUDENT SEL DME 1  (NOT)
+     # 00000006           284.  OSSDME2N     EQU    6                   STUDENT SEL DME 2  (NOT)
+     # 00000005           285.  OSSSPA1N     EQU    5                   STUDENT SEL SPARE  (NOT)
+     # 00000004           286.  OSSSPA2N     EQU    4                   STUDENT SEL SPARE  (NOT)
+     # 000006C7           287.  OILISTVL     EQU    $000006C7           INSTRUCTOR VOLUME LEVEL
+     # 000006CD           288.  OASCONT3     EQU    $000006CD           AUDIO SELECT CONTROL 3
+     # 00000007           289.  OISCOM1N     EQU    7                   INST. SEL COMM1   (NOT)
+     # 00000006           290.  OISCOM2N     EQU    6                   INST. SEL COMM2   (NOT)
+     # 00000005           291.  OISSTN       EQU    5                   INST. SEL SIDE TONE (NOT)
+     # 00000004           292.  OISMONTN     EQU    4                   INST. SEL MONITOR   (NOT)
+     # 00000003           293.  OISINPHN     EQU    3                   INST. SEL INPH.     (NOT)
+     # 00000002           294.  OISSPA1N     EQU    2                   INST. SEL SPARE     (NOT)
+     # 00000001           295.  OISSPA2N     EQU    1                   INST. SEL SPARE     (NOT)
+     # 00000000           296.  OISSPA3N     EQU    0                   INST. SEL SPARE     (NOT)
+    0 Errors
+
+     # 00000004           292.  OISMONTN     EQU    4                   INST. SEL MONITOR   (NOT)
+     # 00000003           293.  OISINPHN     EQU    3                   INST. SEL INPH.     (NOT)
+     # 00000002           294.  OISSPA1N     EQU    2                   INST. SEL SPARE     (NOT)
+     # 00000001           295.  OISSPA2N     EQU    1                   INST. SEL SPARE     (NOT)
+     # 00000000           296.  OISSPA3N     EQU    0                   INST. SEL SPAR

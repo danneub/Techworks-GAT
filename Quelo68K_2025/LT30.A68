@@ -1,0 +1,35 @@
+lt30	idnt	1,3
+
+
+* 1.3	01/09/85  P. Adams	remove nopage and llen
+* 1.2	05/01/84  R. Curtiss	from  main.a68  1.1
+*
+*	Main program for linker testing
+*
+
+
+*
+* Entry points
+*
+	xdef	main.prog
+*
+* External procedures referenced
+*
+	xref.s	disp.config
+	xref.s	line.out
+	xref.s	cr.lf.out
+*
+* External data referenced
+*
+	xref.s	sign.on
+
+	section	0
+main.prog     proc
+	lea	sign.on,a0
+	jsr	line.out
+	jsr	cr.lf.out
+	jsr	disp.config
+	rts
+
+	end
+

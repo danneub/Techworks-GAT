@@ -1,0 +1,111 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  -74:51:16    ...Page  1
+D:LIST1.LTX , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
+   ...
+
+                            1.           OPT       MEX,CEX,NOPCS
+                            2.  **********************************************************************
+                            3.  *                                                                    *
+                            4.  *        MODENTRY  MACRO TO DEFINE AN ENTRY IN REAL-TIME MODULE LIST *
+                            5.  *                                                                    *
+                            6.  **********************************************************************
+                            7.m MODENTRY MACRO
+                            8.m          DC.B      $\2,$\3,$\4,$\5
+                            9.m          DC.L      \1
+                           10.m          ENDM
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  -74:51:16    ...Page  2
+D:LIST1.LTX , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
+   ...
+
+                           12.  **********************************************************************
+                           13.  *                                                                    *
+                           14.  *        REAL-TIME MODULE JUMP LIST                                  *
+                           15.  *                                                                    *
+                           16.  *        #1 LONG WORD        ADDRESS OF MODULE                       *
+                           17.  *        #2 BYTE             FRAME MASK                              *
+                           18.  *        #3 BYTE             PRIV FLAG (FF=PRIV,00=USER)             *
+                           19.  *        #4 BYTE             TYPE (00=ASSEMBLER)                     *
+                           20.  *        #5 BYTE             SPARE                                   *
+                           21.  *                                                                    *
+                           22.  **********************************************************************
+C'000000                   23.           SECTION   12
+                           24.           XDEF      RTLIST
+                           25.           XREF      ENGINE
+                           26.           XREF      LIFT
+                           27.           XREF      SPEED
+                           28.           XREF      CLIMB
+                           29.           XREF      PITCH
+                           30.           XREF      ROLL
+                           31.           XREF      TURN
+                           32.           XREF      MOTION
+                           33.           XREF      NAVFREQ
+                           34.           XREF      NAV1
+                           35.           XREF      RMNKFG
+                           36.           XREF      COMM
+                           37.           XREF      GATVIS
+                           38.           XREF      VISIO
+                           39.           XREF      RTDEBUG
+                           40.           XREF      RTEND
+                           41.  *
+     C'00000000            42.  RTLIST   EQU       *
+                           43.c          MODENTRY ENGINE,11,00,00,00
+C'000000  11 00 00 00      44.1          DC.B      $11,$00,$00,$00
+C'000004 '00000000         45.1          DC.L      ENGINE
+                           46.c          MODENTRY LIFT,FF,00,00,00
+C'000008  FF 00 00 00      47.1          DC.B      $FF,$00,$00,$00
+C'00000C '00000000         48.1          DC.L      LIFT
+                           49.c          MODENTRY SPEED,FF,00,00,00
+C'000010  FF 00 00 00      50.1          DC.B      $FF,$00,$00,$00
+C'000014 '00000000         51.1          DC.L      SPEED
+                           52.c          MODENTRY CLIMB,FF,00,00,00
+C'000018  FF 00 00 00      53.1          DC.B      $FF,$00,$00,$00
+C'00001C '00000000         54.1          DC.L      CLIMB
+                           55.c          MODENTRY PITCH,FF,00,00,00
+C'000020  FF 00 00 00      56.1          DC.B      $FF,$00,$00,$00
+C'000024 '00000000         57.1          DC.L      PITCH
+                           58.c          MODENTRY ROLL,FF,00,00,00
+C'000028  FF 00 00 00      59.1          DC.B      $FF,$00,$00,$00
+C'00002C '00000000         60.1          DC.L      ROLL
+                           61.c          MODENTRY TURN,FF,00,00,00
+C'000030  FF 00 00 00      62.1          DC.B      $FF,$00,$00,$00
+C'000034 '00000000         63.1          DC.L      TURN
+                           64.c          MODENTRY MOTION,FF,00,00,00
+C'000038  FF 00 00 00      65.1          DC.B      $FF,$00,$00,$00
+C'00003C '00000000         66.1          DC.L      MOTION
+                           67.c          MODENTRY NAVFREQ,FF,00,00,00
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  -74:51:16    ...Page  3
+D:LIST1.LTX , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
+   ...
+
+C'000040  FF 00 00 00      68.1          DC.B      $FF,$00,$00,$00
+C'000044 '00000000         69.1          DC.L      NAVFREQ
+                           70.c          MODENTRY NAV1,FF,00,00,00
+C'000048  FF 00 00 00      71.1          DC.B      $FF,$00,$00,$00
+C'00004C '00000000         72.1          DC.L      NAV1
+                           73.c          MODENTRY RMNKFG,55,00,00,00
+C'000050  55 00 00 00      74.1          DC.B      $55,$00,$00,$00
+C'000054 '00000000         75.1          DC.L      RMNKFG
+                           76.c          MODENTRY COMM,FF,00,00,00
+C'000058  FF 00 00 00      77.1          DC.B      $FF,$00,$00,$00
+C'00005C '00000000         78.1          DC.L      COMM
+                           79.c          MODENTRY GATVIS,FF,00,00,00
+C'000060  FF 00 00 00      80.1          DC.B      $FF,$00,$00,$00
+C'000064 '00000000         81.1          DC.L      GATVIS
+                           82.c          MODENTRY VISIO,FF,FF,00,00
+C'000068  FF FF 00 00      83.1          DC.B      $FF,$FF,$00,$00
+C'00006C '00000000         84.1          DC.L      VISIO
+                           85.c          MODENTRY RTDEBUG,FF,FF,00,00
+C'000070  FF FF 00 00      86.1          DC.B      $FF,$FF,$00,$00
+C'000074 '00000000         87.1          DC.L      RTDEBUG
+                           88.c          MODENTRY RTEND,FF,FF,00,00
+C'000078  FF FF 00 00      89.1          DC.B      $FF,$FF,$00,$00
+C'00007C '00000000         90.1          DC.L      RTEND
+                           91.~  ...M68K D2.0C  3/12/85   ...Run on May 7, 2025  -74:50:18
+C'000080                   92.           END
+    0 Errors
+     MODENTRY RTDEBUG,FF,FF,00,00
+C'000070  FF FF 00 00      86.1          DC.B      $FF,$FF,$00,$00
+C'000074 '00000000         87.1          DC.L      RTDEBUG
+                           88.c          MODENTRY RTEND,FF,FF,00,00
+C'000078  FF FF 00 00      89.1          DC.B      $FF,$FF,$00,$00
+C'00007C '00000000         90.1          DC.L      RTEND
+        

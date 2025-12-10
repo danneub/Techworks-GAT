@@ -1,0 +1,250 @@
+	 OPT	   MEX,CEX,NOPCS
+	 XDEF	   ROLL
+*
+	 INCLUDE   FSYM.SA
+	 INCLUDE   ESYM.SA
+	 INCLUDE   IO.SA
+*
+	 SECTION   12
+FRC1	 DC.W	   6888 	       338*.0398 AT 2-9
+FRC2	 DC.W	   10046	       338*.001814 AT 2-14
+FRC3	 DC.W	   532		       338*.0123 AT 2-7
+FRC4	 DC.W	   12979	       338*4.8 AT 2-3
+FRC5	 DC.W	   774		       338*.0179 AT 2-7
+FRC6	 DC.L	   314572800	       75 AT 2-22
+FRC7	 DC.L	   -314572800	      -75 AT 2-22
+FRC8	 DC.L	   251658240	       60 AT 2-22
+FRC9	 DC.L	   -251658240	      -60 AT 2-22
+FRC10	 DC.W	   24782	       338*.0179 AT 2-12
+FRC11	 DC.W	   145		       338*.0000523 AT 2-13
+FRC12	 DC.W	   2662 	       1/.65 AT 2-12
+FRC13	 DC.W	   164		      .01 AT 2-14
+FRC14	 DC.L	   173056	       84.5 AT 2-11
+FRC15	 DC.L	   -173056	      -84.5 AT 2-11
+FRC16	 DC.L	   409600	       200 AT 2-11
+FRC17	 DC.L	   -409600	      -200 AT 2-11
+FRC18	 DC.W	   3277 	      .05 AT 2-16
+FRC19	 DC.W	   819		      .05 AT 2-14
+***************************************************************************
+*	 THIS MODULE COMPUTES:ROLL ACCELERATION(PA DOT)(DEG/SEC SQ AT 2-6 *
+*			      ROLL RATE(PA)(DEG/SEC)	AT 2-22,2-6	  *
+*			      PHI DOT(BANK ANGLE VELOCITY)(DEG/SEC)AT 2-8 *
+*			      BANK ANGLE(PHI)(DEGREES) AT 2-22,2-6	  *
+*			      MODE 1 BOOLEAN	   1=MODE 1		  *
+*			      MODE 3 BOOLEAN	   1=MODE 3		  *
+*			      AILERON POSITION AT 2-14(POS=RT WING DOWN)  *
+*			      FROZEN BANK ANGLE  AT 2-22		  *
+*			      BANK HOLD INTEGRATER AT 2-22		  *
+*	 MODULE IS SKIPPED IF FLIGHT FREEZE IS ACTIVATED		  *
+*	 NOTE: NORMALIZED AILERON IS DEADBANDED BY PLUS OR MINUS .05	  *
+*						   OCTOBER 26,1983	  *
+***************************************************************************
+ROLL	 EQU *
+	 MOVE.L    #$FE6000,A6	    (I/O BASE IN A6)
+	 TST.B	   FFREEZE	    1=FLIGHT FREEZE
+	 BEQ.S	   UNFREEZR	    BRANCH IF NOT FROZEN
+	 TRAP	   #0		    RETURN TO EXEC
+**************************************************************************
+*									 *
+*			   COMPUTE BANK HOLD				 *
+*									 *
+*   FROZEN BANK ANGLE=BANK ANGLE(N)*K1+(BANK ANGLE(N-1)*K2		 *
+*	   WHERE:K1=1 IF NOT MODE 3 OR ABS(AILERON)>.01,OR MODE1 SEL	 *
+*		 K1=ZERO OTHERWISE					 *
+*		 K2=1 IF MODE 3 AND ABS(AILERON)<.01,AND MODE1 NOT SEL	 *
+*		 K2=ZER0 OTHERWISE					 *
+*   BANK ANGLE INTEGRATER=INTEGRAL(FROZEN BANK ANGLE-BANK ANGLE)*DT	 *
+*									 *
+**************************************************************************
+UNFREEZR MOVE.L    FPHI,D1			 BANK ANGLE(N)AT 2-22
+	 BTST.B    #IMODE3,IINSTMDI(A6) 	 1=MODE 3 SELECTED
+	 SNE.B	   FMODE3			 1=MODE 3 SELECTED
+	 MOVEP.W   IAIL(A6),D7	   (12 BIT A/D)+6.5V=RT WING DOWN,-6.5V=LT DOWN
+	 MOVE.B    #0,IAIL(A6)			 START A/D CONVERSION
+	 BCHG	   #15,D7			 COMPLEMENT SIGN BIT
+	 MULS	   FRC12,D7			 1/.65* DEL AIL AT 2-27
+	 ASR.L	   #8,D7	       2-19
+	 ASR.L	   #5,D7	       2-14
+	 BMI.S	   TEMP
+	 SUB.W	   FRC19,D7	       (AIL-.05) AT 2-14
+	 BPL.S	   TEMP1	       BRANCH IF AILERON IS GREATER THAN .05
+	 CLR.W	   D7		       DEAD BAND AILERON
+	 BRA.S	   TEMP1
+TEMP	 ADD.W	   FRC19,D7	       (AIL+.05) AT 2-14
+	 BMI.S	   TEMP1	       BRANCH IF AILERON IS LESS THAN -.05
+	 CLR.W	   D7		       DEADBAND AILERON
+TEMP1	 MOVE.W    D7,FDELAIL	       DEADBANDED AILERON at 2-14
+	 BPL.S	   NEXT
+	 NEG.W	   D7			 ABSOLUTE VALUE(DEL AIL)AT 2-14
+NEXT	 CMP.W	   FRC13,D7		 (ABSOLUTE VALUE-.01) AT 2-14
+	 BPL.S	   NEXT1		 BRANCH IF ABS DEL AIL>.01
+	 TST.B	   FMODE1		 1=MODE1 SELECTED
+	 BNE.S	   NEXT1		 BRANCH IF MODE1 IS SELECTED
+	 TST.B	   FMODE3		 1=MODE 3 SEL
+	 BNE.S	   NEXT2		 BRANCH IF MODE 3 IS SELECTED
+NEXT1	 MOVE.L    D1,FPHIFRZ		 FROZEN BANK ANGLE AT 2-22
+NEXT2	 SUB.L	   FPHIFRZ,D1		 (BANK-FROZEN BANK) AT 2-22
+	 ASR.L	   #8,D1		 1/256*(BANK-FROZEN BANK) AT 2-22
+	 MOVE.L    FROLLHLD,D2		 ROLL INTEGRATER(N-1) AT 2-22
+	 SUB.L	   D1,D2
+	 TST.B	   FMODE3		 1=MODE 3 SEL
+	 BNE.S	   NEXT3
+	 CLR.L	   D2
+NEXT3	 MOVE.L    D2,FROLLHLD		 ROLL INTEGRATER(N) AT 2-22
+**************************************************************************
+*		   COMPUTE ROLL ACCELERATION				 *
+*									 *
+*									 *
+*	 PA DOT=338(( Q*[+.0398DEL SA-.001814*BETA+.0000523*VP*ROUGH AIR *
+*		    +4*K1*ROLL HOLD +K1*(FROZEN BANK-BANK)]		 *
+*		     +VP*(.000057*RA-.000084*PA)			 *
+*			  (-------LIMIT 1 -------)			 *
+*		     +WOG*(-4.8SIN PHI-.0179*PA) ))			 *
+*			     LIMIT 1=.25				 *
+*	 WHERE:K1=4 IF MODE 3 IS ON,ZERO OTHERWISE			 *
+*			    -200<PA DOT<200				 *
+**************************************************************************
+	 MOVE.W    FDELAIL,D7	    DEL AIL AT 2-14 (POSITIVE=RT BANK COMMAND)
+	 MULS	   FRC1,D7	    338*.0398(DEL SA) AT 2-23
+	 MOVE.W    FRC2,D6	    338*.00181 AT 2-14
+	 MULS	   FBETA,D6	    338*.001814(BETA)AT 2-23
+	 SUB.L	   D6,D7	    338*(.0398*DEL SA-.001814*BETA)AT 2-23
+	 ASR.L	   #4,D7	    2-19
+	 ADD.L	   FROLLHLD,D7	    8*ROLL HOLD AT 2-19
+	 CLR.L	   D0
+	 TST.B	   FMODE3	    1=MODE 3 SEL
+	 BEQ.S	   NEXT4	       BRANCH IF NOT MODE 3
+	 MOVE.L    FPHIFRZ,D0	       FROZEN BANK ANGLE AT 2-22
+	 SUB.L	   FPHI,D0	       FROZEN BANK ANGLE -BANK ANGLE AT 2-22
+	 ASR.L	   #2,D0	       2*(---)AT 2-19
+NEXT4	 ADD.L	   D0,D7	       2-19
+	 MOVE.W    FRUFAIR,D5	    VP* ROUGH AIR AT 2-6
+	 MULS	   FRC11,D5	    338*.0000523*VP*ROUGH AIR AT 2-19
+	 ADD.L	   D5,D7	338*(-.0398DEL SA-.00181BETA+ROUGH AIR)AT 2-19
+	 ASR.L	   #8,D7	    2-11
+	 ASR.L	   #2,D7	    2-9 	 MAX=40.83*512=20905
+	 MULS	   FQ,D7	    Q(-----) AT 2-15
+	 MOVE.W    #116,D4	    338*.000084 AT 2-12
+	 MULS	   FPA,D4	    338*.000084*PA AT 2-18	  MAX=446568
+	 MOVE.W    #79,D5	    338*.000057 AT 2-12
+	 MULS	   FRA,D5	    338*.000057*RA AT 2-21
+	 ASR.L	   #3,D5	    2-18
+	 SUB.L	   D4,D5	    K*RA-K*PA AT 2-18		  MAX=196
+	 ASR.L	   #5,D5	    2-13
+	 MULS	   FVP,D5	    VP*(---) AT 2-19
+	 ASR.L	   #4,D5	    2-15		    MAX=1459*(2-11)
+	 ADD.L	   D5,D7	    Q(--)+VP(--)AT 2-15       MAX=14075*(2-11)
+	 ASR.L	   #4,D7	    2-11
+	 CLR.L	   D4		    ZERO IN D4
+	 TST.B	   FWOG 	    1=ON GROUND
+	 BEQ.S	   NEXT6	    BRANCH IF IN AIR
+	 MOVE.W    FRC4,D5	    4.8*338 AT 2-3
+	 MULS	   FSINPHI,D5	    338*4.8*SIN PHI AT 2-18
+	 MOVE.W    FRC10,D4	    338*.0179 AT 2-12
+	 MULS	   FPA,D4	    338*.0179*PA AT 2-18
+	 ADD.L	   D5,D4	    (KSIN PHI+K*PA) AT 2-18
+	 ASR.L	   #7,D4	    2-11
+	 CMP.L	   FRC14,D4	    (----)-84.5 AT 2-11
+	 BMI.S	   NEXT5	    (KSIN+K*PA)<84.5
+	 MOVE.L    FRC14,D4	    LIMIT IN D4 AT 2-11
+NEXT5	 CMP.L	   FRC15,D4	    (---)+84.5 AT 2-11
+	 BPL.S	   NEXT6	    BRANCH IF (----)>-84.5
+	 MOVE.L    FRC15,D4	    LIMIT IN D4 AT 2-11
+NEXT6	 SUB.L	   D4,D7	    PADOT AT 2-11
+	 CMP.L	   FRC16,D7	    Q*(--)+VP*(---)-200 AT 2-11
+	 BMI.S	   NEXT7	    BRANCH IF <200
+	 MOVE.L    FRC16,D7	    LIMIT IN D6 AT 2-11
+NEXT7	 CMP.L	   FRC17,D7	    Q*(---)+VP+(---)+200 AT 2-11
+	 BPL.S	   NEXT8	    BRANCH IF >-200
+	 MOVE.L    FRC17,D7	    LIMIT IN D6 AT 2-11
+NEXT8	 ASR.L	   #5,D7	    2-6
+	 MOVE.W    FPADOT,D4	     PA DOT(N-1)AT 2-6
+	 MOVE.W    D7,FPADOT	    PADOT(N)AT 2-6
+************************************************************
+*	 PA=INTEGRAL(PA DOT*DT) 			   *
+*	      -60<PA<60 				   *
+*	 PA=0 IF MODE 1 IS ACTIVATED			   *
+*	 NOTE: PA IS STORED AS A LONG WORD AT 2-22 BUT CAN *
+*	       ALSO BE USED AS A WORD AT 2-6		   *
+************************************************************
+	 SUB.W	   D4,D7		   PA(N)-PA(N-1)AT 2-6
+	 ASR.W	   #1,D7		   1/2(PADOT(N)-PADOT(N-1) AT 2-6
+	 ADD.W	   FPADOT,D7		   3/2PADOT(N)-1/2PADOT(N-1)AT 2-6
+	 MULS	   FRC18,D7		  .05(----) AT 2-22
+	 ADD.L	   FPA,D7		   PA(N) AT 2-22
+	 CMP.L	   FRC8,D7		   PA -60  AT 2-22
+	 BMI.S	   NEXT9		   BRANCH IF PA <60
+	 MOVE.L    FRC8,D7		   60 AT 2-22
+NEXT9	 CMP.L	   FRC9,D7		   PA +60   AT 2-22
+	 BPL.S	   NEXT10		   BRANCH IF PA >-60
+	 MOVE.L    FRC9,D7		  -60 AT 2-22
+NEXT10	 CLR.L	   D0			   ZERO IN D0
+	 BTST.B    #IMODE1,IINSTMDI(A6)    1=MODE 1 SELECTED
+	 SNE.B	   FMODE1		   STORE MODE 1 BOOLEAN
+	 BEQ.S	   NEXT11		   BRANCH IF MODE 1 IS NOT SELECTED
+	 MOVE.L    D0,D7		   ZERO IN D4
+NEXT11	 MOVE.L    D7,FPA		 LIMITED PA AT 2-22(LONG WORD)2-6(WORD)
+**********************************************************************
+*	 PHI DOT=(PA+PSI DOT*SIN THETA)*K			     *
+*		       K=ZERO IF MODE 1 IS ACTIVATED		     *
+*		       K=1 OTHER WISE				     *
+*		   -60<PHI DOT<60				     *
+**********************************************************************
+	 MOVE.W    FPSIDOT,D6		   SI DOT AT 2-8
+	 MULS	   FSINTHET,D6		   SI*SIN THETA AT 2-23
+	 ASR.L	   #1,D6		   2-22
+	 ADD.L	   D7,D6		   PHI DOT AT 2-22
+	 CMP.L	   FRC8,D6		   PHI DOT -60 AT 2-22
+	 BMI.S	   NEXT12		   BRANCH IF PHI DOT<60
+	 MOVE.L    FRC8,D6		   LIMIT IN D6 AT 2-22
+NEXT12	 CMP.L	   FRC9,D6		   PHI DOT+60 AT 2-22
+	 BPL.S	   NEXT13		   BRANCH IF PHI DOT>-60
+	 MOVE.L    FRC9,D6		   LIMIT IN D6 AT 2-22
+NEXT13	 ASR.L	   #8,D6		   2-14
+	 ASR.L	   #6,D6		   2-8
+	 TST.B	   FMODE1		   1=MODE 1 IS ACTIVATED
+	 BEQ.S	   NEXT14		   BRANCH IF NOT MODE 1
+	 CLR.L	   D6			   ZERO IN D6
+NEXT14	 MOVE.W    FPHIDOT,D7		   PHI DOT(N-1)AT 2-8
+	 MOVE.W    D6,FPHIDOT		   PHIDOT(N)AT 2-8
+************************************************************
+*	 PHI=INTEGRAL(PHI DOT*DT)*K			   *
+*	       K=0 IF MODE 1 IS ACTIVATED		   *
+*	       K=1 OTHERWISE				   *
+*	      -75<PHI<75				   *
+*	NOTE:PHI IS STORED AS A LONG WORD AT 2-22 BUT IT   *
+*	     CAN ALSO BE USED AS A WORD AT 2-6		   *
+************************************************************
+	 SUB.W	   D7,D6	    PHI DOT(N)-PHI DOT(N-1) AT 2-8
+	 ASR.W	   #1,D6	    1/2(---) AT 2-8
+	 ADD.W	   FPHIDOT,D6	    3/2PHI DOT(N)-1/2PHI DOT(N-1)AT 2-8
+	 MULS	   FRC18,D6	   .05(---)AT 2-24
+	 ASR.L	   #2,D6	    2-22
+	 ADD.L	   FPHI,D6	    PHI AT 2-22
+	 CMP.L	   FRC6,D6	    PHI-75 AT 2-22
+	 BMI.S	   NEXT15	    BRANCH IF PHI <75
+	 MOVE.L    FRC6,D6	    LIMIT IN D7 AT 2-22
+NEXT15	 CMP.L	   FRC7,D6	    PHI+75 AT 2-22
+	 BPL.S	   NEXT16	    BRANCH IF PHI >-75
+	 MOVE.L    FRC7,D6	   -75 IN D6  AT 2-22
+NEXT16	 TST.B	   FMODE1	    1=MODE 1
+	 BEQ.S	   NEXT17	    BRANCH IF NOT MODE 1
+	 CLR.L	   D6		    ZERO IN D6
+NEXT17	 MOVE.L    D6,FPHI	    PHI LIMITED AT 2-22(LONG) 2-6(WORD)
+************************************************************
+*							   *
+*	    STORE INDICATER SINE/COSINE BANK ANGLE	   *
+*							   *
+************************************************************
+	 MOVE.W    FISINPHI,D0		 SINE(INDICATER BANK ANGLE)AT 2-15
+	 BCHG	   #15,D0		 COMPLEMENT SIGN BIT
+	 MOVE.W    FICOSPHI,D1		 COSINE(INDICATER BANK ANGLE)AT 2-15
+	 BCHG	   #15,D1		 COMPLEMENT SIGN BIT
+	 BTST.B    #IATGFAIL,IFAIL1(A6)  1=GYRO FAILED
+	 BNE.S	   NEXT18		 BRANCH IF FAILED
+	 MOVEP.W   D0,OATTROLS(A6)	 STORE SIN INDICATER BANK ANGLE
+	 MOVEP.W   D1,OATTROLC(A6)	 STORE COS INDICATER BANK ANGLE
+NEXT18	 NOP
+	 TRAP	   #0			 RETURN TO EXEC
+	 END
+

@@ -1,0 +1,57 @@
+Quelo   ...QLINK D2.0L  3/11/85   ...Run on Dec 4, 2025  13:53:30    ...Page  1
+D:QLOAD1.HEX , D:QLOAD1.LST , D:QLOAD1.SYM = D:QLOAD1.CF
+   ...
+
+                            1.  
+                            2.  * =/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                            3.  * =/*    Build whole Primary Trainer load                           *
+                            4.  * =/*  Link modules and build S-Record file ready for 'DOWN-LOADING *
+                            5.  * =/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                            6.  * =/*
+                            7.  * =LINK.LO        ,LOADl.LO,LOAD1.LK;IXMHUZ=128
+                            8.           LINK NAME1.RO
+                            9.           LINK LOOKUP0.RO
+                           10.           LINK LOOKUP1.RO
+                           11.           LINK TDATA1.RO
+                           12.           LINK IVINIT1.RO
+                           13.           LINK LIST1.RO
+                           14.           LINK MATH.RO
+                           15.           LINK ENGINE.RO
+                           16.           LINK LIFT.RO
+                           17.           LINK SPEED.RO
+                           18.           LINK CLIMB.RO
+                           19.           LINK PITCH.RO
+                           20.           LINK ROLL.RO
+                           21.           LINK TURN.RO
+                           22.           LINK MOTION.RO
+                           23.           LINK NMATH.RO
+                           24.           LINK NAVRCV.RO
+                           25.           LINK NAV1.RO
+                           26.           LINK RMNKFG.RO
+                           27.           LINK COMM.RO
+                           28.           LINK NAVFREQ.RO
+                           29.           LINK GATVIS.RO
+                           30.           LINK VISIO.RO
+                           31.           LINK LCPU1.RO
+                           32.           LINK EXEC.RO
+                           33.           LINK DEBUG.RO
+00000000                   34.  DATA.SEG:
+00000800                   35.            org $0800
+00000800                   36.            SECTION  1
+000008F0                   37.  STAK.SEG:
+00000900                   38.            org $0900
+00000900                   39.            SECTION  2
+00003900                   40.  PROG.SEG
+00F04000                   41.           org $F04000
+00F04000                   42.           SECTION  12,0
+00F0B014                   43.  POOL.SEG
+0000A000                   44.           org $A000
+0000A000                   45.           SECTION  3
+0000A400                   46.           end
+    0 Errors
+
+000008F0                   37.  STAK.SEG:
+00000900                   38.            org $0900
+00000900                   39.            SECTION  2
+00003900                   40.  PROG.SEG
+00F04000                   41.          

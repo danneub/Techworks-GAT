@@ -1,0 +1,1941 @@
+	 OPT	   MEX,CEX,NOPCS
+**********************************************************************
+*								     *
+*	 DEBUG	   REAL-TIME & BACK-GROUND DEBUG ROUTINES	     *
+*								     *
+*		   VERSION:  2.0  12/07/83   D.R. TRIPP 	     *
+*								     *
+**********************************************************************
+	 PAGE
+**********************************************************************
+*								     *
+*	 EXTERANAL LINKAGE INFORMATION				     *
+*								     *
+**********************************************************************
+	 XDEF	   RXSTAT
+	 XDEF	   RXREAD
+	 XDEF	   RXRESET
+	 XDEF	   RXEND
+	 XDEF	   RXDIS
+	 XDEF	   RXENA
+	 XDEF	   TXSTAT
+	 XDEF	   TXWRITE
+	 XDEF	   RXINIT
+*
+	 XDEF	   PSCMD
+	 XDEF	   MMCMD
+	 XDEF	   CLCMD
+	 XDEF	   RECMD
+	 XDEF	   TECMD
+	 XDEF	   TDCMD
+	 XDEF	   TRCMD
+	 XDEF	   DCCMD
+	 XDEF	   MECMD
+	 XDEF	   MDCMD
+	 XDEF	   MICMD
+*
+	 XDEF	   PSMMPARM
+	 XDEF	   MEMDPARM
+	 XDEF	   SLOOKUP
+	 XDEF	   NLOOKUP
+	 XDEF	   GETHX
+	 XDEF	   GETDC
+*
+	 XDEF	   DISPLAY
+	 XDEF	   DISP4Q
+	 XDEF	   SCROLL
+	 XDEF	   LOCATE
+	 XDEF	   CLS
+	 XDEF	   CLR2EOL
+	 XDEF	   BLANKS
+	 XDEF	   DSPLN
+	 XDEF	   DSPB
+*
+	 XDEF	   INIT4
+	 XDEF	   INT4
+*
+	 XDEF	   RTDEBUG
+	 XDEF	   BGDEBUG
+	 XDEF	   BGBUGEX
+*
+	 XREF	   DPCOUNT0
+	 XREF	   DPCOUNT
+	 XREF	   DPTABLE0
+	 XREF	   DPTABLE
+*
+	 XREF	   RTNUMBER
+	 XREF	   RTLIST
+	 XREF	   RTNAME
+*
+	 XREF	   SBMODRUN
+	 XREF	   SMODTOUT
+	 PAGE
+**********************************************************************
+*								     *
+*	 DEBUG SYMBOL BLOCK (DSB) SYMBOLS			     *
+*								     *
+**********************************************************************
+~i	 INCLUDE   DSBSYM.SA
+DSBNAME  EQU	    0	    NAME OF SYMBOL
+DSBADDR  EQU	    8	    ADDRESS OF SYMBOL
+DSBLEN	 EQU	   12	    LENGTH OF SYMBOL
+DSBTYPE  EQU	   13	    TYPE OF SYMBOL
+DSBUPD	 EQU	   14	    UPDATE FLAG
+DSBSCALE EQU	   15	    SCALE CODE
+DSBDATA1 EQU	   16	    DATA
+DSBDATA2 EQU	   20	    DATA N-1
+DSBARRAY EQU	   24	    ARRAY CODE (0=NO ARRAY DISPLAY,
+**********************************************************************
+*								     *
+*	 DEBUG DATA SEGMENT SYMBOLS				     *
+*								     *
+**********************************************************************
+~i	 INCLUDE   BUGSYM.SA
+MMFLAG	 EQU	    0	    MEMORY MODIFY FLAG
+MMTYPE	 EQU	    1	    MEMORY MODIFY TYPE CODE
+MMNEGFLG EQU	    2	    MEMORY MODIFY NEGATE FLAG
+MMLEN	 EQU	    3	    MEMORY MODIFY LENGTH CODE
+TBUFF	 EQU	    4	    TEMP BUFFER
+SBUFF	 EQU	   20	    SYMBOL BUFFER
+MMADDR	 EQU	   28	    ADDRESS OF CURENT MEMORY MODIFY
+NOTFIRST EQU	   32	    FIRST PASS FLAG
+DCNEG	 EQU	   33	    DC COMMAND NAGATE FLAG
+MMSCALE  EQU	   34	    MEMORY MODIFY SCALE CODE
+MMARRAY  EQU	   35	    MEMORY MODIFY ARRAY CODE
+	 PAGE
+**********************************************************************
+*								     *
+*	 DEBUG DATA-POOL SYMBOLS				     *
+*								     *
+**********************************************************************
+~i	 INCLUDE   DSYM.SA
+DSEG	  EQU	$00000F00 L 001 L H   DEBUG DATA SEGMENT ADDRESS
+DBUFF	  EQU	$00000F04 B 080 L H   DEBUG INPUT BUFFER
+DBUFFPTR  EQU	$00000F54 L 001 L H   DEBUG INPUT BUFFER POINTER
+DBUFFCNT  EQU	$00000F58 B 001 L H   DEBUG INPUT BUFFER COUNT
+DBUFFLNE  EQU	$00000F59 B 001 L H   DEBUG INPUT BUFFER LINE COMPLETE FLAG
+DBUFFCHG  EQU	$00000F5A B 001 L H   DEBUG INPUT BUFFER CHANGE FLAG
+D400I	  EQU	$00000F5B B 001 L H   DEBUG MVME400 INSTALLED FLAG
+DLIST	  EQU	$00000F5C L 128 L H   DEBUG DISPLAY LIST
+DCOUNT	  EQU	$0000115C W 001 L H   DEBUG DISPLAY LIST COUNT
+DSPARE2   EQU	$0000115E W 001 L H   DEBUG SPARE WORD
+TFRAME	  EQU	$00001160 L 001 L D   FRAME TIME ACTUAL
+TFRAMEA   EQU	$00001164 L 001 L D   FRAME TIME AVERAGE
+TFRAMEW   EQU	$00001168 L 001 L D   FRAME TIME WORST
+TMODULE   EQU	$0000116C W 016 L D   MODULE TIMES ACTUAL
+TMODULEA  EQU	$0000118C W 016 L D   MODULE TIMES AVERAGE
+TMODULEW  EQU	$000011AC W 016 L D   MODULE TIMES WORST
+DSPARE	  EQU	$000011CC L 032 L H   DEBUG SPARE LONG WORDS
+	 PAGE
+**********************************************************************
+*								     *
+*	 DEBUG SYSTEM CONSTANTS 				     *
+*								     *
+**********************************************************************
+BS	 EQU	   $08		       BACK SPACE
+CR	 EQU	   $0D		       CARIAGE RETURN
+LF	 EQU	   $0A		       LINE FEED
+SPACE	 EQU	   $20		       SPACE
+COMMA	 EQU	   $2C		       COMMA
+BELL	 EQU	   $07		       BELL TONE
+*
+PNT8HX	 EQU	   $F03A72	       VEMbug BINARY LONG TO HEX
+PNT4HX	 EQU	   $F03A80	       VEMbug BINARY WORD TO HEX
+PNT2HX	 EQU	   $F03A88	       VEMbug BINARY BYTE TO HEX
+HEX2DEC  EQU	   $F032B4	       VEMbug BINARY LONG TO DECIMAL
+	 PAGE
+	 SECTION   12
+**********************************************************************
+*								     *
+*	 INIT4	 INTERRUPT #4  INITALIZER			     *
+*								     *
+**********************************************************************
+INIT4	 EQU	   *
+	 LEA	   DBUFF,A0	       LOAD ADDRESS OF INPUT BUFFER
+	 MOVE.L    A0,DBUFFPTR	       STORE ADDRESS IN BUFFER POINTER
+	 MOVE.B    #0,DBUFFCNT	       SET BUFFER COUNT TO ZERO
+	 JSR	   RXINIT	       INIT RX FOR INTERRUPTS
+	 RTS
+**********************************************************************
+*								     *
+*	 INT4	 INTERRUPT HANDLER (KEYBOARD)			     *
+*								     *
+**********************************************************************
+INT4	 EQU	   *
+	 MOVE.W    #$2700,SR	       MASK INTERRUPT
+	 MOVEM.L   D0-D2/A0,-(A7)      SAVE REGISTERS
+	 JSR	   RXSTAT	       GET STATUS FROM RX
+	 TST.B	   D2		       TEST STATUS BITS
+	 BEQ.S	   BAD4 	       BRANCH IF ZERO
+	 MOVE.L    DBUFFPTR,A0	       LOAD BUFFER POINTER
+	 JSR	   RXREAD	       READ DATA FROM RX
+	 MOVE.B    D0,(A0)+	       STORE DATA IN BUFFER
+	 ADDQ.B    #1,DBUFFCNT	       INCREMENT BUFFER COUNT
+	 MOVE.L    A0,DBUFFPTR	       SAVE BUFFER POINTER
+	 ST.B	   DBUFFCHG	       SET BUFFER CHANGE FLAG
+	 CMP.B	   #BS,D0	       TEST FOR BACK SPACE
+	 BNE.S	   TESTCR	       BRANCH IF NOT A BACK SPACE
+	 SUBQ.L    #2,DBUFFPTR	       ADJUST BUFFER POINTER
+	 SUBQ.B    #2,DBUFFCNT	       ADJUST BUFFER COUNT
+	 TST.B	   DBUFFCNT	       TEST BUFFER COUNT
+	 BGE.S	   QUIT4	       BRANCH IF GREATER TO END OF HANDLER
+	 ADDQ.L    #1,DBUFFPTR	       RESET BUFFER POINTER
+	 ADDQ.B    #1,DBUFFCNT	       RESET BUFFER COUNT
+	 SF.B	   DBUFFCHG	       CLEAR BUFFER CHANGE FLAG
+	 BRA.S	   QUIT4	       BRANCH TO END OF HANDLER
+TESTCR	 CMP.B	   #CR,D0	       TEST FOR CARIAGE RETURN
+	 BNE.S	   QUIT4	       BRANCH TO END OF HANDLER
+	 SUBQ.L    #1,DBUFFPTR	       ADJUST BUFFER POINTER
+	 SUBQ.B    #1,DBUFFCNT	       ADJUST BUFFER COUNTER
+	 ST.B	   DBUFFLNE	       SET BUFFER LINE COMPLETE FLAG
+	 SF.B	   DBUFFCHG	       SET CHANGE FLAG FALSE
+	 JSR	   RXDIS	       DISABLE RX
+QUIT4	 MOVEM.L   (A7)+,D0-D2/A0      RESTORE REGISTERS
+	 JSR	   RXEND	       END OF INTERRUPT COMMAND
+	 RTE
+BAD4	 JSR	   RXRESET	       RESET ERROR CONDITION
+	 BRA.S	   QUIT4	       BRANCH TO END OF HANDLER
+	 PAGE
+**********************************************************************
+*								     *
+*	 RTDEBUG   REAL-TIME DEBUG MODULE			     *
+*								     *
+**********************************************************************
+RTDEBUG  EQU	   *
+	 TST.B	   DCOUNT	       TEST DEBUG DSB COUNT
+	 BEQ.S	   DONE 	       QUIT IF ZERO
+	 MOVEQ.L   #0,D4	       CLEAR D4
+	 MOVE.B    DCOUNT,D4	       LOAD DEBUG DSB COUNT
+	 SUBQ.B    #1,D4	       ADJUST LOOP COUNT
+	 LEA	   DLIST,A0	       LOAD ADDRESS OF DSB LIST
+DLOOP	 EQU	   *
+	 MOVE.L    DSBADDR(A0),A1      LOAD ADDRESS DISPLAY ITEM
+	 CMP.B	   #1,DSBLEN(A0)       TEST FOR BYTE LENGTH
+	 BEQ.S	   LOADB	       LOAD A BYTE IF DSBLEN=1
+	 CMP.B	   #2,DSBLEN(A0)       TEST FOR WORD LENGTH
+	 BEQ.S	   LOADW	       LOAD A WORD IF DSBLEN=2
+	 CMP.B	   #4,DSBLEN(A0)       TEST FOR LONG WORD LENGTH
+	 BEQ.S	   LOADLW	       LOAD A LONG WORD IF DSBLEN=4
+NEXTDSB  ADD.L	   #32,A0	       POINT TO NEXT DSB
+	 DBRA	   D4,DLOOP	       LOOP 1..N TIMES
+DONE	 TRAP	   #0		       RETURN TO RTEXEC
+*
+LOADB	 MOVE.B    (A1),DSBDATA1(A0)   STORE DATA
+	 BRA.S	   NEXTDSB	       DO NEXT DSB
+LOADW	 MOVE.W    (A1),DSBDATA1(A0)   STORE DATA
+	 BRA.S	   NEXTDSB	       DO NEXT DSB
+LOADLW	 MOVE.L    (A1),DSBDATA1(A0)   STORE DATA
+	 BRA.S	   NEXTDSB	       DO NEXT DSB
+	 PAGE
+**********************************************************************
+*								     *
+*	 BGBUGEX   EXCEPTION HANDLER				     *
+*								     *
+**********************************************************************
+BGBUGEX  EQU	   *
+	 SF.B	   MMFLAG(A0)	       CLEAR MMFLAG
+	 CMP.W	   #$0008,D0	       TEST FOR BUS ERROR CODE
+	 BEQ.S	   BUGBUS	       BRANCH IF BUS ERROR
+	 CMP.W	   #$000C,D0	       TEST FOR ADDRESS ERROR CODE
+	 BEQ.S	   BUGADR	       BRANCH IF ADDRESS ERROR
+	 LEA	   EMSG1,A3	       LOAD ADDRESS OF ERROR MESSAGE 1
+	 JSR	   EDISP	       DO ERROR DISPLAY
+	 TRAP	   #2		       PUT TASK IN WAIT
+BUGBUS	 LEA	   EMSG2,A3	       LOAD ADDRESS OF ERROR MESSAGE 2
+	 JSR	   EDISP	       DO ERROR DISPLAY
+	 JMP	   ENDCMD	       RESTART DEBUG
+BUGADR	 LEA	   EMSG3,A3	       LOAD ADDRESS OF ERROR MESSAGE 3
+	 JSR	   EDISP	       DO ERROR DISPLAY
+	 JMP	   ENDCMD	       RESTART DEBUG
+EDISP	 JSR	   SCROLL	       SCROLL THE SCREEN
+	 MOVE.L    #24,D0	       ROW 25
+	 MOVEQ.L   #0,D1	       COL 01
+	 JSR	   LOCATE	       LOCATE 25,0
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF TBUFF
+	 MOVE.L    A5,A6	       COPY BUFFER POINTERS
+EDISP1	 CMP.B	   #0,(A3)	       TEST FOR END CHARACTER
+	 BEQ.S	   EDISPL	       BRANCH IF END CHARACTER FOUND
+	 MOVE.B    (A3)+,(A6)+	       COPY BYTE
+	 BRA.S	   EDISP1	       LOOP UNTIL END CHARACTER
+EDISPL	 JSR	   DSPLN	       DISPLAY LINE
+	 RTS			       RETURN
+	 DS.L	   0
+EMSG1	 DC.B	   'DEBUG ERROR',0
+EMSG2	 DC.B	   'BUS ERROR',0
+EMSG3	 DC.B	   'ADDRESS ERROR',0
+	 PAGE
+**********************************************************************
+*								     *
+*	 BGDEBUG   BACK-GROUND DEBUG MODULE			     *
+*								     *
+*		   FUNCTION #1: OUTPUT CONTINOUS DISPLAY WINDOW      *
+*			    #2: PROCESS KEYBOARD INPUT COMMANDS      *
+*								     *
+**********************************************************************
+BGDEBUG  EQU	   *
+	 MOVE.L    A0,DSEG	       SAVE ADDRESS OF DATA SEGMENT
+	 TST.B	   NOTFIRST(A0)        TEST FIRST PASS FLAG
+	 BNE.S	   BUGECHO	       BRANCH IF TRUE
+	 TST.B	   D400I	       TEST FOR MVME400 INSTALLED
+	 BNE.S	   VME400I	       BRANCH IF VME400 INSTALLED
+	 TRAP	   #2		       PROGRAM HOLD
+VME400I  ST.B	   NOTFIRST(A0)        SET FLAG TRUE
+	 JSR	   CLS		       CLEAR DEBUG SCREEN
+BUGECHO  TRAP	   #1		       HOLD TASK
+	 TST.B	   DBUFFCHG	       TEST BUFFER CHANGE FLAG
+	 BEQ.S	   BUGON	       BRANCH IF FALSE
+	 SF.B	   DBUFFCHG	       SET BUFFER CHANGE FLAG TO FALSE
+	 MOVE.B    #24,D0	       ROW 25
+	 TST.B	   MMFLAG(A0)	       TEST MEMORY MODIFY FLAG
+	 BNE.S	   X1		       BRANCH IF TRUE
+	 MOVEQ.L   #0,D1	       COL 1
+	 BRA.S	   X2		       BRANCH TO LOCATE CALL
+X1	 MOVE.B    #24,D1	       COL 25
+X2	 JSR	   LOCATE	       LOCATE CURSOR 25,1 OR 25,25
+	 LEA	   DBUFF,A5	       LOAD ADDRESS OF BUFFER
+	 MOVE.L    DBUFFPTR,A6	       LOAD ADDRESS OF BUFFER END + 1
+	 MOVE.B    #' ',(A6)+          LOAD AN EXTRA BYTE
+	 MOVE.B    #BS,(A6)+	       LOAD A BACK SPACE
+	 JSR	   DSPLN	       OUTPUT BUFFER
+BUGON	 TST.B	   DCOUNT	       TEST DSB COUNT
+	 BEQ	   BUGINP	       BRANCH IF ZERO
+	 MOVEQ.L   #0,D7	       CLEAR D7 (LOOP COUNTER)
+	 MOVEQ.L   #0,D6	       CLEAR D6 (LINE COUNTER)
+	 MOVE.B    DCOUNT,D7	       LOAD DSB COUNT
+	 SUBQ.L    #1,D7	       ADJUST COUNT
+	 LEA	   DLIST,A1	       LOAD ADDRESS OF FIRST DSB
+BUGLP	 TST.B	   DSBUPD(A1)	       TEST DSB UPDATE FLAG
+	 BEQ.S	   BUGLEN	       BRANCH IF FALSE
+	 MOVE.L    D6,D0	       LOAD LINE COUNTER -1 (ROW)
+	 MOVEQ.L   #0,D1	       LOAD 0 (COL)
+	 JSR	   LOCATE	       LOCATE AT LINE COUNTER,1
+	 LEA	   TBUFF(A0),A5        LOAD BUFFER ADDRESS
+	 MOVE.L    A5,A6	       COPY BUFFER ADDRESS
+	 MOVE.L    DSBNAME(A1),(A6)+   COPY NAME PART 1
+	 MOVE.L    DSBNAME+4(A1),(A6)+ COPY NAME PART 2
+	 CMP.B	   #$00,DSBARRAY(A1)   TEST FOR ARRAY DISPLAY
+	 BEQ.S	   NOTARY	       BRANCH IF ZERO (NOT AN ARRAY)
+	 MOVE.B    #'+',(A6)+          PUT + ON BUFFER
+	 MOVEQ.L   #0,D1	       CLEAR D1
+	 MOVE.B    DSBARRAY(A1),D0     LOAD ARRAY INDEX
+	 JSR	   PNT2HX	       CONVERT TO HEX
+	 MOVE.B    #' ',(A6)+          LOAD SPACE
+	 MOVE.B    #' ',(A6)+          LOAD SPACE
+	 MOVE.B    #' ',(A6)+          LOAD SPACE
+	 JSR	   DSPLN	       OUTPUT BUFFER
+	 BRA.S	   ARYDONE	       BRANCH ARRAY OUTPUT DONE
+NOTARY	 JSR	   DSPLN	       OUTPUT BUFFER
+	 MOVEQ.L   #6,D1	       LOAD 6
+	 JSR	   BLANKS	       OUTPUT 6 BLANKS
+ARYDONE  LEA	   TBUFF(A0),A5        LOAD BUFFER ADDRESS
+	 MOVE.L    A5,A6	       COPY BUFFER ADDRESS
+	 MOVE.L    DSBADDR(A1),D0      LOAD SYMBOL ADDRESS
+	 JSR	   PNT8HX	       CONVERT TO HEX CHARACTERS
+	 JSR	   DSPLN	       OUTPUT BUFFER
+	 MOVEQ.L   #4,D1	       LOAD 4
+	 JSR	   BLANKS	       OUTPUT 4 BLANKS
+BUGLEN	 MOVEQ.L   #0,D0	       CLEAR D0 FOR DATA
+	 CMP.B	   #1,DSBLEN(A1)       TEST FOR BYTE LENGTH
+	 BEQ.S	   CMPB 	       COMPARE BYTE
+	 CMP.B	   #2,DSBLEN(A1)       TEST FOR WORD LENGTH
+	 BEQ.S	   CMPW 	       COMPARE WORD
+	 CMP.B	   #4,DSBLEN(A1)       TEST FOR LONG WORD
+	 BEQ.S	   CMPLW	       COMPARE LONG WORD
+	 BRA.S	   NEXTLP	       LENGTH CODE ERROR (SKIP IT)
+CMPB	 MOVE.B    DSBDATA1(A1),D0     LOAD BYTE
+	 CMP.B	   DSBDATA2(A1),D0     COMPARE WITH N-1
+	 BRA.S	   BUG1 	       CONTINUE
+CMPW	 MOVE.W    DSBDATA1(A1),D0     LOAD WORD
+	 CMP.W	   DSBDATA2(A1),D0     COMPARE WITH N-1
+	 BRA.S	   BUG1 	       CONTINUE
+CMPLW	 MOVE.L    DSBDATA1(A1),D0     LOAD LONG WORD
+	 CMP.L	   DSBDATA2(A1),D0     COMPARE WITH N-1
+BUG1	 BNE.S	   BUGSTORE	       BRANCH IF CHANGE
+	 TST.B	   DSBUPD(A1)	       TEST UPDATE FLAG
+	 BEQ.S	   NEXTLP	       BRANCH IF FALSE
+BUGSTORE SF.B	   DSBUPD(A1)	       SET UPDATE FLAG TO FALSE
+	 CMP.B	   #1,DSBLEN(A1)       TEST FOR BYTE LENGTH
+	 BEQ.S	   STOREB	       STORE A BYTE
+	 CMP.B	   #2,DSBLEN(A1)       TEST FOR WORD LENGTH
+	 BEQ.S	   STOREW	       STORE A WORD
+	 CMP.B	   #4,DSBLEN(A1)       TEST FOR LONG WORD LENGTH
+	 BEQ.S	   STORELW	       STORE A LONG WORD
+	 BRA.S	   NEXTLP	       INVALID LENGTH CODE
+STOREB	 MOVE.B    D0,DSBDATA2(A1)     STORE DATA IN N-1
+	 BRA.S	   BUGDISP	       GO DISPLAY DATA
+STOREW	 MOVE.W    D0,DSBDATA2(A1)     STORE DATA IN N-1
+	 BRA.S	   BUGDISP	       GO DISPLAY DATA
+STORELW  MOVE.L    D0,DSBDATA2(A1)     STORE DATA IN N-1
+BUGDISP  MOVE.L    D0,D4	       SAVE DATA
+	 MOVE.L    D6,D0	       LOAD LINE COUNTER-1 (ROW-1)
+	 MOVE.L    #27,D1	       LOAD COL 28 (COL-1)
+	 JSR	   LOCATE	       LOCATE AT LINE COUNTER,28
+	 MOVE.L    D4,D0	       RESTORE DATA
+	 MOVE.B    DSBTYPE(A1),D3      LOAD TYPE CODE
+	 MOVE.B    DSBSCALE(A1),D5     LOAD SCALE CODE
+	 MOVE.B    DSBLEN(A1),D2       LOAD LENGTH CODE
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF BUFFER
+	 MOVE.L    A5,A6	       COPY BUFFER POINTER
+	 JSR	   DISPLAY	       LOAD BUFFER
+	 JSR	   DSPLN	       OUTPUT BUFFER
+NEXTLP	 ADD.L	   #32,A1	       POINT TO NEXT DSB
+	 ADDQ.L    #1,D6	       INCREMENT LINE COUNTER
+	 DBRA	   D7,BUGLP	       LOOP (DCOUNT) TIMES
+BUGINP	 TST.B	   DBUFFLNE	       TEST INPUT LINE COMPLETE FLAG
+	 BEQ	   BUGECHO	       BRANCH IF INPUT LINE NOT COMPLETE
+	 LEA	   DBUFF,A5	       LOAD ADDRESS OF BUFFER
+	 TST.B	   MMFLAG(A0)	       TEST MEMORY MODIFY FLAG
+	 BEQ.S	   BUGCM	       BRANCH IF FALSE
+	 CMP.B	   #'.',(A5)           TEST PERIOD (EXIT COMMAND)
+	 BEQ.S	   MMEXIT	       BRANCH EQUAL EXIT COMMAND
+	 CMP.B	   #'^',(A5)           TEST DECREMENT COMMAND
+	 BEQ.S	   MMDEC	       BRANCH EQUAL DECREMENT COMMAND
+	 CMP.B	   #CR,(A5)	       TEST FOR CR (INCREMENT COMMAND)
+	 BEQ.S	   MMINC	       BRANCH EQUAL INCREMENT COMMAND
+	 JSR	   MMINPUT	       SCAN DATA INPUT
+	 TST.B	   D0		       TEST RETURN CODE
+	 BEQ.S	   MMINC	       INCREMENT & RETURN IF OK
+	 JSR	   MMDISP	       REDISPLAY IF ERROR
+	 BRA	   ENDCMDMM	       RETURN TO REST OF DEBUG
+MMINC	 MOVEQ.L   #0,D0	       LOAD ZERO
+	 MOVE.B    MMLEN(A0),D0        LOAD MEMORY MODIFY LENGTH CODE
+	 ADD.L	   MMADDR(A0),D0       GET NEW ADDRESS
+	 MOVE.L    D0,MMADDR(A0)       STORE NEW ADDRESS
+	 JSR	   MMDISP	       DISPLAY DATA
+	 BRA	   ENDCMDMM	       BRANCH END OF MM COMMAND
+MMDEC	 MOVEQ.L   #0,D0	       LOAD ZERO
+	 MOVEQ.L   #0,D1	       LOAD ZERO
+	 MOVE.L    MMADDR(A0),D0       LOAD MEMORY MODIFY ADDRESS
+	 MOVE.B    MMLEN(A0),D1        LOAD MEMORY MODIFY LENGTH CODE
+	 SUB.L	   D1,D0	       GET NEW ADDRESS
+	 MOVE.L    D0,MMADDR(A0)       STORE NEW ADDRESS
+	 JSR	   MMDISP	       DISPLAY DATA
+	 BRA.S	   ENDCMDMM	       BRANCH END OF MM COMMAND
+MMEXIT	 SF.B	   MMFLAG(A0)	       SET MM FLAG TO FLASE
+	 JSR	   SCROLL	       SCROLL SCREEN
+	 BRA.S	   ENDCMD	       BRANCH END OF COMMAND
+BUGCM	 CMP.W	   #'PS',(A5)          TEST FOR PS COMMAND
+	 BEQ	   PSCMD	       BRANCH IF PS COMMAND
+	 CMP.W	   #'MM',(A5)          TEST FOR MM COMMAND
+	 BEQ	   MMCMD	       BRANCH IF MM COMMAND
+	 CMP.B	   #'S',(A5)           TEST FOR S COMMAND
+	 BEQ	   MMCMD	       BRANCH IF S COMMAND
+	 CMP.W	   #'CL',(A5)          TEST FOR CL COMMAND
+	 BEQ	   CLCMD	       BRANCH IF CL COMMAND
+	 CMP.W	   #'RE',(A5)          TEST FOR RE COMMAND
+	 BEQ	   RECMD	       BRANCH IF RE COMMAND
+	 CMP.W	   #'TE',(A5)          TEST FOR TE COMMAND
+	 BEQ	   TECMD	       BRANCH IF TE COMMAND
+	 CMP.W	   #'TD',(A5)          TEST FOR TD COMMAND
+	 BEQ	   TDCMD	       BRANCH IF TD COMMAND
+	 CMP.W	   #'TR',(A5)          TEST FOR TR COMMAND
+	 BEQ	   TRCMD	       BRANCH IF TR COMMAND
+	 CMP.W	   #'DC',(A5)          TEST FOR DC COMMAND
+	 BEQ	   DCCMD	       BRANCH IF DC COMMAND
+	 CMP.W	   #'ME',(A5)          TEST FOR ME COMMAND
+	 BEQ	   MECMD	       BRANCH IF ME COMMAND
+	 CMP.W	   #'MD',(A5)          TEST FOR MD COMMAND
+	 BEQ	   MDCMD	       BRANCH IF MD COMMAND
+	 CMP.W	   #'MI',(A5)          TEST FOR MI COMMAND
+	 BEQ	   MICMD	       BRANCH IF MI COMMAND
+BUGERR	 JSR	   DISP4Q	       DISPLAY ????
+ENDCMD	 JSR	   SCROLL	       SCROLL THE SCREEN
+ENDCMDMM LEA	   DBUFF,A5	       LOAD ADDRESS OF INPUT BUFFER
+	 MOVE.L    A5,DBUFFPTR	       SET BUFFER POINTER
+	 MOVE.B    #0,DBUFFCNT	       SET BUFFER COUNTER
+	 SF.B	   DBUFFLNE	       CLEAR BUFFER LINE COMPLETE FLAG
+	 JSR	   RXENA	       ENABLE RX
+BUGEND	 BRA	   BUGECHO	       REPEAT FOREVER
+	 PAGE
+**********************************************************************
+*								     *
+*	 PSCMD	   PUT SYMBOL COMMAND				     *
+*								     *
+**********************************************************************
+PSCMD	 EQU	   *
+	 ADDQ.L    #2,A5	       SKIP 'PS'
+	 CMP.B	   #',',(A5)           TEST FOR COMMA
+	 BNE.S	   BUGERR	       BRANCH IF NOT A COMMA
+	 ADDQ.L    #1,A5	       SKIP ','
+	 JSR	   PSMMPARM	       PROCESS PARAMETERS
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE.S	   BUGERR	       BRANCH IF PARM ERRORS
+	 MOVE.L    D1,A3	       COPY SYMBOL ADDRESS
+	 CMP.B	   #1,D2	       TEST FOR BYTE TYPE
+	 BNE.S	   TSTAE	       BRANCH IF NOT BYTE LENGTH
+	 MOVE.B    (A3),D0	       TEST FOR BUS ERROR
+	 BRA.S	   NOBUSER	       CONTINUE ON AS NORMAL
+TSTAE	 MOVE.W    (A3),D0	       TEST FOR ADDRESS ERROR & BUS ERROR
+NOBUSER  ADD.B	   #1,DCOUNT	       INCREMENT COUNTER
+	 CMP.B	   #17,DCOUNT	       TEST FOR MAX+1
+	 BNE.S	   PSON 	       IF LESS THEN CONTINUE ON
+	 SUB.B	   #1,DCOUNT	       RESET COUNT TO MAX (16)
+PSON	 MOVEQ.L   #0,D0	       CLEAR D0
+	 MOVE.B    DCOUNT,D0	       LOAD SYMBOL COUNT
+	 LEA	   DLIST,A1	       LOAD ADDRESS OF DSB LIST
+	 SUBQ.L    #1,D0	       ADJUST COUNTER
+	 MULU	   #32,D0	       MULTIPLY BY DSB SIZE
+	 ADD.L	   D0,A1	       ADD OFFSET(S) TO ADDRESS
+	 MOVE.L    SBUFF(A0),DSBNAME(A1)	 LOAD NAME PART 1
+	 MOVE.L    SBUFF+4(A0),DSBNAME+4(A1)	 LOAD NAME PART 2
+	 MOVE.L    A3,DSBADDR(A1)      LOAD SYMBOL ADDRESS
+	 MOVE.B    D2,DSBLEN(A1)       LOAD SYMBOL LENGTH CODE
+	 MOVE.B    D3,DSBTYPE(A1)      LOAD SYMBOL TYPE CODE
+	 MOVE.B    D4,DSBARRAY(A1)     LOAD SYMBOL ARRAY INDEX
+	 MOVE.B    D5,DSBSCALE(A1)     LOAD SYMBOL SCALE
+	 ST.B	   DSBUPD(A1)	       SET UPDATE FLAG
+	 BRA	   ENDCMD	       RESTART DEBUG
+	 PAGE
+**********************************************************************
+*								     *
+*	 MMCMD	   MEMORY MODIFY COMMAND   (ALSO S COMMAND)	     *
+*								     *
+**********************************************************************
+MMCMD	 EQU	   *
+	 ADDQ.L    #1,A5	       SKIP M OR S
+	 CMP.B	   #',',(A5)           TEST FOR COMMA
+	 BEQ.S	   MMCOMMA	       BRANCH IF A COMMA
+	 ADDQ.L    #1,A5	       SKIP M
+	 CMP.B	   #',',(A5)           TEST FOR COMMA
+	 BEQ.S	   MMCOMMA	       BRANCH IF A COMMA
+	 BRA	   BUGERR	       COMMAND ERROR
+MMCOMMA  ADDQ.L    #1,A5	       SKIP COMMA
+	 JSR	   PSMMPARM	       PROCESS PARAMETERS
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE	   BUGERR	       BRANCH IF PARM ERRORS
+	 ST.B	   MMFLAG(A0)	       SET MM FLAG
+	 MOVE.L    D1,MMADDR(A0)       SET MM ADDRESS
+	 MOVE.B    D2,MMLEN(A0)        SET MM LENGTH
+	 MOVE.B    D3,MMTYPE(A0)       SET MM TYPE
+	 MOVE.B    D5,MMSCALE(A0)      SET MM SCALE
+	 JSR	   MMDISP	       DISPLAY MEMORY
+	 BRA	   ENDCMDMM	       END MM COMMAND
+	 PAGE
+**********************************************************************
+*								     *
+*	 RECMD	   RESET LOAD COMMAND				     *
+*								     *
+**********************************************************************
+RECMD	 EQU	   *
+	 JSR	   RXENA	       ENABLE RX
+	 TRAP	   #5		       RESET LOAD
+**********************************************************************
+*								     *
+*	 CLCMD	   CLEAR SCREEN & REMOVE SYMBOLS		     *
+*								     *
+**********************************************************************
+CLCMD	 EQU	   *
+	 JSR	   CLS		       CLEAR SCREEN
+	 MOVE.B    #0,DCOUNT	       CLEAR COUNT
+	 BRA	   ENDCMD	       END OF COMMAND
+**********************************************************************
+*								     *
+*	 TECMD	   TIMER ENABLE COMMAND 			     *
+*								     *
+**********************************************************************
+TECMD	 EQU	   *
+	 MOVEQ.L   #1,D0	       SET D0 TO TRUE
+	 TRAP	   #7		       ENABLE TIMER SYSTEM
+	 BRA	   ENDCMD
+**********************************************************************
+*								     *
+*	 TDCMD	   TIMER DISABLE COMMAND			     *
+*								     *
+**********************************************************************
+TDCMD	 EQU	   *
+	 MOVEQ.L   #0,D0	       SET D0 TO FALSE
+	 TRAP	   #7		       DISABLE TIMER SYSTEM
+	 BRA	   ENDCMD
+	 PAGE
+**********************************************************************
+*								     *
+*	 TRCMD	   TIMER RESET COMMAND				     *
+*								     *
+**********************************************************************
+TRCMD	 EQU	   *
+	 MOVE.L    #15,D0	       LOAD LOOP COUNT
+	 LEA	   TMODULE,A4	       LOAD ADDRESS OF MODULE TIMES
+TMLP	 MOVE.W    #0,(A4)+	       CLEAR TIMES
+	 DBRA	   D0,TMLP	       LOOP 16 TIMES
+	 MOVE.L    #15,D0	       LOAD LOOP COUNT
+	 LEA	   TMODULEA,A4	       LOAD ADDRESS OF MODULE TIMES
+TMALP	 MOVE.W    #0,(A4)+	       CLEAR TIMES
+	 DBRA	   D0,TMALP	       LOOP 16 TIMES
+	 MOVE.L    #15,D0	       LOAD LOOP COUNT
+	 LEA	   TMODULEW,A4	       LOAD ADDRESS OF MODULE TIME
+TMWLP	 MOVE.W    #0,(A4)+	       CLEAR TIMES
+	 DBRA	   D0,TMWLP	       LOOP 16 TIMES
+	 MOVEQ.L   #0,D0	       CLEAR D0
+	 MOVE.L    D0,TFRAME	       CLEAR FRAME TIME ACTUAL
+	 MOVE.L    D0,TFRAMEA	       CLEAR FRAME TIME AVERAGE
+	 MOVE.L    D0,TFRAMEW	       CLEAR FRAME TIME WORST CASE
+	 BRA	   ENDCMD	       LOOP BACK TO DEBUG
+	 PAGE
+**********************************************************************
+*								     *
+*	 DCCMD	   DESK CALCULATOR COMMAND			     *
+*								     *
+**********************************************************************
+DCCMD	 EQU	   *
+	 ADDQ.L    #2,A5	       SKIP DC
+	 CMP.B	   #',',(A5)           TEST FOR COMMA
+	 BEQ.S	   SKIPDELM	       BRANCH EQUAL SKIP DELIMETER
+	 CMP.B	   #' ',(A5)           TEST FOR SPACE
+	 BEQ.S	   SKIPDELM	       BRANCH EQUAL SKIP DELIMETER
+	 BRA	   BUGERR	       INPUT ERROR
+SKIPDELM ADDQ.L    #1,A5	       SKIP COMMA OR SPACE
+	 CMP.B	   #'&',(A5)           TEST FOR &
+	 BEQ.S	   DCDECP	       BRANCH EQUAL DECIMAL WITH PREFIX
+	 CMP.B	   #'-',(A5)           TEST FOR -
+	 BEQ.S	   DCDECNEG	       BRANCH EQUAL DECIMAL WITH NEGATIVE
+	 CMP.B	   #'$',(A5)           TEST FOR $
+	 BEQ.S	   DCHEXP	       BRANCH EQUAL HEX WITH PREFIX
+	 CMP.B	   #'0',(A5)           TEST FOR ZERO
+	 BLT	   BUGERR	       BRANCH IF LESS THAN ZERO (ERROR)
+	 CMP.B	   #'9',(A5)           TEST FOR NINE
+	 BGT	   BUGERR	       BRANCH IF GREATER THAN NINE (ERROR)
+	 BRA.S	   DCHEX	       MUST BE HEX NUMBER BY DEFAULT
+DCHEXP	 ADDQ.L    #1,A5	       SKIP &
+DCHEX	 JSR	   GETHX	       CONVERT HEX NUMBER TO BINARY
+	 BRA.S	   TSTDCERR	       GO TEST CONVERT ERROR
+DCDECNEG ST.B	   DCNEG(A0)	       SET NEG FLAG
+DCDECP	 ADDQ.L    #1,A5	       SKIP & OR -
+DCDEC	 JSR	   GETDC	       CONVERT DECIMAL NUMBER TO BINARY
+TSTDCERR TST.B	   D0		       TEST RETURN CODE
+	 BNE	   BUGERR	       BRANCH IF TRUE (ERROR)
+	 TST.B	   DCNEG(A0)	       TEST NEGATE FLAG
+	 BEQ.S	   NONEG	       BRANCH IF FALSE
+	 NEG.L	   D1		       NEGATE BINARY NUMBER
+	 SF.B	   DCNEG(A0)	       CLEAR NEGATE FLAG
+NONEG	 MOVE.L    D1,D7	       SAVE DATA
+	 JSR	   SCROLL	       SCROLL THE SCREEN
+	 MOVE.L    #24,D0	       LOAD ROW 25
+	 MOVEQ.L   #0,D1	       LOAD COL 0
+	 JSR	   LOCATE	       LOACAT AT 25,0
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF BUFFER
+	 MOVE.L    A5,A6	       COPY BUFFER POINTER
+	 MOVE.L    #'HEX=',(A6)+       LOAD TEXT
+	 MOVE.L    D7,D0	       COPY DATA
+	 JSR	   PNT8HX	       CONVERT TO HEX
+	 JSR	   DSPLN	       DISPLAY BUFFER
+	 MOVEQ.L   #4,D1	       LOAD BLANK COUNT
+	 JSR	   BLANKS	       OUTPUT 4 BALNKS
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF BUFFER
+	 MOVE.L    A5,A6	       COPY BUFFER POINTER
+	 MOVE.L    #'DEC=',(A6)+       LOAD TEXT
+	 MOVE.L    D7,D0	       COPY DATA
+	 JSR	   HEX2DEC	       CONVERT TO DECIMAL
+	 JSR	   DSPLN	       DISPLAY BUFFER
+	 BRA	   ENDCMD
+	 PAGE
+**********************************************************************
+*								     *
+*	 MECMD	   MODULE ENABLE COMMAND			     *
+*								     *
+**********************************************************************
+MECMD	 EQU	   *
+	 JSR	   MEMDPARM	       PROCESS PARAMETERS
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE	   BUGERR	       INPUT ERROR
+	 MOVEQ.L   #0,D2	       CLEAR FLAG (ENABLE MODULE)
+	 TRAP	   #6		       ENABLE MODULE NUMBER IN D1
+	 BRA	   ENDCMD
+**********************************************************************
+*								     *
+*	 MDCMD	   MODULE DISABLE COMMAND			     *
+*								     *
+**********************************************************************
+MDCMD	 EQU	   *
+	 JSR	   MEMDPARM	       PROCESS PARAMETERS
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE	   BUGERR	       INPUT ERROR
+	 MOVE.B    #$FF,D2	       SET FLAG (DISABLE MODULE)
+	 TRAP	   #6		       DISABLE MODULE NUMBER IN D1
+	 BRA	   ENDCMD
+	 PAGE
+**********************************************************************
+*								     *
+*	 MICMD	   MODULE INFORMATION COMMAND			     *
+*								     *
+**********************************************************************
+MICMD	 EQU	   *
+	 JSR	   MEMDPARM	       PROCESS PARAMETERS
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE	   BUGERR	       INPUT ERROR
+	 MOVE.L    D1,D7	       SAVE MODULE NUMBER
+	 MOVE.L    D1,D6	       SAVE MODULE NUMBER
+	 MOVE.L    D1,D5	       SAVE MODULE NUMBER
+	 JSR	   SCROLL	       SCROLL THE SCREEN
+	 MOVE.L    #24,D0	       ROW 25
+	 MOVEQ.L   #0,D1	       COL 0
+	 JSR	   LOCATE	       LOCATE 25,0
+	 LEA	   SBUFF(A0),A5        LOAD ADDRESS OF SBUFF
+	 MOVE.L    A5,A6	       COPY BUFFER POINTER
+	 ADDQ.L    #8,A6	       POINT A6 TO END+1
+	 JSR	   DSPLN	       OUTPUT BUFFER
+	 MOVEQ.L   #4,D1	       LOAD 4 COUNT
+	 JSR	   BLANKS	       OUTPUT 4 BLANKS
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF TBUFF
+	 MOVE.L    A5,A6	       COPY BUFFER POINTER
+*
+	 LEA	   RTLIST,A4	       LOAD ADDRESS OF REAL-TIME JUMP LIST
+	 LSL.L	   #3,D7	       MULTIPLY BY 8
+	 ADD.L	   D7,A4	       ADD OFFSET
+*
+	 LEA	   SBMODRUN,A3	       LOAD ADDRESS OF MODULE ENABLE FLAGS
+	 ADD.L	   D6,A3	       ADD OFFSET
+*
+	 LEA	   SMODTOUT,A2	       LOAD ADDRESS OF MODULE TIMEOUT LIST
+	 LSL.L	   #2,D5	       MULTIPLY BY 4
+	 ADD.L	   D5,A2	       ADD OFFSET
+*
+	 MOVE.L    4(A4),D0	       LOAD JUMP ADDRESS
+	 JSR	   PNT8HX	       CONVERT TO HEX
+	 MOVE.B    #' ',(A6)+          LOAD SPACE
+	 MOVE.B    #' ',(A6)+          LOAD SPACE
+	 MOVEQ.L   #0,D0	       CLEAR D0
+	 MOVE.B    (A4),D0	       LOAD FRAME MASK
+	 JSR	   PNT2HX	       CONVERT TO HEX
+	 MOVE.B    #' ',(A6)+          LOAD SPACE
+	 MOVE.B    #'U',(A6)           LOAD USER
+	 CMP.B	   #$00,1(A4)	       TEST FOR USER MODE
+	 BEQ.S	   ISUSER	       BRANCH IF USER FLAG
+	 MOVE.B    #'P',(A6)           LOAD PRIV
+ISUSER	 ADDQ.L    #1,A6	       INCREMENT POINTER
+	 MOVE.B    #' ',(A6)+          LOAD SPACE
+	 MOVE.B    #'A',(A6)           LOAD ASSEMBLE
+	 CMP.B	   #$00,2(A4)	       TEST FOR ASSEMBLE CODE
+	 BEQ.S	   ISASSM	       BRANCH IF USER FLAG
+	 MOVE.B    #'F',(A6)           LOAD FORTRAN
+ISASSM	 ADDQ.L    #1,A6	       INCREMENT POINTER
+	 MOVE.B    #' ',(A6)+          LOAD SPACE
+	 MOVE.B    #'E',(A6)           LOAD ENABLED
+	 CMP.B	   #$00,(A3)	       TEST FOR ENABLED CODE
+	 BEQ.S	   ISENAB	       BRANCH IF ENABLED
+	 MOVE.B    #'D',(A6)           LOAD DISABLE
+ISENAB	 ADDQ.L    #1,A6	       INCREMENT POINTER
+	 MOVE.B    #' ',(A6)+          LOAD SPACE
+	 MOVE.L    (A2),D0	       LOAD TIMEOUT COUNT
+	 JSR	   HEX2DEC	       CONVERT TO DECIMAL
+	 JSR	   DSPLN	       OUTPUT BUFFER
+	 BRA	   ENDCMD
+	 PAGE
+**********************************************************************
+*								     *
+*	 PSMMPARM  PS & MM COMMAND PARAMETER SCANNER		     *
+*								     *
+*		   FORM:  XX,<SYMBOL>				     *
+*			  XX,<ADDRESS>[,<LEN>][,<TYPE>] 	     *
+*			  <LEN> = B|W|L 			     *
+*			  <TYPE> = H|D|F|Snn			     *
+*								     *
+*		   INPUT: A5=POINTER TO BUFFER			     *
+*								     *
+*		   OUTPUT: D0 = RETURN CODE (0=OK,1=ERROR)	     *
+*			   D1 = ADDRESS 			     *
+*			   D2 = LENGTH (1=BYTE,2=WORD,4=LONG WORD)   *
+*			   D3 = TYPE (0=HEX,1=DEC,2=FLOAT,3=SCALED   *
+*			   D4 = ARRAY INDEX (0=NONE,1-255 ARRAY)     *
+*			   D5 = SCALE (0-31)			     *
+*								     *
+**********************************************************************
+PSMMPARM EQU	   *
+	 CMP.B	   #'$',(A5)           TEST FOR DOLLAR SIGN
+	 BEQ	   GETDS	       BRANCH IF EQUAL
+	 CMP.B	   #'0',(A5)           TEST FOR ZERO
+	 BLT.S	   TSTSYM	       BRANCH IF < ZERO
+	 CMP.B	   #'9',(A5)           TEST FOR NINE
+	 BGT.S	   TSTSYM	       BRANCH IF > NINE
+	 BRA.S	   GETHEX	       IS A HEX NUMBER
+TSTSYM	 MOVEQ.L   #8,D0	       LOAD COUNT
+	 LEA	   SBUFF(A0),A6        LOAD ADDRESS OF SYMBOL BUFFER
+	 MOVE.L    #'    ',SBUFF(A0)   STORE BLANKS
+	 MOVE.L    #'    ',SBUFF+4(A0) STORE BLANKS
+SYMLOOP  CMP.B	   #CR,(A5)	       TEST FOR CR
+	 BEQ.S	   ENDSYM	       BRANCH IF CR
+	 CMP.B	   #'+',(A5)           TEST FOR +
+	 BEQ.S	   ENDSYM	       BRANCH IF +
+	 MOVE.B    (A5)+,(A6)+	       COPY NAME
+	 DBRA	   D0,SYMLOOP	       LOOP 8 TIMES
+	 BRA.S	   PARMERR	       TOO MANY CHARS
+ENDSYM	 LEA	   SBUFF(A0),A6        LOAD ADDRESS OF SYMBOL BUFFER
+	 JSR	   SLOOKUP	       LOOKUP SYMBOL
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE.S	   PARMERR	       BRANCH IF NOT ZERO
+	 CMP.B	   #$01,D4	       TEST ARRAY CODE
+	 BEQ.S	   NOTARRAY	       BRANCH IF EQUAL
+	 MOVE.L    D1,D7	       SAVE ADDRESS
+	 CMP.B	   #'+',(A5)           TEST FOR +
+	 BEQ.S	   ISARRAY	       BRANCH IF EQUAL
+	 CMP.B	   #CR,(A5)	       TEST FOR CR
+	 BNE.S	   PARMERR	       BRANCH IF NOT EQUAL
+NOTARRAY MOVEQ.L   #0,D4	       CLEAR ARRAY INDEX
+	 RTS
+ISARRAY  ADDQ.L    #1,A5	       SKIP +
+	 JSR	   GETDC	       CONVERT DECIMAL NUMBER
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE.S	   PARMERR	       BRANCH IF NOT EQUAL
+	 CMP.L	   #255,D1	       TEST FOR MAX INDEX
+	 BGT.S	   PARMERR	       INPUT ERROR (INDEX TOO LARGE)
+	 MOVE.L    D1,D4	       LOAD ARRAY INDEX
+	 SUBQ.L    #1,D1	       ADJUST INDEX VALUE
+	 MULU	   D2,D1	       MULTIPLY BY SIZE
+	 ADD.L	   D7,D1	       ADD BASE AND OFFSET
+	 RTS
+PARMERR  MOVEQ.L   #1,D0	       SET RETURN CODE
+	 RTS
+GETDS	 ADDQ.L    #1,A5	       SKIP DOLLAR SIGN
+GETHEX	 MOVE.L    #'    ',SBUFF(A0)   STORE BLANKS
+	 MOVE.L    #'    ',SBUFF+4(A0) STORE BLANKS
+	 JSR	   GETHX	       SCAN HEX NUMBER
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE.S	   PARMERR	       BRANCH IF NOT ZERO
+	 CMP.B	   #',',(A5)           TEST FOR COMMA
+	 BEQ.S	   GETLEN	       BRANCH IF COMMA
+	 MOVEQ.L   #2,D2	       SET LENGTH CODE TO WORD
+	 MOVEQ.L   #0,D3	       SET TYPE CODE TO HEX
+	 MOVEQ.L   #0,D4	       CLEAR ARRAY INDEX
+	 MOVEQ.L   #0,D0	       SET RETURN CODE
+	 RTS
+GETLEN	 ADDQ.L    #1,A5	       SKIP COMMA
+	 CMP.B	   #'B',(A5)           TEST FOR BYTE CODE
+	 BEQ.S	   LENB 	       BRANCH IF B
+	 CMP.B	   #'W',(A5)           TEST FOR WORD CODE
+	 BEQ.S	   LENW 	       BRANCH IF W
+	 CMP.B	   #'L',(A5)           TEST FOR LONG CODE
+	 BEQ.S	   LENL 	       BRANCH IF L
+	 BRA.S	   PARMERR	       INVALID LENGTH CODE
+LENB	 MOVEQ.L   #1,D2	       SET LENGTH CODE
+	 BRA.S	   TTYPE	       BRANCH TO TYPE CHECK
+LENW	 MOVEQ.L   #2,D2	       SET LENGTH CODE
+	 BRA.S	   TTYPE	       BRANCH TO TYPE CHECK
+LENL	 MOVEQ.L   #4,D2	       SET LENGTH CODE
+TTYPE	 ADDQ.L    #1,A5	       SKIP LENGTH CODE
+	 CMP.B	   #',',(A5)           TEST FOR COMMA
+	 BEQ.S	   TESTT	       BRANCH IF COMMA
+	 MOVEQ.L   #0,D3	       SET TYPE CODE TO HEX
+	 MOVEQ.L   #0,D4	       CLEAR ARRAY INDEX
+	 MOVEQ.L   #0,D0	       SET RETURN CODE
+	 RTS
+TESTT	 ADDQ.L    #1,A5	       SKIP COMMA
+	 CMP.B	   #'H',(A5)           TEST FOR HEX CODE
+	 BEQ.S	   HTYPE	       BRANCH IF H CODE
+	 CMP.B	   #'D',(A5)           TEST FOR DECIMAL CODE
+	 BEQ.S	   DTYPE	       BRANCH IF D CODE
+	 CMP.B	   #'F',(A5)           TEST FOR FLOAT CODE
+	 BEQ.S	   FTYPE	       BRANCH IF F CODE
+	 CMP.B	   #'S',(A5)           TEST FOR SCALE CODE
+	 BEQ.S	   STYPE	       BRANCH IF S TYPE
+	 BRA	   PARMERR	       INVALID TYPE CODE
+HTYPE	 MOVEQ.L   #0,D3	       SET TYPE CODE TO HEX
+	 BRA.S	   TDONE	       BRANCH TYPE DONE
+DTYPE	 MOVEQ.L   #1,D3	       SET TYPE CODE TO DECIMAL
+	 BRA.S	   TDONE	       BRANCH TYPE DONE
+FTYPE	 MOVEQ.L   #2,D3	       SET TYPE CODE TO FLOAT
+	 BRA.S	   TDONE	       BRANCH TYPE DONE
+STYPE	 ADDQ.L    #1,A5	       SKIP S
+	 MOVEQ.L   #3,D3	       SET TYPE CODE TO SCALE
+	 MOVE.L    D1,-(A7)	       SAVE D1
+	 JSR	   GETDC	       GET DECIMAL NUMBER
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE	   PARMERR	       BRANCH IF ERROR
+	 MOVE.L    D1,D5	       SET SCALE VALUE
+	 MOVE.L    (A7)+,D1	       RESTORE D1
+	 CMP.L	   #31,D5	       TEST TO MAX VALUE
+	 BGT	   PARMERR	       BRANCH IF ERROR
+	 CMP.L	   #0,D5	       TEST TO MIN VALUE
+	 BLT	   PARMERR	       BRANCH IF ERROR
+TDONE	 MOVEQ.L   #0,D4	       CLEAR ARRAY INDEX
+	 MOVEQ.L   #0,D0	       SET RETURN CODE
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 MEMDPARM  PROCESS PARAMETERS FOR ME & MD & MI COMMAND	     *
+*								     *
+*		   FORM:     XX,<MODULE>			     *
+*								     *
+*		   INPUT:    A5 = POINTER TO BUFFER		     *
+*								     *
+*		   OUTPUT:   D1 = MODULE NUMBER 		     *
+*								     *
+**********************************************************************
+MEMDPARM EQU	   *
+	 ADDQ.L    #2,A5	       SKIP ME OR MD
+	 CMP.B	   #',',(A5)           TEST FOR COMMA
+	 BNE.S	   PARMER	       INPUT ERROR
+	 ADDQ.L    #1,A5	       SKIP COMMA
+	 MOVEQ.L   #8,D0	       LOAD LOOP COUNT
+	 LEA	   SBUFF(A0),A6        LOAD ADDRESS OF SYMBOL BUFFER
+	 MOVE.L    #'    ',SBUFF(A0)   LOAD BLANKS
+	 MOVE.L    #'    ',SBUFF+4(A0) LOAD BLANKS
+NMLOOP	 CMP.B	   #CR,(A5)	       TEST FOR CR
+	 BEQ.S	   ENDNAME	       BRANCH IF END FOUND
+	 MOVE.B    (A5)+,(A6)+	       LOAD A BYTE
+	 DBRA	   D0,NMLOOP	       LOOP MAX 9 TIMES
+	 BRA.S	   PARMER	       INPUT ERROR
+ENDNAME  LEA	   SBUFF(A0),A6        LOAD ADDRESS OF SYMBOL BUFFER
+	 JSR	   NLOOKUP	       LOOKUP NAME
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE.S	   PARMER	       INPUT ERROR
+	 RTS
+PARMER	 MOVEQ.L   #1,D0	       SET RETURN CODE
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 SLOOKUP   SYMBOL LOOKUP				     *
+*								     *
+*		   INPUT:    A6 = POINTER TO SYMBOL BUFFER	     *
+*								     *
+*		   OUTPUT:   D0 = RETURN CODE (0=OK,1=ERROR)	     *
+*			     D1 = ADDRESS			     *
+*			     D2 = LENGTH (1=BYTE,2=WORD,4=LONG WORD) *
+*			     D3 = TYPE (0=HEX,1=DEC,2=FLOAT,3=SCALED *
+*			     D4 = ARRAY (1-255) 		     *
+*			     D5 = SCALE (0-31)			     *
+*								     *
+**********************************************************************
+SLOOKUP  EQU	    *
+	 MOVEQ.L   #0,D7			 CLEAR FLAG
+	 MOVE.W    DPCOUNT,D0			 LOAD NUMBER OF DP SYMBOLS
+	 SUBQ.W    #1,D0			 ADJUST COUNT
+	 LEA	   DPTABLE,A4			 LOAD ADDRESS OF TABLE
+*
+SGLOB	 MOVEQ.L   #1,D1			 CLEAR D1
+	 MOVE.L    D1,D2			 CLEAR D2
+	 MOVE.L    D1,D3			 CLEAR D3
+	 MOVE.L    D1,D4			 CLEAR D4
+	 MOVE.L    D1,D5			 CLEAR D5
+*
+SUPLP	 MOVE.L    (A6),D1			 LOAD NAME PART 1
+	 CMP.L	   (A4),D1			 TEST NAME PART 1
+	 BNE.S	   NXTDP			 BRANCH NOT EQUAL NEXT DP
+	 MOVE.L    4(A6),D1			 LOAD NAME PART 2
+	 CMP.L	   4(A4),D1			 TEST NAME PART 2
+	 BNE.S	   NXTDP			 BRANCH NOT EQUAL NEXT DP
+*
+	 MOVE.L    8(A4),D1			 LOAD ADDRESS
+	 MOVE.B    12(A4),D2			 LOAD LENGTH CODE
+	 MOVE.B    13(A4),D3			 LOAD TYPE CODE
+	 MOVE.B    14(A4),D4			 LOAD ARRAY CODE
+	 MOVE.B    15(A4),D5			 LOAD SCALE CODE
+	 MOVEQ.L   #0,D0			 SET RETURN CODE
+	 RTS
+*
+NXTDP	 ADD.L	   #16,A4			 POINT TO NEXT ENTRY IN TABLE
+	 DBRA	   D0,SUPLP			 LOOP DPCOUNT TIMES
+*
+	 TST.B	   D7				 TEST FLAG
+	 BNE.S	   SLEND			 BRANCH IF SET
+*
+	 ST.B	   D7				 SET FLAG
+	 MOVE.W    DPCOUNT0,D0			 LOAD NUMBER OF DP SYMBOLS
+	 SUBQ.W    #1,D0			 ADJUST COUNT
+	 LEA	   DPTABLE0,A4			 LOAD ADDRESS OF TABLE
+	 BRA.S	   SGLOB			 LOOK INTO GLOBAL TABLE
+*
+SLEND	 MOVEQ.L   #1,D0			 NOT FOUND SET ERROR CODE
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 NLOOKUP   MODULE NAME LOOKUP				     *
+*								     *
+*		   INPUT:    A6 = POINTER TO SYMBOL BUFFER	     *
+*								     *
+*		   OUTPUT:   D0 = RETURN CODE (0=OK,1=ERROR)	     *
+*			     D1 = MODULE NUMBER 		     *
+*								     *
+**********************************************************************
+NLOOKUP  EQU	   *
+	 MOVE.L    RTNUMBER,D0	       LOAD NUMBER OF REAL-TIME MODULES
+	 SUBQ.L    #1,D0	       ADJUST NUMBER
+	 LEA	   RTNAME,A4	       LOAD ADDRESS OF NAME TABLE
+NUPLP	 MOVE.L    (A6),D1	       LOAD NAME PART 1
+	 CMP.L	   (A4),D1	       TEST NAME
+	 BNE.S	   NXTNM	       BRANCH NOT EQUAL NEXT NAME
+	 MOVE.L    4(A6),D1	       LOAD NAME PART 2
+	 CMP.L	   4(A4),D1	       TEST NAME
+	 BNE.S	   NXTNM	       BRANCH NOT EQUAL NEXT NAME
+	 MOVE.L    RTNUMBER,D1	       LOAD NUMBER OF REAL-TIME MODULES
+	 SUB.L	   D0,D1	       GET MODULE NUMBER
+	 SUBQ.L    #1,D1	       ADJUST NUMBER
+	 MOVEQ.L   #0,D0	       SET RETURN CODE
+	 RTS
+NXTNM	 ADDQ.L    #8,A4	       INCREMENT TO NEXT NAME
+	 DBRA	   D0,NUPLP	       LOOP RTNUMBER-1 TIMES
+	 MOVEQ.L   #1,D0	       SET RETURN CODE (ERROR)
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 MMINPUT   MM COMMMAND DATA INPUT SCANNER		     *
+*								     *
+**********************************************************************
+MMINPUT  EQU	   *
+	 CMP.B	   #'$',(A5)           TEST FOR $
+	 BEQ.S	   MMHEXIN	       MUST BE HEX NUMBER
+	 CMP.B	   #'&',(A5)           TEST FOR &
+	 BEQ.S	   MMDECIN	       MUST BE	DECIMAL NUMBER
+	 CMP.B	   #'-',(A5)           TEST FOR -
+	 SEQ.B	   MMNEGFLG(A0)        SET MINUS FLAG IF -
+	 BEQ.S	   MMDECIN	       MUST BE DECIMAL NUMBER
+	 CMP.B	   #'0',(A5)           TEST FOR ZERO
+	 BLT.S	   MMERRIN	       INPUT ERROR
+	 CMP.B	   #'9',(A5)           TEST FOR NINE
+	 BGT.S	   MMERRIN	       INPUT ERROR
+	 CMP.B	   #0,MMTYPE(A0)       TEST FOR HEX TYPE
+	 BEQ.S	   MMHXC	       MUST BE HEX NUMBER
+	 CMP.B	   #1,MMTYPE(A0)       TEST FOR DECIMAL TYPE
+	 BEQ.S	   MMDCC	       MUST BE DECIMAL NUMBER
+MMERRIN  MOVEQ.L   #1,D0	       SET ERROR RETURN CODE
+	 RTS
+MMHEXIN  ADDQ.L    #1,A5	       SKIP $
+MMHXC	 JSR	   GETHX	       CONVERT HEX NUMBER
+	 TST.B	   D0		       TEST RETURN CODE
+	 BEQ.S	   MMSTORE	       BRANCH IF FALSE
+	 BRA.S	   MMERRIN	       INPUT ERROR
+MMDECIN  ADDQ.L    #1,A5	       SKIP & OR -
+MMDCC	 JSR	   GETDC	       CONVERT DECIMAL NUMBER
+	 TST.B	   D0		       TEST RETURN CODE
+	 BNE.S	   MMERRIN	       BRANCH IF TRUE INPUT ERROR
+	 TST.B	   MMNEGFLG(A0)        TEST FOR NEGATE
+	 BEQ.S	   MMSTORE	       BRANCH IF FALSE
+	 NEG.L	   D1		       NEGATE ANSWER
+	 SF.B	   MMNEGFLG(A0)        SET NEGATE FLAG FALSE
+MMSTORE  MOVE.L    MMADDR(A0),A4       LOAD MM ADDRESS
+	 CMP.B	   #1,MMLEN(A0)        TEST BYTE LENGTH
+	 BEQ.S	   MMSTB	       BRANCH EQUAL STORE BYTE
+	 CMP.B	   #2,MMLEN(A0)        TEST WORD LENGTH
+	 BEQ.S	   MMSTW	       BRANCH EQUAL STORE WORD
+	 CMP.B	   #4,MMLEN(A0)        TEST LONG WORD LENGTH
+	 BEQ.S	   MMSTL	       BRANCH EQUAL STORE LONG WORD
+	 BRA.S	   MMERRIN	       INPUT ERROR
+MMSTB	 MOVE.B    D1,(A4)	       STORE BYTE
+	 BRA.S	   MMSTEND	       STORE END
+MMSTW	 MOVE.W    D1,(A4)	       STORE WORD
+	 BRA.S	   MMSTEND	       STORE END
+MMSTL	 MOVE.L    D1,(A4)	       STORE LONG WORD
+MMSTEND  MOVEQ.L   #0,D0	       SET RETURN CODE
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 GETHX	   SCANS HEX NUMBER IN BUFFER			     *
+*								     *
+*		   INPUT:  A5 = POINTER TO BUFFER		     *
+*								     *
+*		   OUTPUT: D0 = RETURN CODE (0=OK,1=ERROR)	     *
+*			   D1 = NUMBER IN BINARY		     *
+*								     *
+**********************************************************************
+GETHX	 EQU	   *
+	 MOVE.L    D2,-(A7)	       SAVE D2
+	 MOVEQ.L   #0,D0	       CLEAR D0
+	 MOVE.L    D0,D1	       CLEAR D1
+	 MOVE.L    D1,D2	       CLEAR D2
+	 MOVE.B    (A5),D2	       LOAD FIRST CHARACTER
+CNTHX	 CMP.B	   #'0',D2             TEST FOR ZERO
+	 BLT.S	   HXERR	       BRANCH LESS THAN HEX ERROR
+	 CMP.B	   #'9',D2             TEST FOR NINE
+	 BGT.S	   TESTAF	       BRANCH GREATER THAN TEST A-F
+	 SUB.B	   #'0',D2             ADJUST TO BINARY
+	 BRA.S	   NEXTD	       BRANCH AND PROCESS NEXT DIGIT
+TESTAF	 CMP.B	   #'A',D2             TEST FOR A
+	 BLT.S	   HXERR	       BRANCH LESS THAN HEX ERROR
+	 CMP.B	   #'F',D2             TEST FOR F
+	 BGT.S	   HXERR	       BRANCH GREATER THAN HEX ERROR
+	 SUB.B	   #'A'-10,D2          ADJUST TO BINARY
+NEXTD	 LSL.L	   #4,D1	       MULTIPLY BY 16
+	 ADD.L	   D2,D1	       ADD TO BINARY
+	 ADDQ.L    #1,A5	       INCREMENT POINTER
+	 MOVE.B    (A5),D2	       LOAD CHARACTER
+	 CMP.B	   #',',D2             TEST FOR COMMA
+	 BEQ.S	   ENDHX	       BRANCH EQUAL END HEX
+	 CMP.B	   #' ',D2             TEST FOR BLANK
+	 BEQ.S	   ENDHX	       BRANCH EQUAL END HEX
+	 CMP.B	   #CR,D2	       TEST FOR CR
+	 BEQ.S	   ENDHX	       BRANCH EQUAL END HEX
+	 BRA.S	   CNTHX	       BRANCH CONTINUE HEX
+ENDHX	 MOVE.L    (A7)+,D2	       RESTORE D2
+	 RTS
+HXERR	 MOVEQ.L   #1,D0	       SET ERROR RETURN CODE
+	 BRA.S	   ENDHX	       BRANCH TO END HEX
+	 PAGE
+**********************************************************************
+*								     *
+*	 GETDC	   SCANS DECIMAL NUMBER IN BUFFER		     *
+*								     *
+*		   INPUT:  A5 = POINTER TO BUFFER		     *
+*								     *
+*		   OUTPUT: D0 = RETURN CODE (0=OK,1=ERROR)	     *
+*			   D1 = NUMBER IN BINARY		     *
+*								     *
+**********************************************************************
+GETDC	 EQU	   *
+	 MOVE.L    D2,-(A7)	       SAVE D2
+	 MOVEQ.L   #0,D1	       CLEAR D1
+	 MOVE.L    D1,D2	       CLEAR D2
+	 MOVE.B    (A5),D2	       LOAD FIRST CHARACTER
+CNTDC	 CMP.B	   #'0',D2             TEST FOR ZERO
+	 BLT.S	   DCERR	       BRANCH LESS THAN DEC ERROR
+	 CMP.B	   #'9',D2             TEST FOR NINE
+	 BGT.S	   DCERR	       BRANCH GREATER THAN DEC ERROR
+	 SUB.B	   #'0',D2             ADJUST TO BINARY
+	 MOVE.L    D1,D0	       COPY DECIMAL NUMBER
+	 SWAP	   D0		       LSH,MSH
+	 MULU	   #10,D1	       10 * LSH
+	 MULU	   #10,D0	       10 * MSH
+	 SWAP	   D0		       PUT LSH IN MSH POSITION
+	 ADD.L	   D0,D1	       ADD TWO PRODUCTS
+	 ADD.L	   D2,D1	       ADD DIGIT TO BASE
+	 ADDQ.L    #1,A5	       INCREMENT POINTER
+	 MOVE.B    (A5),D2	       LOAD CHARACTER
+	 CMP.B	   #',',D2             TEST FOR COMMA
+	 BEQ.S	   ENDDC	       BRANCH EQUAL END DEC
+	 CMP.B	   #' ',D2             TEST FOR BLANK
+	 BEQ.S	   ENDDC	       BRANCH EQUAL END DEC
+	 CMP.B	   #CR,D2	       TEST FOR CR
+	 BEQ.S	   ENDDC	       BRANCH EQUAL END DEC
+	 BRA.S	   CNTDC	       BRANCH CONTINUE DEC
+ENDDC	 MOVEQ.L   #0,D0	       CLEAR ERROR RETURN CODE
+	 MOVE.L    (A7)+,D2	       RESTORE D2
+	 RTS			       RETURN
+DCERR	 MOVEQ.L   #1,D0	       SET ERROR RETURN CODE
+	 MOVE.L    (A7)+,D2	       RESTORE D2
+	 RTS			       RETURN
+	 PAGE
+**********************************************************************
+*								     *
+*	 DISPLAY   DATA DISPLAY ROUTINE 			     *
+*								     *
+*		   INPUT: D0 = DATA				     *
+*			  D2 = LEN (1=BYTE,2=WORD,4=LONG WORD)	     *
+*			  D3 = TYPE (0=HEX,1=DEC,2=FLOAT,3=SCALED)   *
+*			  D4 = ARRAY (1-255)			     *
+*			  D5 = SCALE (0-31)			     *
+*								     *
+*		   OUTPUT: CHARACTER OUTPUT ON BUFFER A5,A6	     *
+*								     *
+**********************************************************************
+DISPLAY  EQU	   *
+	 CMP.B	   #0,D3	       TEST FOR HEX
+	 BEQ	   DISPHX	       GO DISPLAY HEX
+	 CMP.B	   #1,D3	       TEST FOR DEC
+	 BEQ.S	   DISPDC	       GO DISPLAY DEC
+	 CMP.B	   #3,D3	       TEST FOR SCALED INTEGER
+	 BEQ.S	   DISPSC	       GO DISPLAY SCALED
+	 BRA	   DISPHX	       GO DISPLAY HEX ANYWAY
+DISPSC	 MOVEM.L   D6/D7/A5,-(A7)      SAVE D6/D7
+	 CMP.B	   #2,D2	       TEST FOR WORD LENGTH
+	 BNE.S	   SCD4 	       MUST BE LONG WORD
+	 EXT.L	   D0		       EXTEND WORD TO LONG WORD
+SCD4	 TST.L	   D0		       TEST FOR POSITIVE
+	 BPL.S	   SCPOS	       BRANCH IF POSITIVE
+	 NEG.L	   D0		       MAKE IT POSITIVE
+	 MOVE.B    #'-',(A6)+          PUT - INTO BUFFER
+SCPOS	 MOVE.L    D0,D6	       COPY DATA
+	 ASR.L	   D5,D6	       INTEGER PART
+	 MOVE.L    D0,D7	       COPY DATA
+	 MOVE.L    D6,D0	       SHIFT BY SCALE
+	 JSR	   HEX2DEC	       DISPLAY DECIMAL
+	 MOVE.B    #'.',(A6)+          PUT . INTO BUFFER
+	 CMP.B	   #9,D5	       TEST FOR SCALE 2-9
+	 BGT.S	   SHIFTR	       BRANCH IF GREATER
+	 BLT.S	   SHIFTL	       BRANCH IF LESS
+	 BRA.S	   FRAC 	       EQUAL TO 2-9
+SHIFTR	 SUB.B	   #9,D5	       ADJUST SCALE
+         ASR.L     D5,D7	       PUT TOP 9 FRACTION BITS DOWN
+	 BRA.S	   FRAC 	       NOW EQUAL TO 2-9
+SHIFTL	 NEG.B	   D5		       NEGATE SCALE
+	 ADD.B	   #9,D5	       ADJUST SCALE
+	 ASL.L	   D5,D7	       NOW EQUAL TO 2-9
+FRAC	 AND.L	   #$000001FF,D7       CLEAR ALL BUT LAST 9 BITS
+	 LEA	   FRACTAB,A5	       LOAD ADDRESS OF TABLE
+	 LSL.L	   #2,D7	       MULTIPLY OFFSET BY 4
+	 ADD.L	   D7,A5	       ADD OFFSET TO BASE ADDRESS
+	 MOVEQ.L   #3,D7	       LOAD LOOP COUNT
+FRACLP	 MOVE.B    (A5)+,(A6)+	       LOAD FRACION INTO BUFFER
+	 DBRA	   D7,FRACLP	       LOOP 4 TIMES
+	 JSR	   CLR2EOL	       CLEAR TO END OF LINE
+	 MOVEM.L   (A7)+,D6/D7/A5      RESTORE D6/D7/A5
+	 RTS			       RETURN
+DISPDC	 CMP.B	   #1,D2	       TEST FOR BYTE LENGTH
+	 BEQ.S	   DSD1 	       GO EXTEND AND DISPLAY DEC BYTE
+	 CMP.B	   #2,D2	       TEST FOR WORD LENGTH
+	 BEQ.S	   DSD2 	       GO EXTEND AND DISPLAY DEC WORD
+	 BRA.S	   DISPH2D	       GO DISPLAY DEC LONG WORD
+DSD1	 EXT.W	   D0		       EXTEND BYTE TO WORD
+	 EXT.L	   D0		       EXTEND WORD TO LONG WORD
+	 BRA.S	   DISPH2D	       GO DISPLAY DEC LONG WORD
+DSD2	 EXT.L	   D0		       EXTEND WORD TO LONG WORD
+DISPH2D  JSR	   HEX2DEC	       VMEBUG BINARY TO DEC SUBROUTINE
+	 MOVE.B    #' ',(A6)+          PUT SPACE IN BUFFER
+	 JSR	   CLR2EOL	       CLEAR TO END OF LINE
+	 RTS			       RETURN
+DISPHX	 CMP.B	   #1,D2	       TEST FOR BYTE LENGTH
+	 BEQ.S	   DS1		       GO DISPLAY HEX BYTE
+	 CMP.B	   #2,D2	       TEST FOR WORD LENGTH
+	 BEQ.S	   DS2		       GO DISPLAY HEX WORD
+	 BRA.S	   DS4		       GO DISPLAY HEX LONG WORD
+DS1	 JSR	   PNT2HX	       VMEBUG BINARY BYTE TO HEX
+	 RTS			       RETURN
+DS2	 JSR	   PNT4HX	       VMEBUG BINARY WORD TO HEX
+	 RTS			       RETURN
+DS4	 JSR	   PNT8HX	       VMEBUG BINARY LONG WORD TO HEX
+	 RTS			       RETURN
+FRACTAB  EQU	   *
+	 DC.B	   '0000'
+	 DC.B	   '0020'
+	 DC.B	   '0039'
+	 DC.B	   '0059'
+	 DC.B	   '0078'
+	 DC.B	   '0098'
+	 DC.B	   '0117'
+	 DC.B	   '0137'
+	 DC.B	   '0156'
+	 DC.B	   '0176'
+	 DC.B	   '0195'
+	 DC.B	   '0215'
+	 DC.B	   '0234'
+	 DC.B	   '0254'
+	 DC.B	   '0273'
+	 DC.B	   '0293'
+	 DC.B	   '0312'
+	 DC.B	   '0332'
+	 DC.B	   '0352'
+	 DC.B	   '0371'
+	 DC.B	   '0391'
+	 DC.B	   '0410'
+	 DC.B	   '0430'
+	 DC.B	   '0449'
+	 DC.B	   '0469'
+	 DC.B	   '0488'
+	 DC.B	   '0508'
+	 DC.B	   '0527'
+	 DC.B	   '0547'
+	 DC.B	   '0566'
+	 DC.B	   '0586'
+	 DC.B	   '0605'
+	 DC.B	   '0625'
+	 DC.B	   '0645'
+	 DC.B	   '0664'
+	 DC.B	   '0684'
+	 DC.B	   '0703'
+	 DC.B	   '0723'
+	 DC.B	   '0742'
+	 DC.B	   '0762'
+	 DC.B	   '0781'
+	 DC.B	   '0801'
+	 DC.B	   '0820'
+	 DC.B	   '0840'
+	 DC.B	   '0859'
+	 DC.B	   '0879'
+	 DC.B	   '0898'
+	 DC.B	   '0918'
+	 DC.B	   '0938'
+	 DC.B	   '0957'
+	 DC.B	   '0977'
+	 DC.B	   '0996'
+	 DC.B	   '1016'
+	 DC.B	   '1035'
+	 DC.B	   '1055'
+	 DC.B	   '1074'
+	 DC.B	   '1094'
+	 DC.B	   '1113'
+	 DC.B	   '1133'
+	 DC.B	   '1152'
+	 DC.B	   '1172'
+	 DC.B	   '1191'
+	 DC.B	   '1211'
+	 DC.B	   '1230'
+	 DC.B	   '1250'
+	 DC.B	   '1270'
+	 DC.B	   '1289'
+	 DC.B	   '1309'
+	 DC.B	   '1328'
+	 DC.B	   '1348'
+	 DC.B	   '1367'
+	 DC.B	   '1387'
+	 DC.B	   '1406'
+	 DC.B	   '1426'
+	 DC.B	   '1445'
+	 DC.B	   '1465'
+	 DC.B	   '1484'
+	 DC.B	   '1504'
+	 DC.B	   '1523'
+	 DC.B	   '1543'
+	 DC.B	   '1562'
+	 DC.B	   '1582'
+	 DC.B	   '1602'
+	 DC.B	   '1621'
+	 DC.B	   '1641'
+	 DC.B	   '1660'
+	 DC.B	   '1680'
+	 DC.B	   '1699'
+	 DC.B	   '1719'
+	 DC.B	   '1738'
+	 DC.B	   '1758'
+	 DC.B	   '1777'
+	 DC.B	   '1797'
+	 DC.B	   '1816'
+	 DC.B	   '1836'
+	 DC.B	   '1855'
+	 DC.B	   '1875'
+	 DC.B	   '1895'
+	 DC.B	   '1914'
+	 DC.B	   '1934'
+	 DC.B	   '1953'
+	 DC.B	   '1973'
+	 DC.B	   '1992'
+	 DC.B	   '2012'
+	 DC.B	   '2031'
+	 DC.B	   '2051'
+	 DC.B	   '2070'
+	 DC.B	   '2090'
+	 DC.B	   '2109'
+	 DC.B	   '2129'
+	 DC.B	   '2148'
+	 DC.B	   '2168'
+	 DC.B	   '2188'
+	 DC.B	   '2207'
+	 DC.B	   '2227'
+	 DC.B	   '2246'
+	 DC.B	   '2266'
+	 DC.B	   '2285'
+	 DC.B	   '2305'
+	 DC.B	   '2324'
+	 DC.B	   '2344'
+	 DC.B	   '2363'
+	 DC.B	   '2383'
+	 DC.B	   '2402'
+	 DC.B	   '2422'
+	 DC.B	   '2441'
+	 DC.B	   '2461'
+	 DC.B	   '2480'
+	 DC.B	   '2500'
+	 DC.B	   '2520'
+	 DC.B	   '2539'
+	 DC.B	   '2559'
+	 DC.B	   '2578'
+	 DC.B	   '2598'
+	 DC.B	   '2617'
+	 DC.B	   '2637'
+	 DC.B	   '2656'
+	 DC.B	   '2676'
+	 DC.B	   '2695'
+	 DC.B	   '2715'
+	 DC.B	   '2734'
+	 DC.B	   '2754'
+	 DC.B	   '2773'
+	 DC.B	   '2793'
+	 DC.B	   '2812'
+	 DC.B	   '2832'
+	 DC.B	   '2852'
+	 DC.B	   '2871'
+	 DC.B	   '2891'
+	 DC.B	   '2910'
+	 DC.B	   '2930'
+	 DC.B	   '2949'
+	 DC.B	   '2969'
+	 DC.B	   '2988'
+	 DC.B	   '3008'
+	 DC.B	   '3027'
+	 DC.B	   '3047'
+	 DC.B	   '3066'
+	 DC.B	   '3086'
+	 DC.B	   '3105'
+	 DC.B	   '3125'
+	 DC.B	   '3145'
+	 DC.B	   '3164'
+	 DC.B	   '3184'
+	 DC.B	   '3203'
+	 DC.B	   '3223'
+	 DC.B	   '3242'
+	 DC.B	   '3262'
+	 DC.B	   '3281'
+	 DC.B	   '3301'
+	 DC.B	   '3320'
+	 DC.B	   '3340'
+	 DC.B	   '3359'
+	 DC.B	   '3379'
+	 DC.B	   '3398'
+	 DC.B	   '3418'
+	 DC.B	   '3438'
+	 DC.B	   '3457'
+	 DC.B	   '3477'
+	 DC.B	   '3496'
+	 DC.B	   '3516'
+	 DC.B	   '3535'
+	 DC.B	   '3555'
+	 DC.B	   '3574'
+	 DC.B	   '3594'
+	 DC.B	   '3613'
+	 DC.B	   '3633'
+	 DC.B	   '3652'
+	 DC.B	   '3672'
+	 DC.B	   '3691'
+	 DC.B	   '3711'
+	 DC.B	   '3730'
+	 DC.B	   '3750'
+	 DC.B	   '3770'
+	 DC.B	   '3789'
+	 DC.B	   '3809'
+	 DC.B	   '3828'
+	 DC.B	   '3848'
+	 DC.B	   '3867'
+	 DC.B	   '3887'
+	 DC.B	   '3906'
+	 DC.B	   '3926'
+	 DC.B	   '3945'
+	 DC.B	   '3965'
+	 DC.B	   '3984'
+	 DC.B	   '4004'
+	 DC.B	   '4023'
+	 DC.B	   '4043'
+	 DC.B	   '4062'
+	 DC.B	   '4082'
+	 DC.B	   '4102'
+	 DC.B	   '4121'
+	 DC.B	   '4141'
+	 DC.B	   '4160'
+	 DC.B	   '4180'
+	 DC.B	   '4199'
+	 DC.B	   '4219'
+	 DC.B	   '4238'
+	 DC.B	   '4258'
+	 DC.B	   '4277'
+	 DC.B	   '4297'
+	 DC.B	   '4316'
+	 DC.B	   '4336'
+	 DC.B	   '4355'
+	 DC.B	   '4375'
+	 DC.B	   '4395'
+	 DC.B	   '4414'
+	 DC.B	   '4434'
+	 DC.B	   '4453'
+	 DC.B	   '4473'
+	 DC.B	   '4492'
+	 DC.B	   '4512'
+	 DC.B	   '4531'
+	 DC.B	   '4551'
+	 DC.B	   '4570'
+	 DC.B	   '4590'
+	 DC.B	   '4609'
+	 DC.B	   '4629'
+	 DC.B	   '4648'
+	 DC.B	   '4668'
+	 DC.B	   '4688'
+	 DC.B	   '4707'
+	 DC.B	   '4727'
+	 DC.B	   '4746'
+	 DC.B	   '4766'
+	 DC.B	   '4785'
+	 DC.B	   '4805'
+	 DC.B	   '4824'
+	 DC.B	   '4844'
+	 DC.B	   '4863'
+	 DC.B	   '4883'
+	 DC.B	   '4902'
+	 DC.B	   '4922'
+	 DC.B	   '4941'
+	 DC.B	   '4961'
+	 DC.B	   '4980'
+	 DC.B	   '5000'
+	 DC.B	   '5020'
+	 DC.B	   '5039'
+	 DC.B	   '5059'
+	 DC.B	   '5078'
+	 DC.B	   '5098'
+	 DC.B	   '5117'
+	 DC.B	   '5137'
+	 DC.B	   '5156'
+	 DC.B	   '5176'
+	 DC.B	   '5195'
+	 DC.B	   '5215'
+	 DC.B	   '5234'
+	 DC.B	   '5254'
+	 DC.B	   '5273'
+	 DC.B	   '5293'
+	 DC.B	   '5312'
+	 DC.B	   '5332'
+	 DC.B	   '5352'
+	 DC.B	   '5371'
+	 DC.B	   '5391'
+	 DC.B	   '5410'
+	 DC.B	   '5430'
+	 DC.B	   '5449'
+	 DC.B	   '5469'
+	 DC.B	   '5488'
+	 DC.B	   '5508'
+	 DC.B	   '5527'
+	 DC.B	   '5547'
+	 DC.B	   '5566'
+	 DC.B	   '5586'
+	 DC.B	   '5605'
+	 DC.B	   '5625'
+	 DC.B	   '5645'
+	 DC.B	   '5664'
+	 DC.B	   '5684'
+	 DC.B	   '5703'
+	 DC.B	   '5723'
+	 DC.B	   '5742'
+	 DC.B	   '5762'
+	 DC.B	   '5781'
+	 DC.B	   '5801'
+	 DC.B	   '5820'
+	 DC.B	   '5840'
+	 DC.B	   '5859'
+	 DC.B	   '5879'
+	 DC.B	   '5898'
+	 DC.B	   '5918'
+	 DC.B	   '5938'
+	 DC.B	   '5957'
+	 DC.B	   '5977'
+	 DC.B	   '5996'
+	 DC.B	   '6016'
+	 DC.B	   '6035'
+	 DC.B	   '6055'
+	 DC.B	   '6074'
+	 DC.B	   '6094'
+	 DC.B	   '6113'
+	 DC.B	   '6133'
+	 DC.B	   '6152'
+	 DC.B	   '6172'
+	 DC.B	   '6191'
+	 DC.B	   '6211'
+	 DC.B	   '6230'
+	 DC.B	   '6250'
+	 DC.B	   '6270'
+	 DC.B	   '6289'
+	 DC.B	   '6309'
+	 DC.B	   '6328'
+	 DC.B	   '6348'
+	 DC.B	   '6367'
+	 DC.B	   '6387'
+	 DC.B	   '6406'
+	 DC.B	   '6426'
+	 DC.B	   '6445'
+	 DC.B	   '6465'
+	 DC.B	   '6484'
+	 DC.B	   '6504'
+	 DC.B	   '6523'
+	 DC.B	   '6543'
+	 DC.B	   '6562'
+	 DC.B	   '6582'
+	 DC.B	   '6602'
+	 DC.B	   '6621'
+	 DC.B	   '6641'
+	 DC.B	   '6660'
+	 DC.B	   '6680'
+	 DC.B	   '6699'
+	 DC.B	   '6719'
+	 DC.B	   '6738'
+	 DC.B	   '6758'
+	 DC.B	   '6777'
+	 DC.B	   '6797'
+	 DC.B	   '6816'
+	 DC.B	   '6836'
+	 DC.B	   '6855'
+	 DC.B	   '6875'
+	 DC.B	   '6895'
+	 DC.B	   '6914'
+	 DC.B	   '6934'
+	 DC.B	   '6953'
+	 DC.B	   '6973'
+	 DC.B	   '6992'
+	 DC.B	   '7012'
+	 DC.B	   '7031'
+	 DC.B	   '7051'
+	 DC.B	   '7070'
+	 DC.B	   '7090'
+	 DC.B	   '7109'
+	 DC.B	   '7129'
+	 DC.B	   '7148'
+	 DC.B	   '7168'
+	 DC.B	   '7188'
+	 DC.B	   '7207'
+	 DC.B	   '7227'
+	 DC.B	   '7246'
+	 DC.B	   '7266'
+	 DC.B	   '7285'
+	 DC.B	   '7305'
+	 DC.B	   '7324'
+	 DC.B	   '7344'
+	 DC.B	   '7363'
+	 DC.B	   '7383'
+	 DC.B	   '7402'
+	 DC.B	   '7422'
+	 DC.B	   '7441'
+	 DC.B	   '7461'
+	 DC.B	   '7480'
+	 DC.B	   '7500'
+	 DC.B	   '7520'
+	 DC.B	   '7539'
+	 DC.B	   '7559'
+	 DC.B	   '7578'
+	 DC.B	   '7598'
+	 DC.B	   '7617'
+	 DC.B	   '7637'
+	 DC.B	   '7656'
+	 DC.B	   '7676'
+	 DC.B	   '7695'
+	 DC.B	   '7715'
+	 DC.B	   '7734'
+	 DC.B	   '7754'
+	 DC.B	   '7773'
+	 DC.B	   '7793'
+	 DC.B	   '7812'
+	 DC.B	   '7832'
+	 DC.B	   '7852'
+	 DC.B	   '7871'
+	 DC.B	   '7891'
+	 DC.B	   '7910'
+	 DC.B	   '7930'
+	 DC.B	   '7949'
+	 DC.B	   '7969'
+	 DC.B	   '7988'
+	 DC.B	   '8008'
+	 DC.B	   '8027'
+	 DC.B	   '8047'
+	 DC.B	   '8066'
+	 DC.B	   '8086'
+	 DC.B	   '8105'
+	 DC.B	   '8125'
+	 DC.B	   '8145'
+	 DC.B	   '8164'
+	 DC.B	   '8184'
+	 DC.B	   '8203'
+	 DC.B	   '8223'
+	 DC.B	   '8242'
+	 DC.B	   '8262'
+	 DC.B	   '8281'
+	 DC.B	   '8301'
+	 DC.B	   '8320'
+	 DC.B	   '8340'
+	 DC.B	   '8359'
+	 DC.B	   '8379'
+	 DC.B	   '8398'
+	 DC.B	   '8418'
+	 DC.B	   '8438'
+	 DC.B	   '8457'
+	 DC.B	   '8477'
+	 DC.B	   '8496'
+	 DC.B	   '8516'
+	 DC.B	   '8535'
+	 DC.B	   '8555'
+	 DC.B	   '8574'
+	 DC.B	   '8594'
+	 DC.B	   '8613'
+	 DC.B	   '8633'
+	 DC.B	   '8652'
+	 DC.B	   '8672'
+	 DC.B	   '8691'
+	 DC.B	   '8711'
+	 DC.B	   '8730'
+	 DC.B	   '8750'
+	 DC.B	   '8770'
+	 DC.B	   '8789'
+	 DC.B	   '8809'
+	 DC.B	   '8828'
+	 DC.B	   '8848'
+	 DC.B	   '8867'
+	 DC.B	   '8887'
+	 DC.B	   '8906'
+	 DC.B	   '8926'
+	 DC.B	   '8945'
+	 DC.B	   '8965'
+	 DC.B	   '8984'
+	 DC.B	   '9004'
+	 DC.B	   '9023'
+	 DC.B	   '9043'
+	 DC.B	   '9062'
+	 DC.B	   '9082'
+	 DC.B	   '9102'
+	 DC.B	   '9121'
+	 DC.B	   '9141'
+	 DC.B	   '9160'
+	 DC.B	   '9180'
+	 DC.B	   '9199'
+	 DC.B	   '9219'
+	 DC.B	   '9238'
+	 DC.B	   '9258'
+	 DC.B	   '9277'
+	 DC.B	   '9297'
+	 DC.B	   '9316'
+	 DC.B	   '9336'
+	 DC.B	   '9355'
+	 DC.B	   '9375'
+	 DC.B	   '9395'
+	 DC.B	   '9414'
+	 DC.B	   '9434'
+	 DC.B	   '9453'
+	 DC.B	   '9473'
+	 DC.B	   '9492'
+	 DC.B	   '9512'
+	 DC.B	   '9531'
+	 DC.B	   '9551'
+	 DC.B	   '9570'
+	 DC.B	   '9590'
+	 DC.B	   '9609'
+	 DC.B	   '9629'
+	 DC.B	   '9648'
+	 DC.B	   '9668'
+	 DC.B	   '9688'
+	 DC.B	   '9707'
+	 DC.B	   '9727'
+	 DC.B	   '9746'
+	 DC.B	   '9766'
+	 DC.B	   '9785'
+	 DC.B	   '9805'
+	 DC.B	   '9824'
+	 DC.B	   '9844'
+	 DC.B	   '9863'
+	 DC.B	   '9883'
+	 DC.B	   '9902'
+	 DC.B	   '9922'
+	 DC.B	   '9941'
+	 DC.B	   '9961'
+	 DC.B	   '9980'
+	 PAGE
+**********************************************************************
+*								     *
+*	 MMDISP    MEMORY MODIFY DISPLAY SUBROUTINE		     *
+*								     *
+**********************************************************************
+MMDISP	 EQU	   *
+	 JSR	   SCROLL	       SCROLL SCREEN
+	 MOVE.B    #24,D0	       LOAD ROW 25
+	 MOVEQ.L   #0,D1	       LOAD COL 1
+	 JSR	   LOCATE	       LOACATE AT 25,1
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF BUFFER
+	 MOVE.L    A5,A6	       COPY BUFFER ADDRESS
+	 MOVE.L    MMADDR(A0),D0       LOAD ADDRESS VALUE
+	 JSR	   PNT8HX	       CONVERT TO ASCII
+	 MOVE.L    #'    ',(A6)+       LOAD BLANKS
+	 MOVEQ.L   #0,D0	       CLEAR D0
+	 MOVE.L    MMADDR(A0),A4       LOAD ADDRESS
+	 MOVE.B    MMLEN(A0),D2        LOAD LENGTH CODE
+	 CMP.B	   #1,D2	       TEST BYTE CODE
+	 BEQ.S	   MMB		       DISPLAY BYTE
+	 CMP.B	   #2,D2	       TEST WORD CODE
+	 BEQ.S	   MMW		       DISPLAY WORD
+	 CMP.B	   #4,D2	       TEST LONG WORD CODE
+	 BEQ.S	   MML		       DISPLAY LONG WORD
+	 JSR	   DSPLN	       DISPLAY BUFFER
+	 RTS
+MMB	 MOVE.B    (A4),D0	       LOAD BYTE
+	 BRA.S	   MMD1 	       DISPLAY BYTE
+MMW	 MOVE.W    (A4),D0	       LOAD WORD
+	 BRA.S	   MMD1 	       DISPLAY WORD
+MML	 MOVE.L    (A4),D0	       LOAD LONG WORD
+MMD1	 MOVE.B    MMTYPE(A0),D3       LOAD TYPE CODE
+	 MOVE.B    MMSCALE(A0),D5      LOAD SCALE CODE
+	 JSR	   DISPLAY	       CONVERT DATA TO ASCII
+	 JSR	   DSPLN	       DISPLAY BUFFER
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 DISP4Q    DISPLAY ???? ON DEBUG TERMINAL (ERROR)	     *
+*								     *
+**********************************************************************
+DISP4Q	 EQU	   *
+	 JSR	   SCROLL	       SCROLL THE SCREEN
+	 MOVE.B    #24,D0	       ROW 24
+	 MOVE.B    #00,D1	       COL 00
+	 JSR	   LOCATE	       LOCATE CURSOR AT 24,0
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF TEMP BUFFER
+	 MOVE.L    A5,A6	       COPY BUFFER ADDRESS
+	 MOVE.L    #'????',(A6)+       COPY ???? INTO BUFFER
+	 JSR	   DSPLN	       OUTPUT TO TERMINAL
+	 JSR	   SCROLL	       SCROLL THE SCREEN
+	 RTS
+**********************************************************************
+*								     *
+*	 SCROLL    SCROLL THE SCREEN FROM LINE 17		     *
+*								     *
+**********************************************************************
+SCROLL	 EQU	   *
+	 MOVE.B    #17,D0	       ROW 17
+	 MOVE.B    #00,D1	       COL 00
+	 JSR	   LOCATE	       LOCATE CURSOR AT 17,0
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF TEMP BUFFFER
+	 MOVE.L    A5,A6	       COPY BUFFER ADDRESS
+	 MOVE.B    #$1B,(A6)+	       LEAD IN CODE
+	 MOVE.B    #$13,(A6)+	       DELETE LINE CODE
+	 JSR	   DSPLN	       OUTPUT TO TERMINAL
+	 RTS
+**********************************************************************
+*								     *
+*	 LOCATE    LOCATE CURSOR (D0=ROW,D1=COL)		     *
+*								     *
+**********************************************************************
+LOCATE	 EQU	   *
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF TEMP BUFFER
+	 MOVE.L    A5,A6	       COPY BUFFER ADDRESS
+	 MOVE.B    #$1B,(A6)+	       LEAD IN CODE
+	 MOVE.B    #$11,(A6)+	       LOCATE CODE
+	 MOVE.B    D1,(A6)+	       COL POSITION
+	 MOVE.B    D0,(A6)+	       ROW POSITION
+	 JSR	   DSPLN	       OUTPUT TO TERMINAL
+	 RTS
+**********************************************************************
+*								     *
+*	 CLS	   CLEAR SCREEN 				     *
+*								     *
+**********************************************************************
+CLS	 EQU	   *
+	 LEA	   TBUFF(A0),A5        LOAD ADDRESS OF TEMP BUFFER
+	 MOVE.L    A5,A6	       COPY BUFFER ADDRESS
+	 MOVE.B    #$1B,(A6)+	       LEAD IN CODE
+	 MOVE.B    #$1C,(A6)+	       CLEAR SCREEN CODE
+	 JSR	   DSPLN	       OUTPUT TO TERMINAL
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 CLR2EOL   CLEAR TO END OF LINE 			     *
+*								     *
+**********************************************************************
+CLR2EOL  EQU	   *
+	 MOVE.B    #$1B,(A6)+	       LEAD IN CODE
+	 MOVE.B    #$0F,(A6)+	       CLEAR 2 END OF LINE
+	 RTS
+**********************************************************************
+*								     *
+*	 BLANKS    DISPLAY BLANKS TO DEBUG TERMINAL  D1=NUMBER	     *
+*								     *
+**********************************************************************
+BLANKS	 EQU	   *
+	 SUBQ.L    #1,D1	       ADJUST LOOP COUNTER
+SPLP	 MOVE.B    #' ',D0             LOAD BLANK
+	 JSR	   DSPB 	       OUTPUT CHARACTER
+	 DBRA	   D1,SPLP	       LOOP FOR COUNT IN D1
+	 RTS
+**********************************************************************
+*								     *
+*	 DSPLN	   DISPLAY LINE TO DEBUG TERMINAL		     *
+*								     *
+*		   A5 = START  A6 = END + 1			     *
+*								     *
+**********************************************************************
+DSPLN	 EQU	   *
+	 MOVE.L    D0,-(A7)	       SAVE D0 ON STACK
+CDSPLN	 MOVE.B    (A5)+,D0	       LOAD BYTE TO OUTPUT
+	 JSR	   DSPB 	       DISPLAY THE BYTE
+	 CMP.L	   A5,A6	       COMPARE TO END POINTER
+	 BNE.S	   CDSPLN	       BRANCH IF NOT EQUAL
+	 MOVE.L    (A7)+,D0	       RESTORE D0 FROM STACK
+	 RTS
+**********************************************************************
+*								     *
+*	 DSPB	   DISPLAY BYTE (D0=DATA)			     *
+*								     *
+**********************************************************************
+DSPB	 EQU	   *
+	 JSR	   TXSTAT    TEST TX STATUS
+	 TST.B	   D2	     TEST FOR ZERO
+	 BEQ.S	   HOLDIT    HOLD IF NOT ZERO
+	 JSR	   TXWRITE   OUTPUT DATA
+	 RTS
+HOLDIT	 TRAP	   #1	     HOLD TASK
+	 BRA.S	   DSPB      TRY AGAIN
+	 PAGE
+**********************************************************************
+*								     *
+*	 LOW LEVEL I/O SUPPORT TO SERIAL PORT			     *
+*								     *
+**********************************************************************
+NECA	 EQU	   $FE61C9	       NEC PORT A
+NECB	 EQU	   $FE61CB	       NEC PORT B
+**********************************************************************
+*								     *
+*	 RXDIS	   DISABLE RX					     *
+*								     *
+**********************************************************************
+RXDIS	 EQU	   *
+	 MOVE.B    #$03,NECB+4	       POINT TO REGISTER THREE
+	 MOVE.B    #$E0,NECB+4	       DISABLE RX
+	 RTS
+**********************************************************************
+*								     *
+*	 RXENA	   ENABLE RX					     *
+*								     *
+**********************************************************************
+RXENA	 EQU	   *
+	 MOVE.B    #$03,NECB+4	       POINT TO REGISTER THREE
+	 MOVE.B    #$E1,NECB+4	       ENABLE RX
+	 RTS
+**********************************************************************
+*								     *
+*	 RXSTAT    STATUS OF RX  (D2=01 RX FULL,D2=00 RX NOT FULL)   *
+*								     *
+**********************************************************************
+RXSTAT	 EQU	   *
+	 MOVE.B    NECB+4,D2	       READ STATUS BITS
+	 AND.B	   #$01,D2	       MASK OFF TOP 7 BITS
+	 RTS
+**********************************************************************
+*								     *
+*	 TXSTAT    STATUS OF TX  (D2=04 TX READY,D2=00 TX NOT READY) *
+*								     *
+**********************************************************************
+TXSTAT	 EQU	   *
+	 MOVE.B    NECB+4,D2	       READ STATUS BITS
+	 AND.B	   #$04,D2	       MASK OFF EXTRA BITS
+	 RTS
+**********************************************************************
+*								     *
+*	 RXRESET   RESET RX AFTER ERROR 			     *
+*								     *
+**********************************************************************
+RXRESET  EQU	   *
+	 MOVE.B    #$30,NECB+4	       RESET RX (CLEAR ERROR)
+	 RTS
+	 PAGE
+**********************************************************************
+*								     *
+*	 RXEND	   END OF INTERRUPT COMMAND TO RX		     *
+*								     *
+**********************************************************************
+RXEND	 EQU	   *
+	 MOVE.B    #$38,NECB+4	       END OF INTERRUPT COMMAND
+	 RTS
+**********************************************************************
+*								     *
+*	 RXREAD    READ DATA FROM RX   (D0=DATA)		     *
+*								     *
+**********************************************************************
+RXREAD	 EQU	   *
+	 MOVE.B    NECB,D0	       READ DATA
+	 RTS
+**********************************************************************
+*								     *
+*	 TXWRITE   WRITE DATA TO TX    (D0=DATA)		     *
+*								     *
+**********************************************************************
+TXWRITE  EQU	   *
+	 MOVE.B    D0,NECB	       WRITE DATA
+	 RTS
+**********************************************************************
+*								     *
+*	 RXINIT    RX INITALIZER  (TURN ON INTERRUPTS)		     *
+*								     *
+**********************************************************************
+RXINIT	 EQU	   *
+	 MOVE.B    #$01,NECB+4	       POINT TO REGISTER ONE
+	 MOVE.B    #$18,NECB+4	       ENABLE RX INTERRUPTS
+	 RTS
+~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:29
+	 END
+********
+TXWRITE  EQU	   *
+	 MOVE.B    D0,NECB	       WRITE DATA
+	 RTS
+**********************************************************************
+*								     *
+*	 RXINIT    RX INITALIZER  (TURN ON INTERRUPTS)		     *
+*								     *
+*********************************

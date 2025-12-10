@@ -1,0 +1,463 @@
+ 
+          A80.DOC                                   Quelo 8080 Assembler
+ 
+ 
+ 
+                             Quelo 8080 Assembler
+  
+                           Development Version 1.0
+  
+                                   03/21/85
+  
+  
+  
+  This  version of the assembler is compatible with the output of The Software
+  Toolworks C/80 compiler when configured for MACRO-80 output. 
+  
+  Known deviations from MACRO-80:
+      
+      Some expression operators are different. 
+      
+      ORG automatically selects ASEG. 
+      
+      ASEG automatically sets PC to 0. 
+      
+      Macros not supported, but M68K can be used. 
+      
+      @ not supported in symbols (can easily be patched, however). 
+      
+      No Z80 instructions. 
+      
+      Produces Quelo linker text for use with the Quelo linker and librarian. 
+  
+  This 8080 assembler was developed primarily for "in house" use by  Quelo  in
+  developing the 68000 assembler package for CP/M-80. 
+  
+  Not  all  features  of  the  8080  assembler  have  been  tested.   However,
+  instruction generation has been tested and a large quantity of  code  output
+  by  The  Software  Toolworks  C/80 compiler has been assembled successfully.
+  See the file A80TEST.MAC for instruction encoding tests. 
+  
+  The 8080 assembler was produced by making minimal changes to the Quelo 68000
+  assembler (ver 5.0). 
+  
+  At the present time, the 8080 assembler is not a formal  product  of  Quelo.
+  It is included with the 68000 assembler as a bonus. 
+  
+  The  command line for A80 is like that of A68K, except that the default file
+  name extension is .MAC, rather than .A68.  This is  also  true  for  INCLUDE
+  file name extensions. 
+  
+  ;
+  ; ----------------------------------------------------------
+  ;
+  ;               Directives
+  ;
+  
+  <lbl>   IDNT    <s> <ver>,<rev> <s> <description>
+  
+          ENTRY   <s> <public symbol>
+          PUBLIC  <s> <public symbol>
+  
+ 
+          (c) 1985 by QUELO                                           1
+ 
+ 
+ 
+ 
+          A80.DOC                                   Quelo 8080 Assembler
+ 
+ 
+ 
+          EXT     <s> <ext. decl.>
+          EXTRN   <s> <ext. decl.>
+  
+                      <symbol>            simple external decl.
+                      <qual> : <symbol>   external decl. with qualifier
+  
+                      ASEG        absolute address qualifier
+                      CSEG        code segment qualifier (sect. 0)
+                      DSEG        data segment qualifier (sect. 1)
+                      <0..15>     constant section number (0..15)
+                      <sym>       symbol with constant value (0..15)
+                      #           type of constant qualifier
+                      @           absolute address qualifier
+  
+          END
+          END     <s> <start address expression>
+  
+          IF  <s> <exp>           ; <exp> != 0
+          IFE <s> <exp>           ; <exp> == 0
+          IFT <s> <exp>           ; <exp> true  -- same as IF
+          IFF <s> <exp>           ; <exp> false -- same as IFE
+          ENDC
+  
+  <lbl>   EQU     <s> <expr>      ; assign permanent value
+  <lbl>   SET     <s> <expr>      ; assign temporary value
+  
+  <lbl>   PROC                    ; tag label as procedure entry
+  
+  
+          ASEG                    ; select and zero absolute prog. counter
+              same as ORG 0
+          CSEG                    ; select reloc. section 0 prog. counter
+              same as SECTION 0
+          DSEG                    ; select reloc. section 1 prog. counter
+              same as SECTION 1
+  
+          OFFSET  <s> <expr>      ; select and initialize offset counter
+          ORG     <s> <expr>      ; select and set absolute prog. counter
+          SECTION <s> <expr>      ; select relocatable prog. counter (0..15)
+  
+          DB      <s> <string>    ; ASCII string
+  
+          DB      <s> <expr>      ; byte constant (Z80 byte order)
+          DW      <s> <expr>      ; word constant
+          DL      <s> <expr>      ; long word constant
+  
+          DUPB    <s> <count>,<expr>      ; constant block (Z80 byte order)
+          DUPW    <s> <count>,<expr>
+          DUPL    <s> <count>,<expr>
+  
+          DC.B    <s> <expr>      ; byte constant (68000 byte order)
+          DC.W    <s> <expr>      ; word constant
+          DC.L    <s> <expr>      ; long word constant
+  
+          DCB.B   <s> <count>,<expr>      ; constant block (68000 byte order)
+          DCB.W   <s> <count>,<expr>
+ 
+          (c) 1985 by QUELO                                           2
+ 
+ 
+ 
+ 
+          A80.DOC                                   Quelo 8080 Assembler
+ 
+ 
+ 
+          DCB.L   <s> <count>,<expr>
+  
+          DS      <s> <expr>
+  
+          INCLUDE <s> <file specification>
+  
+          LLEN    <s> <line length>
+          PLEN    <s> <lines/page>,<t-margin>,<b-margin>
+  
+          NOPAGE
+          PAGE
+          .LIST
+          .XLIST
+          .PRINTX <s> <message>
+          SPC     <s> <line skip>
+          TITLE   <s> <page title information>
+  
+          OPT     <s> <options>
+                      A
+                      BRL
+                      BRS
+                      CEX
+                      CL
+                      FRL
+                      FRS
+                      MC
+                      MD
+                      MEX
+                      NOA
+                      NOCEX
+                      NOCL
+                      NOMC
+                      NOMD
+                      NOMEX
+                      NOPCF
+                      NOPCO
+                      NOPCS
+                      NOQ
+                      PCF
+                      PCO
+                      PCS
+                      Q
+  ;
+  ; ------------------------------------------------------------------
+  ;
+  ;               instructions
+  ;
+          ACI     <s>     <exp>           [fm00-11   001 110 B]   [fm08]
+          ADC     <s>     <src>           [fm0Y-10   001 rrr B]
+          ADD     <s>     <src>           [fm0Y-10   000 rrr B]
+          ADI     <s>     <exp>           [fm00-11   000 110 B]   [fm08]
+          ANA     <s>     <src>           [fm0Y-10   100 rrr B]
+          ANI     <s>     <exp>           [fm00-11   100 110 B]   [fm08]
+  
+          CALL    <s>     <exp>           [fm00-11   001 101 B]   [fm16]
+          CMA                             [fm00-00  1 01 111 B]
+ 
+          (c) 1985 by QUELO                                           3
+ 
+ 
+ 
+ 
+          A80.DOC                                   Quelo 8080 Assembler
+ 
+ 
+ 
+          CMC                             [fm00-00  1 11 111 B]
+          CMP     <s>     <src>           [fm0Y-10   111 rrr B]
+          CPI     <s>     <exp>           [fm00-11   111 110 B]   [fm08]
+          C<cond> <s>     <exp>           [fmX0-11   ccc 100 B]   [fm16]
+  
+          DAA                             [fm00-00  1 00 111 B]
+          DAD     <s>     <rp2>           [fmX0-00  rr 1 001 B]
+          DCR     <s>     <dst>           [fmX0-00   RRR 101 B]
+          DCX     <s>     <rp2>           [fmX0-00  RR 1 011 B]
+          DI                              [fm00-11  11 0 011 B]
+  
+          EI                              [fm00-11  11 1 011 B]
+  
+          HLT                             [fm00-01   110 110 B]
+  
+          INR     <s>     <dst>           [fmX0-00   RRR 100 B]
+          INX     <s>     <rp2>           [fmX0-00  RR 0 011 B]
+          IN      <s>     <exp>           [fm00-11  01 1 011 B]   [fm08]
+  
+          JMP     <s>     <exp>           [fm00-11   000 011 B]   [fm16]
+          J<cond> <s>     <exp>           [fmX0-11   ccc 010 B]   [fm16]
+  
+          LDAX    <s>     <rp1>           [fmX0-00 0 r 1 010 B]
+          LDA     <s>     <exp>           [fm00-00  1 11 010 B]   [fm16]
+          LHLD    <s>     <exp>           [fm00-00  1 01 010 B]   [fm16]
+          LXI     <s>     <rp2> , <exp>   [fmX0-00  rr 0 001 B]   [fm16]
+  
+          MOV     <s>     <dst> , <src>   [fmXY-01   RRR rrr B]
+          MVI     <s>     <dst> , <exp>   [fmX0-00   RRR 110 B]   [fm08]
+  
+          NOP                             [fm00-00   000 000 B]
+  
+          ORA     <s>     <src>           [fm0Y-10   110 rrr B]
+          ORI     <s>     <exp>           [fm00-11   110 110 B]   [fm08]
+          OUT     <s>     <exp>           [fm00-11  01 0 011 B]   [fm08]
+  
+          PCHL                            [fm00-11 1 0 1 001 B]
+          POP     <s>     <rp3>           [fmX0-11  RR 0 001 B]
+          PUSH    <s>     <rp3>           [fmX0-11  rr 0 101 B]
+  
+          RAL                             [fm00-00  0 10 111 B]
+          RAR                             [fm00-00  0 11 111 B]
+          RET                             [fm00-11   001 001 B]
+          RLC                             [fm00-00  0 00 111 B]
+          RRC                             [fm00-00  0 01 111 B]
+          RST     <s>     <vector>        [fmX0-11   vvv 111 B]
+          R<cond>                         [fmX0-11   ccc 000 B]
+  
+          SBB     <s>     <src>           [fm0Y-10   011 rrr B]
+          SBI     <s>     <exp>           [fm00-11   011 110 B]   [fm08]
+          SHLD    <s>     <exp>           [fm00-00  1 00 010 B]   [fm16]
+          SPHL                            [fm00-11 1 1 1 001 B]
+          STAX    <s>     <rp1>           [fmX0-00 0 r 0 010 B]
+          STA     <s>     <exp>           [fm00-00  1 10 010 B]   [fm16]
+          STC                             [fm00-00  1 10 111 B]
+          SUB     <s>     <src>           [fm0Y-10   010 rrr B]
+ 
+          (c) 1985 by QUELO                                           4
+ 
+ 
+ 
+ 
+          A80.DOC                                   Quelo 8080 Assembler
+ 
+ 
+ 
+          SUI     <s>     <exp>           [fm00-11   010 110 B]   [fm08]
+  
+          XCHG                            [fm00-11  10 1 011 B]
+          XRA     <s>     <src>           [fm0Y-10   101 rrr B]
+          XRI     <s>     <exp>           [fm00-11   101 110 B]   [fm08]
+          XTHL                            [fm00-11  10 0 011 B]
+  ;
+  ; ------------------------------------------------------------------
+  ;
+  <src>
+          B       [yyy-0]
+          C       [yyy-1]
+          D       [yyy-2]
+          E       [yyy-3]
+          H       [yyy-4]
+          L       [yyy-5]
+          M       [yyy-6]
+          A       [yyy-7]
+  
+  <dst>
+          B       [xxx-0]
+          C       [xxx-1]
+          D       [xxx-2]
+          E       [xxx-3]
+          H       [xxx-4]
+          L       [xxx-5]
+          M       [xxx-6]
+          A       [xxx-7]
+  
+  <cond>
+          NZ      [xxx-0]
+          Z       [xxx-1]
+          NC      [xxx-2]
+          C       [xxx-3]
+          PO      [xxx-4]
+          PE      [xxx-5]
+          P       [xxx-6]
+          M       [xxx-7]
+  
+  <rp1>
+          B       [xxx-0]
+          D       [xxx-2]
+  
+  <rp2>
+          B       [xxx-0]
+          D       [xxx-2]
+          H       [xxx-4]
+          SP      [xxx-6]
+  
+  <rp3>
+          B       [xxx-0]
+          D       [xxx-2]
+          H       [xxx-4]
+          PSW     [xxx-6]
+  
+  <vector>
+ 
+          (c) 1985 by QUELO                                           5
+ 
+ 
+ 
+ 
+          A80.DOC                                   Quelo 8080 Assembler
+ 
+ 
+ 
+          <48-55> [xxxv]
+  ;
+  ;
+  ; -------------------------------------------------------
+  ;
+  ;               expressions
+  ;
+  <expr>
+          <primary>  <tail>
+  
+  <tail>
+          <binary operator>  <primary>  <tail>
+          <>
+  
+  <binary operator>
+          +
+          -
+          *
+          /
+          %
+          &
+          |
+          ^
+          <<
+          >>
+  
+  
+  <primary>
+          +  <primary>
+          -  <primary>
+          ~  <primary>
+          (  <expr>   )
+          <constant>
+          <identifier>
+          $
+  ;
+  ; ---------------------------------------------------
+  ;
+  <identifier>
+          first character:        alpha         .  $  _
+          subsequent characters:  alpha  digit  .  $  _
+  
+          optional suffix:        ## for external reference
+  
+  ;
+  ; --------------------------------------------------
+  ;
+  <constant>
+          <character constant>
+          <binary constant>
+          <octal constant>
+          <decimal constant>
+          <hex constant>
+  
+  <character constant>
+          '  <one to four characters depending on context>  '
+ 
+          (c) 1985 by QUELO                                           6
+ 
+ 
+ 
+ 
+          A80.DOC                                   Quelo 8080 Assembler
+ 
+ 
+ 
+  
+  <binary constant>
+          B suffix
+  
+  <octal constant>
+          O or Q suffix
+  
+  <decimal constant>
+          D or no suffix
+  
+  <hex constant>
+          H suffix
+  
+  <string>
+          '  <string content>  '
+          use '' to force a single ' into the string
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+ 
+          (c) 1985 by QUELO                                           7
+ 
+ 
+ 
+

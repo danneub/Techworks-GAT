@@ -1,0 +1,25 @@
+**********************************************************************
+*								     *
+*	 TASKDATA  DATA USED TO ALLOCATE BACKGROUND TASKS	     *
+*								     *
+**********************************************************************
+	 XDEF	   TASKDATA
+	 XREF	   BGDEBUG
+	 XREF	   BGBUGEX
+	 SECTION   12
+TASKDATA EQU	   *
+	 DC.B	   'DEBUG1  '          TASK NAME
+	 DC.L	   BGDEBUG	       TASK ENTRY POINT
+	 DC.L	   BGDEBUG	       TASK CODE SEGMENT POINTER
+	 DC.W	   0		       TASK CODE SEGMENT LENGTH
+	 DC.W	   256		       TASK DATA SEGMENT LENGTH
+	 DC.W	   256		       TASK STACK SEGMENT LENGTH
+	 DC.W	   0		       TASK PRIORITY CODE
+	 DC.B	   $03		       TDB FLAG BITS
+	 DC.B	   0		       TDB FLAG BITS
+	 DC.B	   0		       TDB FLAG BITS
+	 DC.B	   0		       TDB FLAG BITS
+	 DC.L	   BGBUGEX	       TASK ERROR ENTRY POINT
+	 DC.L	   0		       LINK TO NEXT TDB
+	 END
+

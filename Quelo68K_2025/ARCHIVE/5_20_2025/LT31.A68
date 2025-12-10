@@ -1,0 +1,92 @@
+	plen	66,6,6
+
+lt31	idnt	1,7
+
+
+* 1.7	01/09/85  P. Adams	remove nopage and llen
+* 1.6	05/04/84		spelling correction
+* 1.5				remove short branches
+* 1.4	05/01/84  R. Curtiss	from  config.a68  1.3
+*
+*	Linker test module
+*
+
+
+*
+* Entry points
+*
+	xdef	disp.config
+*
+* External procedures referenced
+*
+	xref.s	string.out
+	xref.s	spaces.out
+	xref.s	cr.lf.out
+	xref.s	char.out
+*
+* External data referenced
+*
+	xref.s	revlist
+
+	section	1
+disp.config  proc
+
+	lea	revlist,a0
+
+	repeat
+	move.b	(a0),d0		end of list check
+
+	break.s	if <eq>		loop exit
+
+	move.l	a0,a1		save string origin
+	jsr	string.out	a0 at end of string
+
+	moveq	#32,d0		32 column field
+	add.l	a1,d0		pad count =
+	sub.l	a0,d0		32 - ( a0 - a1)
+	jsr	spaces.out
+
+	add.l	#1,a0		past end of string
+	move	a0,d0
+	and.l	#1,d0
+	add.l	d0,a0		word boundary adjust
+
+	move	(a0)+,d0	version
+	jsr	hex.word.out
+
+	moveq	#2,d0		two spaces
+	jsr	spaces.out
+
+	move	(a0)+,d0	revision
+	jsr	hex.word.out
+
+	jsr	cr.lf.out
+	endr
+
+	jsr	cr.lf.out
+	rts
+
+	section	2
+hex.word.out  proc
+
+	move.l	d0,d1
+	moveq	#4,d2		repeat count
+
+	repeat
+	rol	#4,d1
+	move	d1,d0
+	and	#$f,d0		nibble mask
+
+	if	d0 <gt> #9  then.s
+	add	#7,d0		offset to 'A'
+	endi
+
+	add.b	#'0',d0		ASCII bias
+	jsr	char.out
+	sub	#1,d2
+	until	<eq>
+
+	rts
+
+	end
+

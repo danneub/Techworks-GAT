@@ -1,0 +1,40 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:43     ...Page  1
+D:MOD1DATA.LTX , D:MOD1DATA.PRN , D:MOD1DATA.SYM = D:MOD1DATA.SA
+   ...
+
+>>>  ERROR  line[1] Invalid opcode   [1] D:MOD1DATA.SA
+                            1.   ENGINE   11 USER ASSEMBLER        GAT 1 ENGINE MODULE
+>>>  ERROR  line[2] Invalid opcode   [2] D:MOD1DATA.SA
+                            2.   LIFT     FF USER ASSEMBLER        LIFT     MODULE
+>>>  ERROR  line[3] Invalid opcode   [3] D:MOD1DATA.SA
+                            3.   SPEED    FF USER ASSEMBLER        SPEED    MODULE
+>>>  ERROR  line[4] Invalid opcode   [4] D:MOD1DATA.SA
+                            4.   CLIMB    FF USER ASSEMBLER        CLIMB    MODULE
+>>>  ERROR  line[5] Invalid opcode   [5] D:MOD1DATA.SA
+                            5.   PITCH    FF USER ASSEMBLER        PITCH    MODULE
+>>>  ERROR  line[6] Invalid operand(s)   [6] D:MOD1DATA.SA
+                            6.   ROLL     FF USER ASSEMBLER        ROLL     MODULE
+>>>  ERROR  line[7] Invalid opcode   [7] D:MOD1DATA.SA
+                            7.   TURN     FF USER ASSEMBLER        TURN     MODULE
+>>>  ERROR  line[8] Invalid opcode   [8] D:MOD1DATA.SA
+                            8.   MOTION   FF USER ASSEMBLER        MOTION   MODULE
+>>>  ERROR  line[9] Invalid opcode   [9] D:MOD1DATA.SA
+                            9.   NAVFREQ  FF USER ASSEMBLER        NAVFREQ  MODULE
+>>>  ERROR  line[10] Invalid opcode   [10] D:MOD1DATA.SA
+                           10.   NAV1     FF USER ASSEMBLER        NAV1     MODULE
+>>>  ERROR  line[11] Invalid opcode   [11] D:MOD1DATA.SA
+                           11.   RMNKFG   55 USER ASSEMBLER        RMNKFG   MODULE
+>>>  ERROR  line[12] Invalid opcode   [12] D:MOD1DATA.SA
+                           12.   COMM     FF USER ASSEMBLER        COMM     MODULE
+>>>  ERROR  line[13] Invalid opcode   [13] D:MOD1DATA.SA
+                           13.   GATVIS   FF USER ASSEMBLER        GATVIS   MODULE
+>>>  ERROR  line[14] Invalid opcode   [14] D:MOD1DATA.SA
+                           14.   VISIO    FF PRIV ASSEMBLER        VISIO    MODULE
+>>>  ERROR  line[15] Invalid opcode   [15] D:MOD1DATA.SA
+                           15.   RTDEBUG  FF PRIV ASSEMBLER        RTDEBUG  MODULE
+>>>  ERROR  line[16] Invalid opcode   [16] D:MOD1DATA.SA
+                           16.   RTEND    FF PRIV ASSEMBLER        RTEND    MODULE (LAST MODULE)
+0'000000                   17.  .
+   16 Errors
+    GATVIS   MODULE
+>>>  ERROR  line[14] Invalid opcode   [14] D:MOD1DATA.S

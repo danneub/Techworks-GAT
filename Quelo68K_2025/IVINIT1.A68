@@ -1,0 +1,28 @@
+**********************************************************************
+*								     *
+*	 IVINIT    INTERRUPT VECTOR INITIALIZER ROUTINE 	     *
+*								     *
+**********************************************************************
+	 XDEF	   IVINIT
+	 XREF	   INT4 	       INTERRUPT #4 RECIEVER (DEBUG KEYBOAD)
+	 XREF	   INIT4	       INTERRUPT #4 INITIALIZER
+	 SECTION   12
+IVINIT	 EQU	   *
+	 JSR	   INIT4	       INITIALIZE HANDLER FOR IV #4
+	 MOVE.L    #INT4,$70	       LOAD ADDRESS FOR IV #4
+	 RTS
+~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:37
+	 END
+*
+*								     *
+*	 IVINIT    INTERRUPT VECTOR INITIALIZER ROUTINE 	     *
+*								     *
+**********************************************************************
+	 XDEF	   IVINIT
+	 XREF	   INT4 	       INTERRUPT #4 RECIEVER (DEBUG KEYBOAD)
+	 XREF	   INIT4	       INTERRUPT #4 INITIALIZER
+	 SECTION   12
+IVINIT	 EQU	   *
+	 JSR	   INIT4	       INITIALIZE HANDLER FOR IV #4
+	 MOVE.L    #INT4,$70	       LOAD ADDRESS FOR IV #4
+	 RTS

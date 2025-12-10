@@ -1,0 +1,370 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  1
+D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+   ...
+
+                            1.           OPT       MEX,CEX,NOPCS
+                            2.  **********************************************************************
+                            3.  *                                                                    *
+                            4.  *        NAV MATH SUBROUTINE LIBRARY                                 *
+                            5.  *                                                                    *
+                            6.  **********************************************************************
+                            7.           XDEF      AEPC                END POINT CHECK
+                            8.           XDEF      NCDI                COURSE DEVIATION
+                            9.           XDEF      NATAN2              RESOLVE SIN/COS TO ANGLE
+                           10.           XDEF      ATAN2               ARC TAN
+                           11.           XDEF      ESRD                ESRD DRIVER
+                           12.  *
+                           13.           XREF      MSC1                MATH LIB SIN/COS
+                           14.           XREF      MSIN1               MATH LIB SIN
+                           15.           XREF      DSMUL               MATH LIB 32 * 16 = 32 MULTIPLY
+                           16.           XREF      SQRT                MATH LIB 32 BIT SQUARE ROOT
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  2
+D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+   ...
+
+C'000000                   18.           SECTION   12
+                           19.  **********************************************************************
+                           20.  *                                                                    *
+                           21.  *        ESRD      SYNCRO DRIVE                                      *
+                           22.  *                                                                    *
+                           23.  *        INPUTS:   D0.W - INPUT ANGLE  +06  DEG  +-180.0             *
+                           24.  *                                                                    *
+                           25.  *        OUTPUTS:  D0.W - OUTPUT X     +06  DEG  +-180.0             *
+                           26.  *                  D1.W - OUTPUT Y     +06  DEG  +-180.0             *
+                           27.  *                                                                    *
+                           28.  **********************************************************************
+     C'00000000            29.  ESRD     EQU       *
+C'000000  3F00             30.           MOVE.W    D0,-(SP)            +06       SAVE INPUT ANGLE
+                           31.  *
+C'000002  D07C 1E00        32.           ADD.W     #7680,D0            +06       ADD 120 DEG
+C'000006  4EB9'00000038    33.           JSR       AEPC                          LIMIT TO +- 180
+C'00000C  4440             34.           NEG.W     D0                  +06       NEGATE
+C'00000E  4EB9'00000000    35.           JSR       MSIN1                         CALL SIN
+C'000014  0840 000F        36.           BCHG      #15,D0              +15       CONVERT TO OFFSET BINARY
+C'000018  3200             37.           MOVE.W    D0,D1               +15       LOAD Y FOR OUTPUT
+                           38.  *
+C'00001A  301F             39.           MOVE.W    (SP)+,D0            +06       LOAD INPUT ANGLE
+                           40.  *
+C'00001C  D07C 0F00        41.           ADD.W     #3840,D0            +06       ADD 60 DEG
+C'000020  4EB9'00000038    42.           JSR       AEPC                          LIMIT TO +- 180
+C'000026  4440             43.           NEG.W     D0                  +06       NEGATE
+C'000028  3F01             44.           MOVE.W    D1,-(SP)            +15       SAVE Y OUTPUT
+C'00002A  4EB9'00000000    45.           JSR       MSIN1                         CALL SIN
+C'000030  321F             46.           MOVE.W    (SP)+,D1            +15       RELOAD Y OUTPUT
+C'000032  0840 000F        47.           BCHG      #15,D0              +15       CONVERT TO OFFSET BINARY
+C'000036  4E75             48.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  3
+D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+   ...
+
+                           50.  **********************************************************************
+                           51.  *                                                                    *
+                           52.  *        END POINT CHECK                                             *
+                           53.  *                                                                    *
+                           54.  *        INPUTS:   D0.W - INPUT ANGLE  +06  DEG  +-511.999           *
+                           55.  *                                                                    *
+                           56.  *        OUTPUTS:  D0.W - OUTPUT ANGLE +06  DEG  +-180.000           *
+                           57.  *                                                                    *
+                           58.  **********************************************************************
+     C'00000038            59.  AEPC     EQU       *
+C'000038  0C40 2D00        60.           CMPI.W    #11520,D0           +06       COMPARE TO 180 DEG
+C'00003C  6D06             61.           BLT.S     LT180                         BRANCH IF LESS THAN 180
+                           62.  *
+C'00003E  907C 5A00        63.           SUB.W     #23040,D0           +06       SUBTRACT 360 DEG
+C'000042  600E             64.           BRA.S     END180                        BRANCH TO END
+                           65.  *
+C'000044  4A40             66.  LT180    TST.W     D0                  +06       COMPARE WITH ZERO DEG
+C'000046  6A0A             67.           BPL.S     END180                        BRANCH IF GREATER THAN 0
+                           68.  *
+C'000048  0C40 D300        69.           CMPI.W    #-11520,D0          +06       COMPARE TO -180 DEG
+C'00004C  6E04             70.           BGT.S     END180                        BRANCH IF GREATER THAN -180
+                           71.  *
+C'00004E  D07C 5A00        72.           ADD.W     #23040,D0           +06       ADD 360 DEG
+C'000052  4E75             73.  END180   RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  4
+D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+   ...
+
+                           75.  **********************************************************************
+                           76.  *                                                                    *
+                           77.  *        COURSE DEV SUBROUTINE                                       *
+                           78.  *                                                                    *
+                           79.  *        INPUT:    D0 - HEADING DIFF   +06  +- 360 DEG               *
+                           80.  *                                                                    *
+                           81.  *        OUTPUTS:  D0 - DEVIATION      +06  +- 89.9                  *
+                           82.  *                  D1 - TO-FROM FLAG   +15                           *
+                           83.  *                                                                    *
+                           84.  **********************************************************************
+     C'00000054            85.  NCDI     EQU       *
+C'000054  323C FFFF        86.           MOVE.W    #$FFFF,D1           +15       SET "TO"  FLAG     +10   VOLT
+C'000058  4440             87.           NEG.W     D0                  +06       DEVIATION                 DEG
+C'00005A  6A1E             88.           BPL.S     POSIT1              .         POSITIVE?
+C'00005C  B07C E980        89.           CMP.W     #-5760,D0           +06       GT-90 ?                   DEG
+C'000060  6A34             90.           BPL.S     RET1                .         YES: RETURN
+C'000062  B07C BC80        91.           CMP.W     #-17280,D0          +06       GT-270?                   DEG
+C'000066  6A06             92.           BPL.S     MIN1801             .         YES
+C'000068  D07C 5A00        93.           ADD.W     #23040,D0           +06       NO ADD 360                DEG
+C'00006C  4E75             94.           RTS                           .
+                           95.  *
+C'00006E  323C 0000        96.  MIN1801  MOVE.W    #0,D1               +15       SET "FROM" FLAG       -10   VO
+C'000072  D07C 2D00        97.           ADD.W     #11520,D0           +06       YES ADD 180               DEG
+C'000076  4440             98.           NEG.W     D0                  +06       -180-DIFF                 DEG
+C'000078  4E75             99.           RTS                           .
+                          100.  *
+C'00007A  B07C 1680       101.  POSIT1   CMP.W     #5760,D0            +06       LT  90                    DEG
+C'00007E  6B16            102.           BMI.S     RET1                .         YES: RETURN
+C'000080  B07C 4380       103.           CMP.W     #17280,D0           +06       NO:  GT 270 ?             DEG
+C'000084  6A0C            104.           BPL.S     MIN3601             .         YES:
+C'000086  323C 0000       105.           MOVE.W    #0,D1               +15       SET "FROM" FLAG       -10   VO
+C'00008A  907C 2D00       106.           SUB.W     #11520,D0           +06       NO DIFF -180              DEG
+C'00008E  4440            107.           NEG.W     D0                  +06       180 -DIFF                 DEG
+C'000090  4E75            108.           RTS
+                          109.  *
+C'000092  907C 5A00       110.  MIN3601  SUB.W     #23040,D0           +06       DIFF-360                  DEG
+C'000096  4E75            111.  RET1     RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  5
+D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+   ...
+
+                          113.  **********************************************************************
+                          114.  *                                                                    *
+                          115.  *        SUBROUTINE FOR ATAN WHEN INPUTS ARE LONG WORDS              *
+                          116.  *                                                                    *
+                          117.  *        INPUTS:   D0.L - COS(ANGLE)   +23                           *
+                          118.  *                  D1.L - SIN(ANGLE)   +23                           *
+                          119.  *                                                                    *
+                          120.  *        OUTPUT:   D0.W - ANGLE        +06  +- 180 DEG               *
+                          121.  *                                                                    *
+                          122.  **********************************************************************
+     C'00000098           123.  NATAN2   EQU       *
+C'000098  2C00            124.           MOVE.L    D0,D6               +23       SAVE COS FOR SIGN
+C'00009A  2E01            125.           MOVE.L    D1,D7               +23       SAVE SIN FOR SIGN
+C'00009C  4A80            126.           TST.L     D0                  +23       TEST COS
+C'00009E  6A02            127.           BPL.S     COSPOS2                       BRANCH IF POSITIVE
+                          128.  *
+C'0000A0  4480            129.           NEG.L     D0                  +23       NEGATE COS
+                          130.  *
+C'0000A2  4A81            131.  COSPOS2  TST.L     D1                  +23       TEST SIN
+C'0000A4  6A02            132.           BPL.S     SINPOS2                       BRANCH IF POSITIVE
+                          133.  *
+C'0000A6  4481            134.           NEG.L     D1                            NEGATE SIN
+                          135.  *
+C'0000A8  B280            136.  SINPOS2  CMP.L     D0,D1               +23       IS (NUM > DEN)
+C'0000AA  6E10            137.           BGT.S     NEXT12                        BRANCH IF GREATER THAN
+                          138.  *
+C'0000AC  4A86            139.           TST.L     D6                  +18       TEST COS (INPUT)
+C'0000AE  6B06            140.           BMI.S     BASE1802                      BRANCH IF NEGATIVE
+                          141.  *
+C'0000B0  383C 0000       142.           MOVE.W    #0,D4               +06       BASE = 0 DEG
+C'0000B4  6012            143.           BRA.S     NEXT32
+                          144.  *
+C'0000B6  383C 2D00       145.  BASE1802 MOVE.W    #11520,D4           +06       BASE = 180 DEG
+C'0000BA  600A            146.           BRA.S     NEXT22
+                          147.  *
+     C'000000BC           148.  NEXT12   EQU       *
+C'0000BC  383C 1680       149.           MOVE.W    #5760,D4            +06       BASE = 90 DEG
+C'0000C0  C141            150.           EXG.L     D0,D1               +23       NUM < DEN
+                          151.  *
+C'0000C2  4A86            152.           TST.L     D6                            IS COS NEGATIVE ?
+C'0000C4  6B02            153.           BMI.S     NEXT32
+                          154.  *
+C'0000C6  4481            155.  NEXT22   NEG.L     D1                  +23       MAKE NUM NEGATIVE
+                          156.  *
+     C'000000C8           157.  NEXT32   EQU       *
+C'0000C8  4A80            158.           TST.L     D0                  +23       TEST FOR ZERO DEN
+C'0000CA  6602            159.           BNE.S     NZERO2
+                          160.  *
+C'0000CC  6030            161.           BRA.S     EQZERO2
+                          162.  *
+     C'000000CE           163.  NZERO2   EQU       *
+                          164.  **********************************************************************
+                          165.  *                                                                    *
+                          166.  *        NUMERATOR   =   D1.L          +23 (SMALLER NUMBER) DEG      *
+                          167.  *        DENOMINATOR =   D0.L          +23 (LAREGER NUMBER) DEG      *
+                          168.  *                                                                    *
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  6
+D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+   ...
+
+                          169.  *        ABS(NUMERATOR)  <=  ABS(DENOMINATOR)                        *
+                          170.  *                                                                    *
+                          171.  **********************************************************************
+C'0000CE  4282            172.           CLR.L     D2                            D2= NO. OF SHIFTS
+C'0000D0  B0BC 00007FFF   173.  LOOP1    CMP.L     #32767,D0           +23       D0.L<= $7FFF TO FIT IN WORD
+C'0000D6  6D06            174.           BLT.S     NEXT42
+                          175.  *
+C'0000D8  E280            176.           ASR.L     #1,D0
+C'0000DA  5282            177.           ADD.L     #1,D2                         D2 = N
+C'0000DC  60F2            178.           BRA.S     LOOP1
+                          179.  *
+     C'000000DE           180.  NEXT42   EQU       *
+                          181.  *
+C'0000DE  2601            182.  LOOPN1   MOVE.L    D1,D3                         SAVE D1 = NUM
+C'0000E0  6708            183.           BEQ.S     NEXT43                        IF D1=0, DON'T SHIFT !
+C'0000E2  E381            184.           ASL.L     #1,D1
+C'0000E4  6904            185.           BVS.S     NEXT43                        STOP IF  MSB SIGN CHANGES
+C'0000E6  5282            186.           ADD.L     #1,D2                         D2 = (M+N)
+C'0000E8  60F4            187.           BRA.S     LOOPN1
+                          188.  *
+C'0000EA  2203            189.  NEXT43   MOVE.L    D3,D1                         RECOVER NO. BEFORE LAST SHIFT
+                          190.  *
+C'0000EC  B4BC 0000000F   191.  LOOP2    CMP.L     #15,D2
+C'0000F2  6F06            192.           BLE.S     NEXT52                        GO AND DIVIDE
+C'0000F4  E281            193.           ASR.L     #1,D1                         RIGHT SHIFT MUM
+C'0000F6  5382            194.           SUB.L     #1,D2                         D2=(M+N) <= 15
+C'0000F8  60F2            195.           BRA.S     LOOP2
+                          196.  *
+C'0000FA  83C0            197.  NEXT52   DIVS      D0,D1                         D2=(M+N) <=15  QUO SCALE
+                          198.  *
+C'0000FC  6810            199.           BVC.S     NOVFLOW2
+                          200.  *
+C'0000FE  4A81            201.  EQZERO2  TST.L     D1            +22 OR +28      CHECK IF NUM IS POSITIVE ?
+C'000100  6A06            202.           BPL.S     NINETY2
+C'000102  303C E980       203.           MOVE.W    #-5760,D0           +06       ANGLE = -90 DEG
+C'000106  6034            204.           BRA.S     ENDATAN4
+C'000108  303C 1680       205.  NINETY2  MOVE.W    #5760,D0            +06       ANGLE = +90 DEG
+C'00010C  602E            206.           BRA.S     ENDATAN4
+                          207.  *
+C'00010E  3001            208.  NOVFLOW2 MOVE.W    D1,D0             (M+N)       5<= (M+N) <=15
+                          209.  *
+C'000110  B4BC 0000000C   210.  LOOP3    CMP.L     #12,D2                        D2 = (M+N)
+C'000116  6F06            211.           BLE.S     NEXT62
+C'000118  E240            212.           ASR.W     #1,D0                         MAKE (M+N) <= 12
+C'00011A  5382            213.           SUB.L     #1,D2
+C'00011C  60F2            214.           BRA.S     LOOP3
+                          215.  *
+     C'0000011E           216.  NEXT62   EQU       *
+C'00011E  B4BC 0000000C   217.  LOOP4    CMP.L     #12,D2
+C'000124  6706            218.           BEQ.S     NEXT72                        IF (M+N) = 12, DONE
+C'000126  E340            219.           ASL.W     #1,D0
+C'000128  5282            220.           ADD.L     #1,D2
+C'00012A  60F2            221.           BRA.S     LOOP4
+                          222.  *
+     C'0000012C           223.  NEXT72   EQU       *                             NOW (M+N) = 12
+                          224.  *
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  7
+D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+   ...
+
+C'00012C  3F04            225.           MOVE.W    D4,-(SP)                      SAVE BASE
+C'00012E  610E            226.           BSR.S     ATAN2               +08       D0.W=ANGLE FROM TABLE AT +08
+C'000130  E440            227.           ASR.W     #2,D0               +08-02+06 RESCALE
+                          228.  *
+C'000132  381F            229.           MOVE.W    (SP)+,D4                      RESTORE BASE
+C'000134  D044            230.           ADD.W     D4,D0               +06       ADD BASE TO ANGLE
+                          231.  *
+C'000136  4A87            232.           TST.L     D7                  +23       TEST SIN(ANGLE)
+C'000138  6A02            233.           BPL.S     ENDATAN4                      BRANCH IF POSITIVE
+                          234.  *
+C'00013A  4440            235.           NEG.W     D0                  +06       CHANGE SIGN
+     C'0000013C           236.  ENDATAN4 EQU       *
+C'00013C  4E75            237.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  8
+D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+   ...
+
+                          239.  **********************************************************************
+                          240.  *                                                                    *
+                          241.  *        ATAN2  ROUTINE                                              *
+                          242.  *                                                                    *
+                          243.  *        INPUT:    D0.W - X=TAN(Y)     +12       +- 7.99             *
+                          244.  *        OUTPUT:   D0.W - Y            +08       +- 89.9 DEG         *
+                          245.  *                                                                    *
+                          246.  *        ALGORITHM:                                                  *
+                          247.  *                                                                    *
+                          248.  *        SEARCH TABLE OF  9 VALUES AND FIND THE                      *
+                          249.  *        2 POINTS THAT X (TAN Y) FALLS BETWEEN (X1 AND X2).          *
+                          250.  *        LOOK UP Y1 AND Y2 DEPENDENT UPON X1 AND X2.                 *
+                          251.  *        INTERPOLATE BETWEEN THE POINTS AS FOLLOWS.                  *
+                          252.  *                                                                    *
+                          253.  *        Y = ((Y2-Y1)/(X2-X1)) * (X-X1) + Y1                         *
+                          254.  *                                                                    *
+                          255.  **********************************************************************
+     C'0000013E           256.  ATAN2    EQU       *
+C'00013E  3A00            257.           MOVE.W    D0,D5               +12       SAVE X FOR SIGN
+C'000140  4A40            258.           TST.W     D0                  +12
+C'000142  673E            259.           BEQ.S     ENDATAN2            .         ATAN 0 = 0
+C'000144  6A02            260.           BPL.S     NOTNEG              .         CHECK SIGN
+C'000146  4440            261.           NEG.W     D0                  .         MAKE POSITIVE
+C'000148  207C'00000184   262.  NOTNEG   MOVE.L    #TANADDR,A0         .         LOAD TABLE ADDR
+                          263.  *
+C'00014E  3218            264.  LOOPX1   MOVE.W    (A0)+,D1            +12       GET TABLE ADDR (POST INC)
+C'000150  B240            265.           CMP.W     D0,D1               +12       COMPARE POINT IN TABLE WITH X
+C'000152  6BFA            266.           BMI.S     LOOPX1              .         LOOP UNTIL X > TABLE VALUE
+                          267.  *
+C'000154  5988            268.           SUB.L     #4,A0               .         POINT TO X1
+C'000156  2448            269.           MOVE.L    A0,A2               .
+C'000158  D5FC 00000022   270.           ADD.L     #34,A2              .         POINT TO Y1
+C'00015E  3218            271.           MOVE.W    (A0)+,D1            +12       GET X1
+C'000160  3418            272.           MOVE.W    (A0)+,D2            +12       GET X2
+C'000162  361A            273.           MOVE.W    (A2)+,D3            +08       GET Y1
+C'000164  381A            274.           MOVE.W    (A2)+,D4            +08       GET Y2
+C'000166  9843            275.           SUB.W     D3,D4               +08       Y2-Y1
+C'000168  9441            276.           SUB.W     D1,D2               +12       X2-X1
+C'00016A  48C4            277.           EXT.L     D4                  +08       PREPARE FOR DIVIDE
+C'00016C  E184            278.           ASL.L     #8,D4               +08+08+16 RESCALE
+C'00016E  EB84            279.           ASL.L     #5,D4               +16+05+21 RESCALE
+C'000170  89C2            280.           DIVS      D2,D4               +21-12+09 M = (Y2-Y1)/(X2-X1)
+C'000172  9041            281.           SUB.W     D1,D0               +12       X-X1
+C'000174  C1C4            282.           MULS      D4,D0               +09+12+21 M * (X-X1)
+C'000176  E080            283.           ASR.L     #8,D0               +21-08+13 RESCALE
+C'000178  EA80            284.           ASR.L     #5,D0               +13-05+08 RESCALE
+C'00017A  D043            285.           ADD.W     D3,D0               +08       Y = M * (X-X1) + Y1
+C'00017C  4A45            286.           TST.W     D5                  +08       CHECK ORIGINAL SIGN OF X
+C'00017E  6A02            287.           BPL.S     ENDATAN2            .         BRANCH IF PLUS
+                          288.  *
+C'000180  4440            289.           NEG.W     D0                  +08       ATAN(-X) = -ATAN(X)
+C'000182  4E75            290.  ENDATAN2 RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  9
+D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+   ...
+
+                          292.  **********************************************************************
+                          293.  *                                                                    *
+                          294.  *        ATAN2 LFI TABLE     ONLY UPTO 45 DEG REQUIRED               *
+                          295.  *                                                                    *
+                          296.  **********************************************************************
+C'000184  0000            297.  TANADDR  DC.W      0                   +12       TAN Y
+C'000186  00C8            298.           DC.W      200
+C'000188  0190            299.           DC.W      400
+C'00018A  0258            300.           DC.W      600
+C'00018C  0330            301.           DC.W      816
+C'00018E  03E8            302.           DC.W      1000
+C'000190  04E0            303.           DC.W      1248
+C'000192  0578            304.           DC.W      1400
+C'000194  06A0            305.           DC.W      1696
+C'000196  079E            306.           DC.W      1950
+C'000198  0890            307.           DC.W      2192
+C'00019A  0992            308.           DC.W      2450
+C'00019C  0AB0            309.           DC.W      2736
+C'00019E  0BB8            310.           DC.W      3000
+C'0001A0  0D20            311.           DC.W      3360
+C'0001A2  0E74            312.           DC.W      3700
+C'0001A4  1000            313.           DC.W      4096
+                          314.  *
+C'0001A6  0000            315.           DC.W      0                   +08       ATAN Y
+C'0001A8  02CC            316.           DC.W      716
+C'0001AA  0594            317.           DC.W      1428
+C'0001AC  0855            318.           DC.W      2133
+C'0001AE  0B44            319.           DC.W      2884
+C'0001B0  0DB8            320.           DC.W      3512
+C'0001B2  10F2            321.           DC.W      4338
+C'0001B4  12DF            322.           DC.W      4831
+C'0001B6  167E            323.           DC.W      5758
+C'0001B8  1975            324.           DC.W      6517
+C'0001BA  1C27            325.           DC.W      7207
+C'0001BC  1EE3            326.           DC.W      7907
+C'0001BE  21BE            327.           DC.W      8638
+C'0001C0  2438            328.           DC.W      9272
+C'0001C2  275D            329.           DC.W      10077
+C'0001C4  2A18            330.           DC.W      10776
+C'0001C6  2D00            331.           DC.W      11520
+C'0001C8                  332.           END
+    0 Errors
+ 1975            324.           DC.W      6517
+C'0001BA  1C27            325.           DC.W      7207
+C'0001BC  1EE3            326.           DC.W      7907
+C'0001BE  21BE            327.           DC.W      8638
+C'0001C0  2438            328.           DC.W      9272
+C'0001C2  275D            329.           DC.W      10077
+C'0001C4  2A18            330.           DC.W     

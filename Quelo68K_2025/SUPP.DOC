@@ -1,0 +1,67 @@
+ 
+          SUPP.DOC                         Supplement for MS-DOS, PC-DOS
+ 
+ 
+ 
+                           Supplement for MS-DOS, PC-DOS
+              
+                           Assembler Package Release 5.0
+              
+              
+              
+          Date-Time Access:
+              
+              The  date  and  time  for  listings  are obtained from the
+              operating system. 
+              
+              
+              
+          Symbol Table Space:
+              
+              The various programs  will  take  as  much  memory  as  is
+              available (but not more than 32766 bytes) for symbol table
+              space  or  buffer space in the case of the SPLIT and IMAGE
+              programs. 
+              
+              Some difficulty has been encountered  in  determining  how
+              much  space is really available when running on the PC-Jr.
+              The "-Z" command line option allows the  user  to  specify
+              symbol  table  space  directly.   See the Package Overview
+              Manual for "-Z" option details. 
+              
+              If you get an "ALLOC" error message, run the program  with
+              the  "-1" option to discover how much space the program is
+              trying to take.  The value  displayed  is  the  number  of
+              bytes  given  in  hexadecimal.  Run the program again with
+              the "-Z" option to specify a smaller amount of space.   It
+              will  take  some experimentation to find the maximum value
+              that will work for a given program. 
+              
+              
+              
+          Maximum Number of Open Files:
+              
+              The maximum number of open files is determined by your DOS
+              "config.sys" file.  If the Quelo software  has  difficulty
+              opening  files,  try increasing the maximum.  In the worst
+              case, the Quelo software requires 6 open files plus 2 more
+              for a total of 8 if redirection is used. 
+              
+              
+              
+          Path Names:
+              
+              Path names are not supported. 
+              
+              
+              
+              
+              
+              
+              
+ 
+          (c) 1985 by QUELO                                           1
+ 
+ 
+ 
+

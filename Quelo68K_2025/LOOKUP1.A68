@@ -1,0 +1,1164 @@
+	 XDEF	   DPTABLE
+	 XDEF	   DPCOUNT
+	 SECTION   12
+DPTABLE  EQU	   *
+	 DC.B	   'DSEG    '
+	 DC.L	   $00000F00
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'DBUFF   '
+	 DC.L	   $00000F04
+	 DC.B	   $01,$00,$50,$00
+	 DC.B	   'DBUFFPTR'
+	 DC.L	   $00000F54
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'DBUFFCNT'
+	 DC.L	   $00000F58
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'DBUFFLNE'
+	 DC.L	   $00000F59
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'DBUFFCHG'
+	 DC.L	   $00000F5A
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'DSPARE1 '
+	 DC.L	   $00000F5B
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'DLIST   '
+	 DC.L	   $00000F5C
+	 DC.B	   $04,$00,$80,$00
+	 DC.B	   'DCOUNT  '
+	 DC.L	   $0000115C
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'DSPARE2 '
+	 DC.L	   $0000115E
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'TFRAME  '
+	 DC.L	   $00001160
+	 DC.B	   $04,$01,$01,$00
+	 DC.B	   'TFRAMEA '
+	 DC.L	   $00001164
+	 DC.B	   $04,$01,$01,$00
+	 DC.B	   'TFRAMEW '
+	 DC.L	   $00001168
+	 DC.B	   $04,$01,$01,$00
+	 DC.B	   'TMODULE '
+	 DC.L	   $0000116C
+	 DC.B	   $02,$01,$10,$00
+	 DC.B	   'TMODULEA'
+	 DC.L	   $0000118C
+	 DC.B	   $02,$01,$10,$00
+	 DC.B	   'TMODULEW'
+	 DC.L	   $000011AC
+	 DC.B	   $02,$01,$10,$00
+	 DC.B	   'DSPARE  '
+	 DC.L	   $000011CC
+	 DC.B	   $04,$00,$20,$00
+	 DC.B	   'IOS     '
+	 DC.L	   $0000124C
+	 DC.B	   $04,$00,$80,$00
+	 DC.B	   'EPROPCTL'
+	 DC.L	   $0000144C
+	 DC.B	   $04,$03,$01,$1D
+	 DC.B	   'ENTHROTT'
+	 DC.L	   $00001450
+	 DC.B	   $04,$03,$01,$1D
+	 DC.B	   'ESPARE1 '
+	 DC.L	   $00001454
+	 DC.B	   $04,$03,$01,$05
+	 DC.B	   'EBHP    '
+	 DC.L	   $00001458
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'EFUELMIX'
+	 DC.L	   $0000145A
+	 DC.B	   $02,$03,$01,$0D
+	 DC.B	   'EMAP    '
+	 DC.L	   $0000145C
+	 DC.B	   $02,$03,$01,$09
+	 DC.B	   'ENRPMDOT'
+	 DC.L	   $0000145E
+	 DC.B	   $02,$03,$01,$03
+	 DC.B	   'EIRPM   '
+	 DC.L	   $00001460
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'ENFULL  '
+	 DC.L	   $00001462
+	 DC.B	   $02,$03,$01,$03
+	 DC.B	   'ENIDLE  '
+	 DC.L	   $00001464
+	 DC.B	   $02,$03,$01,$03
+	 DC.B	   'ENRPM   '
+	 DC.L	   $00001466
+	 DC.B	   $02,$03,$01,$03
+	 DC.B	   'ENRPMDEM'
+	 DC.L	   $00001468
+	 DC.B	   $02,$03,$01,$03
+	 DC.B	   'ENTHRUST'
+	 DC.L	   $0000146A
+	 DC.B	   $02,$03,$01,$05
+	 DC.B	   'ERPMWM  '
+	 DC.L	   $0000146C
+	 DC.B	   $02,$03,$01,$03
+	 DC.B	   'EFEATHER'
+	 DC.L	   $0000146E
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'EFIRED  '
+	 DC.L	   $0000146F
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'EFAIL   '
+	 DC.L	   $00001470
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'ECUTOFF '
+	 DC.L	   $00001471
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'EIGNITN '
+	 DC.L	   $00001472
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'EMASTER '
+	 DC.L	   $00001473
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'ESTART  '
+	 DC.L	   $00001474
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'EMAGLT  '
+	 DC.L	   $00001475
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'EMAGRT  '
+	 DC.L	   $00001476
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'ECARBHT '
+	 DC.L	   $00001477
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'EMAGBOTH'
+	 DC.L	   $00001478
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'ESPAREB1'
+	 DC.L	   $00001479
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FALPHA  '
+	 DC.L	   $0000147A
+	 DC.B	   $04,$03,$01,$19
+	 DC.B	   'FBALL   '
+	 DC.L	   $0000147E
+	 DC.B	   $04,$03,$01,$14
+	 DC.B	   'FBETA   '
+	 DC.L	   $00001482
+	 DC.B	   $04,$03,$01,$19
+	 DC.B	   'FHF     '
+	 DC.L	   $00001486
+	 DC.B	   $04,$03,$01,$11
+	 DC.B	   'FHGGND  '
+	 DC.L	   $0000148A
+	 DC.B	   $04,$03,$01,$11
+	 DC.B	   'FHFP    '
+	 DC.L	   $0000148E
+	 DC.B	   $04,$03,$01,$11
+	 DC.B	   'FHP     '
+	 DC.L	   $00001492
+	 DC.B	   $04,$03,$01,$11
+	 DC.B	   'FLAMBDA '
+	 DC.L	   $00001496
+	 DC.B	   $04,$03,$01,$18
+	 DC.B	   'FPA     '
+	 DC.L	   $0000149A
+	 DC.B	   $04,$03,$01,$16
+	 DC.B	   'FPHI    '
+	 DC.L	   $0000149E
+	 DC.B	   $04,$03,$01,$16
+	 DC.B	   'FPHIFRZ '
+	 DC.L	   $000014A2
+	 DC.B	   $04,$03,$01,$16
+	 DC.B	   'FPSI    '
+	 DC.L	   $000014A6
+	 DC.B	   $04,$03,$01,$16
+	 DC.B	   'FQA     '
+	 DC.L	   $000014AA
+	 DC.B	   $04,$03,$01,$19
+	 DC.B	   'FRA     '
+	 DC.L	   $000014AE
+	 DC.B	   $04,$03,$01,$19
+	 DC.B	   'FRCHOLD '
+	 DC.L	   $000014B2
+	 DC.B	   $04,$03,$01,$16
+	 DC.B	   'FRCLIMB '
+	 DC.L	   $000014B6
+	 DC.B	   $04,$03,$01,$16
+	 DC.B	   'FROLLHLD'
+	 DC.L	   $000014BA
+	 DC.B	   $04,$03,$01,$16
+	 DC.B	   'FRCLIMB1'
+	 DC.L	   $000014BE
+	 DC.B	   $04,$03,$01,$03
+	 DC.B	   'FHG     '
+	 DC.L	   $000014C2
+	 DC.B	   $04,$03,$01,$11
+	 DC.B	   'FTEMP3  '
+	 DC.L	   $000014C6
+	 DC.B	   $04,$03,$01,$03
+	 DC.B	   'FTEMP4  '
+	 DC.L	   $000014CA
+	 DC.B	   $04,$03,$01,$04
+	 DC.B	   'FTEMP5  '
+	 DC.L	   $000014CE
+	 DC.B	   $04,$03,$01,$05
+	 DC.B	   'FTEMP6  '
+	 DC.L	   $000014D2
+	 DC.B	   $04,$03,$01,$06
+	 DC.B	   'FTHETA  '
+	 DC.L	   $000014D6
+	 DC.B	   $04,$03,$01,$19
+	 DC.B	   'FUEW    '
+	 DC.L	   $000014DA
+	 DC.B	   $04,$03,$01,$15
+	 DC.B	   'FVCAL   '
+	 DC.L	   $000014DE
+	 DC.B	   $04,$03,$01,$16
+	 DC.B	   'FVEW    '
+	 DC.L	   $000014E2
+	 DC.B	   $04,$03,$01,$15
+	 DC.B	   'FVP     '
+	 DC.L	   $000014E6
+	 DC.B	   $04,$03,$01,$16
+	 DC.B	   'FVPGND  '
+	 DC.L	   $000014EA
+	 DC.B	   $04,$03,$01,$15
+	 DC.B	   'FALPHDOT'
+	 DC.L	   $000014EE
+	 DC.B	   $02,$03,$01,$07
+	 DC.B	   'FAZA    '
+	 DC.L	   $000014F0
+	 DC.B	   $02,$03,$01,$0C
+	 DC.B	   'FAZADOT '
+	 DC.L	   $000014F2
+	 DC.B	   $02,$03,$01,$0C
+	 DC.B	   'FBETADOT'
+	 DC.L	   $000014F4
+	 DC.B	   $02,$03,$01,$07
+	 DC.B	   'FCG     '
+	 DC.L	   $000014F6
+	 DC.B	   $02,$03,$01,$09
+	 DC.B	   'FCL     '
+	 DC.L	   $000014F8
+	 DC.B	   $02,$03,$01,$0D
+	 DC.B	   'FCOSALPH'
+	 DC.L	   $000014FA
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FCOSPHI '
+	 DC.L	   $000014FC
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FCOSPSI '
+	 DC.L	   $000014FE
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FCOSPSIW'
+	 DC.L	   $00001500
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FCOSTHET'
+	 DC.L	   $00001502
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FDELAIL '
+	 DC.L	   $00001504
+	 DC.B	   $02,$03,$01,$0E
+	 DC.B	   'FDELEV  '
+	 DC.L	   $00001506
+	 DC.B	   $02,$03,$01,$0E
+	 DC.B	   'FDELRUD '
+	 DC.L	   $00001508
+	 DC.B	   $02,$03,$01,$0E
+	 DC.B	   'FDELTATK'
+	 DC.L	   $0000150A
+	 DC.B	   $02,$03,$01,$09
+	 DC.B	   'FELTRIM '
+	 DC.L	   $0000150C
+	 DC.B	   $02,$03,$01,$0E
+	 DC.B	   'FFLAPS  '
+	 DC.L	   $0000150E
+	 DC.B	   $02,$03,$01,$0E
+	 DC.B	   'FFXA    '
+	 DC.L	   $00001510
+	 DC.B	   $02,$03,$01,$03
+	 DC.B	   'FFZA    '
+	 DC.L	   $00001512
+	 DC.B	   $02,$03,$01,$02
+	 DC.B	   'FGAMMA  '
+	 DC.L	   $00001514
+	 DC.B	   $02,$03,$01,$0A
+	 DC.B	   'FHDOT   '
+	 DC.L	   $00001516
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'FICOSPHI'
+	 DC.L	   $00001518
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FISINPHI'
+	 DC.L	   $0000151A
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FLAMDOT '
+	 DC.L	   $0000151C
+	 DC.B	   $02,$03,$01,$08
+	 DC.B	   'FMPX    '
+	 DC.L	   $0000151E
+	 DC.B	   $02,$03,$01,$01
+	 DC.B	   'FPADOT  '
+	 DC.L	   $00001520
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'FPBAR   '
+	 DC.L	   $00001522
+	 DC.B	   $02,$03,$01,$0A
+	 DC.B	   'FPSIDOT '
+	 DC.L	   $00001524
+	 DC.B	   $02,$03,$01,$08
+	 DC.B	   'FQ      '
+	 DC.L	   $00001526
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'FQADOT  '
+	 DC.L	   $00001528
+	 DC.B	   $02,$03,$01,$07
+	 DC.B	   'FPHIDOT '
+	 DC.L	   $0000152A
+	 DC.B	   $02,$03,$01,$08
+	 DC.B	   'FRADOT  '
+	 DC.L	   $0000152C
+	 DC.B	   $02,$03,$01,$07
+	 DC.B	   'FRAND   '
+	 DC.L	   $0000152E
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FRUFAIR '
+	 DC.L	   $00001530
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'FSINALPH'
+	 DC.L	   $00001532
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FSINGAMA'
+	 DC.L	   $00001534
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FSINPHI '
+	 DC.L	   $00001536
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FSINPSI '
+	 DC.L	   $00001538
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FSINPSIW'
+	 DC.L	   $0000153A
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FSINTHET'
+	 DC.L	   $0000153C
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FTHETDOT'
+	 DC.L	   $0000153E
+	 DC.B	   $02,$03,$01,$08
+	 DC.B	   'FTIMER10'
+	 DC.L	   $00001540
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'FTIMER50'
+	 DC.L	   $00001542
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'FVPDOT  '
+	 DC.L	   $00001544
+	 DC.B	   $02,$03,$01,$08
+	 DC.B	   'FVPINV  '
+	 DC.L	   $00001546
+	 DC.B	   $02,$03,$01,$04
+	 DC.B	   'FVW     '
+	 DC.L	   $00001548
+	 DC.B	   $02,$03,$01,$08
+	 DC.B	   'FWG     '
+	 DC.L	   $0000154A
+	 DC.B	   $02,$03,$01,$03
+	 DC.B	   'FWGINV  '
+	 DC.L	   $0000154C
+	 DC.B	   $02,$03,$01,$11
+	 DC.B	   'FWOW    '
+	 DC.L	   $0000154E
+	 DC.B	   $02,$03,$01,$0C
+	 DC.B	   'FBAROPR '
+	 DC.L	   $00001550
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FRAAMPL '
+	 DC.L	   $00001552
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FENGVOL '
+	 DC.L	   $00001554
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FFUELQR '
+	 DC.L	   $00001556
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FFUELQL '
+	 DC.L	   $00001558
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FCYLTP  '
+	 DC.L	   $0000155A
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FOILTP  '
+	 DC.L	   $0000155C
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FOILPR  '
+	 DC.L	   $0000155E
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FSPARE0 '
+	 DC.L	   $00001560
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FSPARE1 '
+	 DC.L	   $00001562
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FWINDVEL'
+	 DC.L	   $00001564
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FWINDC  '
+	 DC.L	   $00001566
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FWINDS  '
+	 DC.L	   $00001568
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FOAT    '
+	 DC.L	   $0000156A
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FGRWT   '
+	 DC.L	   $0000156C
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FCGIN   '
+	 DC.L	   $0000156E
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'FALTFRZ '
+	 DC.L	   $00001570
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FALTSDN '
+	 DC.L	   $00001571
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FALTSUP '
+	 DC.L	   $00001572
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FBFIELD '
+	 DC.L	   $00001573
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FBRAKE  '
+	 DC.L	   $00001574
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FFREEZE '
+	 DC.L	   $00001575
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FINIT   '
+	 DC.L	   $00001576
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FMODE1  '
+	 DC.L	   $00001577
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FMODE2  '
+	 DC.L	   $00001578
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FMODE3  '
+	 DC.L	   $00001579
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FSTALL  '
+	 DC.L	   $0000157A
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'FWOG    '
+	 DC.L	   $0000157B
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'MSINTHET'
+	 DC.L	   $0000157C
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'MCOSTHET'
+	 DC.L	   $0000157E
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'MPITCOMM'
+	 DC.L	   $00001580
+	 DC.B	   $02,$03,$01,$08
+	 DC.B	   'MSINPHI '
+	 DC.L	   $00001582
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'MCOSPHI '
+	 DC.L	   $00001584
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'MROLLCOM'
+	 DC.L	   $00001586
+	 DC.B	   $02,$03,$01,$08
+	 DC.B	   'MSINPSI '
+	 DC.L	   $00001588
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'MTIMHEAD'
+	 DC.L	   $0000158A
+	 DC.B	   $02,$03,$01,$0A
+	 DC.B	   'MTIMPIT '
+	 DC.L	   $0000158C
+	 DC.B	   $02,$03,$01,$0A
+	 DC.B	   'MTIMROLL'
+	 DC.L	   $0000158E
+	 DC.B	   $02,$03,$01,$0A
+	 DC.B	   'MCOSPSI '
+	 DC.L	   $00001590
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'MHEADCOM'
+	 DC.L	   $00001592
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NADF1FRQ'
+	 DC.L	   $00001594
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NADF1STA'
+	 DC.L	   $00001598
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NA1IDNT1'
+	 DC.L	   $0000159C
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NA1IDNT2'
+	 DC.L	   $000015A0
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NADF2FRQ'
+	 DC.L	   $000015A4
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NADF2STA'
+	 DC.L	   $000015A8
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NA2IDNT1'
+	 DC.L	   $000015AC
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NA2IDNT2'
+	 DC.L	   $000015B0
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NAV1FREQ'
+	 DC.L	   $000015B4
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NAV2FREQ'
+	 DC.L	   $000015B8
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NAV1STA '
+	 DC.L	   $000015BC
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NAV2STA '
+	 DC.L	   $000015C0
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NDIST2  '
+	 DC.L	   $000015C4
+	 DC.B	   $04,$03,$01,$18
+	 DC.B	   'NGLAT   '
+	 DC.L	   $000015C8
+	 DC.B	   $04,$03,$01,$17
+	 DC.B	   'NGLON   '
+	 DC.L	   $000015CC
+	 DC.B	   $04,$03,$01,$17
+	 DC.B	   'NV1IDNT1'
+	 DC.L	   $000015D0
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NV1IDNT2'
+	 DC.L	   $000015D4
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NV2IDNT1'
+	 DC.L	   $000015D8
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NV2IDNT2'
+	 DC.L	   $000015DC
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'ND1IDNT1'
+	 DC.L	   $000015E0
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'ND1IDNT2'
+	 DC.L	   $000015E4
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'ND2IDNT1'
+	 DC.L	   $000015E8
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'ND2IDNT2'
+	 DC.L	   $000015EC
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NADF1ERR'
+	 DC.L	   $000015F0
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NADF2ERR'
+	 DC.L	   $000015F4
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NRAGAS  '
+	 DC.L	   $000015F8
+	 DC.B	   $04,$03,$01,$08
+	 DC.B	   'NRBGAS  '
+	 DC.L	   $000015FC
+	 DC.B	   $04,$03,$01,$08
+	 DC.B	   'NRGAS2  '
+	 DC.L	   $00001600
+	 DC.B	   $04,$03,$01,$0B
+	 DC.B	   'NRRAS2  '
+	 DC.L	   $00001604
+	 DC.B	   $04,$03,$01,$0B
+	 DC.B	   'NSACF   '
+	 DC.L	   $00001608
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NMKRSA  '
+	 DC.L	   $0000160C
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NDME1STA'
+	 DC.L	   $00001610
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NDME2STA'
+	 DC.L	   $00001614
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NAPTPSA '
+	 DC.L	   $00001618
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NAPTRNG2'
+	 DC.L	   $0000161C
+	 DC.B	   $04,$03,$01,$18
+	 DC.B	   'NMKRRNG2'
+	 DC.L	   $00001620
+	 DC.B	   $04,$03,$01,$18
+	 DC.B	   'NTABNAV1'
+	 DC.L	   $00001624
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NTABNAV2'
+	 DC.L	   $00001628
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NCENLAT '
+	 DC.L	   $0000162C
+	 DC.B	   $04,$03,$01,$17
+	 DC.B	   'NCENLON '
+	 DC.L	   $00001630
+	 DC.B	   $04,$03,$01,$17
+	 DC.B	   'NRSLEW  '
+	 DC.L	   $00001634
+	 DC.B	   $04,$03,$01,$17
+	 DC.B	   'NRXGASL '
+	 DC.L	   $00001638
+	 DC.B	   $04,$03,$01,$17
+	 DC.B	   'NRYGASL '
+	 DC.L	   $0000163C
+	 DC.B	   $04,$03,$01,$17
+	 DC.B	   'N3KBAND '
+	 DC.L	   $00001640
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NENGFREQ'
+	 DC.L	   $00001644
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NSPARE1 '
+	 DC.L	   $00001648
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NSPARE2 '
+	 DC.L	   $0000164C
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NSPARE3 '
+	 DC.L	   $00001650
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NSPARE4 '
+	 DC.L	   $00001654
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NSPARE5 '
+	 DC.L	   $00001658
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NSPARE6 '
+	 DC.L	   $0000165C
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NSPARE7 '
+	 DC.L	   $00001660
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NSPARE8 '
+	 DC.L	   $00001664
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'NADF1BRG'
+	 DC.L	   $00001668
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NADF1CTR'
+	 DC.L	   $0000166A
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NADF1DEV'
+	 DC.L	   $0000166C
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NADF1RNG'
+	 DC.L	   $0000166E
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'NADF2RNG'
+	 DC.L	   $00001670
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'NADF2BRG'
+	 DC.L	   $00001672
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NADF2CTR'
+	 DC.L	   $00001674
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NADF2DEV'
+	 DC.L	   $00001676
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NAV1BRG '
+	 DC.L	   $00001678
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NAV2BRG '
+	 DC.L	   $0000167A
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NAV1CTR '
+	 DC.L	   $0000167C
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NAV2CTR '
+	 DC.L	   $0000167E
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NAV1OBS '
+	 DC.L	   $00001680
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NAV2OBS '
+	 DC.L	   $00001682
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NCDI1DEG'
+	 DC.L	   $00001684
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NCDI2DEG'
+	 DC.L	   $00001686
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NGCLAT  '
+	 DC.L	   $00001688
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NGCLATIN'
+	 DC.L	   $0000168A
+	 DC.B	   $02,$03,$01,$07
+	 DC.B	   'NGFE    '
+	 DC.L	   $0000168C
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'NGGA    '
+	 DC.L	   $0000168E
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'NGS     '
+	 DC.L	   $00001690
+	 DC.B	   $02,$03,$01,$04
+	 DC.B	   'NHRA    '
+	 DC.L	   $00001692
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'NGSD1DEG'
+	 DC.L	   $00001694
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NIMCTR  '
+	 DC.L	   $00001696
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NMAGVAR '
+	 DC.L	   $00001698
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NMMCTR  '
+	 DC.L	   $0000169A
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NOMCTR  '
+	 DC.L	   $0000169C
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NPSIGA  '
+	 DC.L	   $0000169E
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NPSIMH  '
+	 DC.L	   $000016A0
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NPSIIH  '
+	 DC.L	   $000016A2
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NUEW    '
+	 DC.L	   $000016A4
+	 DC.B	   $02,$03,$01,$04
+	 DC.B	   'NVEW    '
+	 DC.L	   $000016A6
+	 DC.B	   $02,$03,$01,$04
+	 DC.B	   'NADF1RAW'
+	 DC.L	   $000016A8
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NRASIN  '
+	 DC.L	   $000016AA
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NRACOS  '
+	 DC.L	   $000016AC
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NRXGAS  '
+	 DC.L	   $000016AE
+	 DC.B	   $02,$03,$01,$0C
+	 DC.B	   'NRYGAS  '
+	 DC.L	   $000016B0
+	 DC.B	   $02,$03,$01,$0C
+	 DC.B	   'NRBRG   '
+	 DC.L	   $000016B2
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NRRGAS  '
+	 DC.L	   $000016B4
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NRZGAS  '
+	 DC.L	   $000016B6
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'NRRRAS  '
+	 DC.L	   $000016B8
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NGBIAS  '
+	 DC.L	   $000016BA
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NSPSIB  '
+	 DC.L	   $000016BC
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NCPSIB  '
+	 DC.L	   $000016BE
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NGVNS   '
+	 DC.L	   $000016C0
+	 DC.B	   $02,$03,$01,$04
+	 DC.B	   'NGVEW   '
+	 DC.L	   $000016C2
+	 DC.B	   $02,$03,$01,$04
+	 DC.B	   'NDME1CTR'
+	 DC.L	   $000016C4
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NDME2CTR'
+	 DC.L	   $000016C6
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NVTC1CTR'
+	 DC.L	   $000016C8
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NVTC2CTR'
+	 DC.L	   $000016CA
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NK1     '
+	 DC.L	   $000016CC
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NK2     '
+	 DC.L	   $000016CE
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NK3     '
+	 DC.L	   $000016D0
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NE      '
+	 DC.L	   $000016D2
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NCRS1COS'
+	 DC.L	   $000016D4
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NCRS1SIN'
+	 DC.L	   $000016D6
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NCRS2COS'
+	 DC.L	   $000016D8
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NCRS2SIN'
+	 DC.L	   $000016DA
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NSYNCS  '
+	 DC.L	   $000016DC
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NSYNCC  '
+	 DC.L	   $000016DE
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NSYNCDEG'
+	 DC.L	   $000016E0
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NRSCALE '
+	 DC.L	   $000016E2
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'USETHD  '
+	 DC.L	   $000016E4
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NCONRAD '
+	 DC.L	   $000016E6
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NAV1GS  '
+	 DC.L	   $000016E8
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NAV2GS  '
+	 DC.L	   $000016EA
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NAV1LR  '
+	 DC.L	   $000016EC
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NAV2LR  '
+	 DC.L	   $000016EE
+	 DC.B	   $02,$03,$01,$0F
+	 DC.B	   'NGSTAN  '
+	 DC.L	   $000016F0
+	 DC.B	   $02,$03,$01,$0C
+	 DC.B	   'NBASEREG'
+	 DC.L	   $000016F2
+	 DC.B	   $02,$03,$01,$06
+	 DC.B	   'NITCOUNT'
+	 DC.L	   $000016F4
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NSPAREW1'
+	 DC.L	   $000016F6
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NSPAREW2'
+	 DC.L	   $000016F8
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NSPAREW3'
+	 DC.L	   $000016FA
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NSPAREW4'
+	 DC.L	   $000016FC
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NSPAREW5'
+	 DC.L	   $000016FE
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NSPAREW6'
+	 DC.L	   $00001700
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NSPAREW7'
+	 DC.L	   $00001702
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NSPAREW8'
+	 DC.L	   $00001704
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NICOM1SQ'
+	 DC.L	   $00001706
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NICOM2SQ'
+	 DC.L	   $00001708
+	 DC.B	   $02,$00,$01,$00
+	 DC.B	   'NMKRLVL '
+	 DC.L	   $0000170A
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NLF1LOS '
+	 DC.L	   $0000170B
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NADF1TUN'
+	 DC.L	   $0000170C
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NADF2TUN'
+	 DC.L	   $0000170D
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NAV1TUN '
+	 DC.L	   $0000170E
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NAV2TUN '
+	 DC.L	   $0000170F
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NAVFRZ  '
+	 DC.L	   $00001710
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NBWOW   '
+	 DC.L	   $00001711
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NIMTONE '
+	 DC.L	   $00001712
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NIN1GSF '
+	 DC.L	   $00001713
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NINIT   '
+	 DC.L	   $00001714
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NMMTONE '
+	 DC.L	   $00001715
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NOMTONE '
+	 DC.L	   $00001716
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NRWR1   '
+	 DC.L	   $00001717
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NRWR2   '
+	 DC.L	   $00001718
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NRWR3   '
+	 DC.L	   $00001719
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NRLOS   '
+	 DC.L	   $0000171A
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NMKRVL  '
+	 DC.L	   $0000171B
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NDME1TUN'
+	 DC.L	   $0000171C
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NDME2TUN'
+	 DC.L	   $0000171D
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NIMKEY  '
+	 DC.L	   $0000171E
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NAMRA   '
+	 DC.L	   $0000171F
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NMMRA   '
+	 DC.L	   $00001720
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NOMRA   '
+	 DC.L	   $00001721
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NVTC1   '
+	 DC.L	   $00001722
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NVTC2   '
+	 DC.L	   $00001723
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NAV1VOL '
+	 DC.L	   $00001724
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NAV2VOL '
+	 DC.L	   $00001725
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NLF1VOL '
+	 DC.L	   $00001726
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NCOM1OP '
+	 DC.L	   $00001727
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NCOM2OP '
+	 DC.L	   $00001728
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NMKRSNS '
+	 DC.L	   $00001729
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NIPFLAG '
+	 DC.L	   $0000172A
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'UHDSET  '
+	 DC.L	   $0000172B
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NMMKEY  '
+	 DC.L	   $0000172C
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NOMKEY  '
+	 DC.L	   $0000172D
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NAV1KY  '
+	 DC.L	   $0000172E
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NAV2KY  '
+	 DC.L	   $0000172F
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NDM1KY  '
+	 DC.L	   $00001730
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NDM2KY  '
+	 DC.L	   $00001731
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NLF1KY  '
+	 DC.L	   $00001732
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NLF2KY  '
+	 DC.L	   $00001733
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NNV1VOL '
+	 DC.L	   $00001734
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NNV2VOL '
+	 DC.L	   $00001735
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NCDI1DO '
+	 DC.L	   $00001736
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NCDI2DO '
+	 DC.L	   $00001737
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NDMECTL '
+	 DC.L	   $00001738
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NENGAMP '
+	 DC.L	   $00001739
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NPROPAMP'
+	 DC.L	   $0000173A
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NRUMBLE '
+	 DC.L	   $0000173B
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSTALL  '
+	 DC.L	   $0000173C
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NCOM1SQ '
+	 DC.L	   $0000173D
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NCOM2SQ '
+	 DC.L	   $0000173E
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NCOM1VOL'
+	 DC.L	   $0000173F
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NCOM2VOL'
+	 DC.L	   $00001740
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NASCONT1'
+	 DC.L	   $00001741
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NASCONT2'
+	 DC.L	   $00001742
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NASCONT3'
+	 DC.L	   $00001743
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NMKRDOB '
+	 DC.L	   $00001744
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NDS1DO15'
+	 DC.L	   $00001745
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREB1'
+	 DC.L	   $00001746
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREB2'
+	 DC.L	   $00001747
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREB3'
+	 DC.L	   $00001748
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREB4'
+	 DC.L	   $00001749
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREB5'
+	 DC.L	   $0000174A
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREB6'
+	 DC.L	   $0000174B
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREB7'
+	 DC.L	   $0000174C
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREB8'
+	 DC.L	   $0000174D
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREB9'
+	 DC.L	   $0000174E
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'NSPAREBA'
+	 DC.L	   $0000174F
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'VISON   '
+	 DC.L	   $00001750
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'VFILL   '
+	 DC.L	   $00001751
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'SYNC1   '
+	 DC.L	   $00001752
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'VFLAG1  '
+	 DC.L	   $00001753
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'VISHDG  '
+	 DC.L	   $00001754
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'VISPITCH'
+	 DC.L	   $00001756
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'VISROLL '
+	 DC.L	   $00001758
+	 DC.B	   $02,$03,$01,$00
+	 DC.B	   'VISALT  '
+	 DC.L	   $0000175A
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'VISXF   '
+	 DC.L	   $0000175E
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'VISYF   '
+	 DC.L	   $00001762
+	 DC.B	   $04,$00,$01,$00
+	 DC.B	   'VFLAG2  '
+	 DC.L	   $00001766
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'SYNC22  '
+	 DC.L	   $00001767
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'VFIRST  '
+	 DC.L	   $00001768
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'VTEMP1  '
+	 DC.L	   $00001769
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'VISX    '
+	 DC.L	   $0000176A
+	 DC.B	   $04,$03,$01,$0A
+	 DC.B	   'VISY    '
+	 DC.L	   $0000176E
+	 DC.B	   $04,$03,$01,$0A
+*
+DPCOUNT  DC.W		   382
+~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:38
+	 END
+C.B	   'VFLAG2  '
+	 DC.L	   $00001766
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'SYNC22  '
+	 DC.L	   $00001767
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'VFIRST  '
+	 DC.L	   $00001768
+	 DC.B	   $01,$00,$01,$00
+	 DC.B	   'VTEMP1  '

@@ -1,0 +1,32 @@
+	 OPT	   MEX,CEX,NOPCS
+**********************************************************************
+*								     *
+*	 REAL-TIME MODULE NAME LIST				     *
+*								     *
+**********************************************************************
+	 SECTION  12
+	 XDEF	   RTNAME
+	 XDEF	   RTNUMBER
+*
+RTNUMBER DC.L	  15
+*
+RTNAME	 EQU	  *
+	 DC.B	 'ENGINE  '
+	 DC.B	 'LIFT    '
+	 DC.B	 'SPEED   '
+	 DC.B	 'CLIMB   '
+	 DC.B	 'PITCH   '
+	 DC.B	 'ROLL    '
+	 DC.B	 'TURN    '
+	 DC.B	 'MOTION  '
+	 DC.B	 'NAVFREQ '
+	 DC.B	 'NAV1    '
+	 DC.B	 'RMNKFG  '
+	 DC.B	 'COMM    '
+	 DC.B	 'GATVIS  '
+	 DC.B	 'VISIO   '
+	 DC.B	 'RTDEBUG '
+	 DC.B	 'RTEND   '
+*
+	 END
+

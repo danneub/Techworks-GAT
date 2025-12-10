@@ -1,0 +1,50 @@
+macro	idnt	1,0	macro example
+
+cseg	equ	0
+dseg	equ	1
+
+extbl	macro
+	ext.w	\1
+	ext.l	\1
+	endm
+
+	extbl	d0
+
+push	macro
+	move.\0	\1,-(sp)
+	endm
+
+	push	d0
+	push.l	d0
+
+pop	macro
+	move.\0	(sp)+,\1
+	endm
+
+	xref	message,doit,save_and_doit
+
+msg	macro
+	section	dseg
+\@	dc.b	'\1',0
+	section	cseg
+	lea	\@,a0
+	jsr	message
+	endm
+
+	msg	<Hello Quelo>
+
+call	macro
+	ifnc	'\2',''
+	push	\2
+	endc
+	jsr	\1
+	ifnc	'\2',''
+	pop	\2
+	endc
+	endm
+
+	call	doit
+	call	save_and_doit,d0
+
+	end
+

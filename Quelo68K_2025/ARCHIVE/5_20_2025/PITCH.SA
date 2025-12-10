@@ -1,0 +1,271 @@
+	 OPT	   MEX,CEX,NOPCS
+	 XDEF	   PITCH
+*
+	 INCLUDE   FSYM.SA
+	 INCLUDE   ESYM.SA
+	 INCLUDE   IO.SA
+*
+	 SECTION   12
+FCMC1	 DC.W	   14863		   37.7*.385 AT 2-10
+FCMC2	 DC.W	   94			   37.7*.3115 AT 2-3
+FCMC3	 DC.W	   1007 		   15.74 AT 2-6
+FCMC4	 DC.W	   -6443		  -37.7*.1669 AT 2-10
+FCMC5	 DC.W	   706			   37.7*.0183 AT 2-10
+FCMC6	 DC.W	   374			   37.7*.31 AT 2-5
+FCMC7	 DC.W	   22			   37.7*.000143 AT 2-12
+FCMC8	 DC.W	   12800		   25 AT 2-9
+FCMC9	 DC.W	   523			   37.7*.0542 AT 2-8
+FCMC10	 DC.L	   3833856		   117 AT 2-15
+FCMC11	 DC.L	   -3833856		  -117 AT 2-16
+FCMCA	 DC.W	   106			   37.7*1.71(10-4)AT 2-14
+FCMCB	 DC.W	   302			   37.7 AT 2-3
+FCMCD	 DC.W	   13107		  .05 AT 2-18
+FCMCF	 DC.L	   -197657		  -37.7*.08 AT 2-16
+FCMC12	 DC.L	   1006632900		   30 AT 2-25
+FCMC13	 DC.L	   -536870910		  -16 AT 2-25
+FCMC14	 DC.L	   -1006632900		  -30 AT 2-25
+FCMC15	 DC.L	   3276800		   200 AT 2-14
+FCMC16	 DC.L	   -3276800		  -200 AT 2-14
+FCMC17	 DC.L	   503316480		   30 AT 2-24
+FCMC18	 DC.L	   -5033316480		  -30 AT 2-24
+FCMC19	 DC.W	   9			  37.7*.0002346 AT 2-10
+FCMC20	 DC.W	   -5588		  -1/.733 AT 2-12
+FCMC21	 DC.W	   4404 		   1/.93 AT 2-12
+FCMC22	 DC.L	   129656		  .2473 AT 2-19
+FCMC23	 DC.W	   273			   1/15 AT 2-12
+FCMC24	 DC.L	   4194300		   1 AT 2-22
+FCMC25	 DC.L	   -4194300		  -1 AT 2-22
+FCMC26	 DC.L	   4194304		   1 AT 2-22 (LESS 8)
+FCMC27	 DC.L	   -4194304		  -1 AT 2-22(LESS 8)
+FCMC28	 DC.W	   2413 		   37.7*4  AT 2-4
+FCMC29	 DC.L	   245760		   15 AT 2-14
+********************************************************************
+*     THIS MODULE COMPUTES: QA DOT (DEG/SEC SQ)  AT 2-8 	   *
+*			    QA	(PITCH RATE)(DEG/SEC)AT 2-25,2-9   *
+*			    THETA DOT (DEG/SEC)  AT 2-8 	   *
+*			    THETA (PITCH ANGLE)(DEG)AT 2-25,2-9    *
+*			    ELEVATOR POSITION AT 2-14		   *
+*			    PITCH TRIM POSITION AT 2-14 	   *
+*			    CG. POSITION AT 2-9 		   *
+*			    INDICATED PITCH (A/0)10V=15 DEGREES    *
+*			    RATE OF CLIMB HOLD INTEGRATER AT 2-22  *
+*			    MODE 2 BOOLEAN    1=MODE 2		   *
+*			    STALL BOOLEAN  1=ALPHA>15.74 DEG	   *
+*	    MODULE IS SKIPPED IF FLIGHT FREEZE IS ACTIVATED	   *
+*					      SEPTEMBER 23,1983    *
+********************************************************************
+PITCH	 EQU *
+	 MOVE.L    #$FE6000,A6		  (I/O BASE IN A6)
+	 TST.B	   FFREEZE		   1=FLIGHT FREEZE
+	 BEQ.S	   UNFREEZP		   BRANCH IF NOT FLIGHT FREEZE
+	 TRAP	   #0			   REAL TIME RETURN TO EXEC
+********************************************************************
+*	R/C HOLD COMMAND=K1*INTEGRAL(SIN GAMMA*.15625*DT) AT 2-22  *
+*		   WHERE:K1=1 IF MODE 2 IS SELECTED,ZERO OTHERWISE *
+*			 -1<INTEGRAL<1 AT 2-15			   *
+*			  DT=.05(20 ITERATIONS/SEC)		   *
+*		   NOTE:INTEGRAL IS SET TO ZERO IF NOT MODE 2 SEL  *
+********************************************************************
+UNFREEZP BTST.B    #IMODE2,IINSTMDI(A6)    1=MODE2 SELECTED
+	 SNE.B	   FMODE2		   1=MODE2 SELECTED
+	 BNE.S	   NEXT 		   BRANCH IF MODE 2 IS SELECTED
+	 CLR.L	   D0			   CLEAR REGISTER
+	 BRA.S	   NEXT2		   SET INTEGRATER TO ZERO
+NEXT	 MOVE.W    FSINGAMA,D0		   SIN GAMMA AT 2-15
+	 MULS	   #2,D0		   1/64*SIN GAMMA AT 2-22
+	 ADD.L	   FRCHOLD,D0		   R/C HOLD(N)AT 2-22
+	 CMP.L	   FCMC26,D0		  (R/C HOLD-1) AT 2-22
+	 BMI.S	   NEXT1		   BRANCH IF LESS THAN 1
+	 MOVE.L    FCMC26,D0		   LIMIT IN D0	AT 2-22
+NEXT1	 CMP.L	   FCMC27,D0		   R/C HOLD+1)AT 2-22
+	 BPL.S	   NEXT2		   BRANCH IF >-1
+	 MOVE.L    FCMC27,D0		   LIMIT IN D0 AT 2-22
+NEXT2	 MOVE.L    D0,FRCHOLD		   R/C HOLD COMMAND AT 2-22
+****************************************************************************
+*									   *
+*				    *			 NEVER NEG.	   *
+*	 QA DOT=37.7[Q((-.385*DEL SE+.08-.3115*CL-.1669*(ALPHA-15.74)	   *
+*   +.0183*FLAP+.31*DEL E TRIM+.0002346*VP*ROUGH AIR-32*(R/C HOLD)*K1	   *
+*   -32*SIN GAMMA*K1 )) 						   *
+*	       +.000143*TN+.0542*(CG-25)				   *
+*	       -.000171*VP*QA						   *
+*	       -4*WOW ] 						   *
+*									   *
+*	    WHERE:37.7=57.3*157*4.8/1145				   *
+*		       S=157						   *
+*		       C BAR=4.8					   *
+*		       IYY=1145 					   *
+*		       15<CG<35 					   *
+*		       K1=1/37.7 IF MODE 2 IS ENGAGED,ZERO OTHERWISE	   *
+*		      -200<QA DOT<200					   *
+*		      -.714<DEL E TRIM<1.0    (POSITIVE IS NOSE UP)	   *
+*		      -1.0 <DEL ELEV.<.955    (POSITIVE IS NOSE DOWN)	   *
+****************************************************************************
+	 MOVEP.W   IELEV(A6),D6 	  (12 BIT A/D) 7.33 V=NOSE UP,-7 V=DOWN
+	 MOVE.B    #0,IELEV(A6) 	   START A/D CONVERSION
+	 BCHG	   #15,D6		   COMPLEMENT SIGN  AT 2-15
+	 MULS	   FCMC20,D6		  -1/.733*A/D  AT 2-27
+	 ASR.L	   #8,D6		   2-19
+	 ASR.L	   #5,D6		   DEL ELEV AT 2-14
+	 MOVE.W    D6,FDELEV		   DEL ELEV(NORMALIZED)NEGATIVE=NOSE UP
+	 MULS	   FCMC1,D6		   STICK *(37.7*.385) AT 2-24
+	 ASR.L	   #8,D6		   2-16
+	 ADD.L	   FCMCF,D6		   37.7*(-.08+.385*STICK)AT 2-16
+	 MOVE.W    FCMC2,D7		   37.7*.3115 AT 2-3
+	 MULS	   FCL,D7		   37.7*.3115*FCL AT 2-16
+	 ADD.L	   D6,D7		   37.7(-.08+.385DELEV+.3115FCL)AT 2-16
+	 MOVE.W    FALPHA,D6		   ALPHA AT 2-9
+	 ASR.W	   #3,D6		   2-6
+	 SUB.W	   FCMC3,D6		  (ALPHA-15.74)AT 2-6
+	 SPL.B	   FSTALL		   1=STALL
+	 TST.B	   FSTALL		   1=STALL
+	 BNE.S	   NEXT3		   BRANCH IF STALL
+	 CLR.W	   D6			   ZERO SLICE
+NEXT3	 MULS	   FCMC4,D6		 -37.7*.1669*(ALPHA-15.74)(POS) AT 2-16
+	 SUB.L	   D7,D6     37.7(+.08-.385DELE-.3115CL-.1669(ALPHA-15.74) 2-16
+	 MOVE.W    FCMC5,D7		   37.7*.0183 AT 2-10
+	 MULS	   FFLAPS,D7		   37.7*.0183*FLAPS AT 2-24
+	 ASR.L	   #8,D7		   2-16
+	 ADD.L	   D6,D7		   37.7*(.0183FLAPS----)AT 2-16
+	 MOVEP.W   IELEVT(A6),D6	  (12 BIT A/D)+7V=NOSE UP,-9V=DN,-2.3V=
+	 MOVE.B    #0,IELEVT(A6)	   START A/D CONVERSION
+	 BCHG	   #15,D6		   COMPLEMENT SIGN BIT	AT 2-15
+	 MULS	   FCMC21,D6		   1/.93 *(TRIM INPUT) AT 2-27
+	 ASR.L	   #8,D6		   2-19
+	 ADD.L	   FCMC22,D6		   1=NOSE UP,-.718=NOSE DOWN,0=NEUTRAL
+	 ASR.L	   #5,D6		   2-14
+	 MOVE.W    D6,FELTRIM		  (NORMALIZED TRIM) AT 2-14
+	 MULS	   FCMC6,D6		   37.7*.31*TRIM AT 2-19
+	 ASR.L	   #3,D6		   2-16
+	 ADD.L	   D7,D6		   PARTIAL CM AT 2-16
+	 MOVE.W    FRUFAIR,D5		   VP* ROUGH AIR AT 2-6
+	 MULS	   FCMC19,D5		   37.7*VP*.0002346*ROUGH AIR AT 2-16
+	 ADD.L	   D5,D6	   37.7*CMQ AT 2-16 MAX=122*256*256=31232*256
+	 MOVE.L    FRCHOLD,D1	       R/C HOLD AT 2-22
+	 ASR.L	   #1,D1		   32*R/C HOLD AT 2-16
+	 SUB.L	   D1,D6		   37.7*CMQ AT 2-16
+	 ASR.L	   #8,D6		   2-8
+	 TST.B	   FMODE2		   1=MODE 2 ENGAGED
+	 BEQ.S	   NEXT4		   BRANCH IF NOT MODE 2
+	 MOVE.W    FSINGAMA,D4		   SIN GAMMA AT 2-15
+	 ASR.W	   #2,D4		   32*SIN GAMMA AT 2-8
+	 SUB.W	   D4,D6
+NEXT4	 MULS	   FQ,D6		   37.7*Q*CMQ AT 2-14
+	 MOVE.W    FCMC7,D7		   37.7*.000143 AT  2-12
+	 MULS	   ENTHRUST,D7		   37.7*.000143*THRUST AT 2-17
+	 ASR.L	   #3,D7		   2-14
+	 ADD.L	   D6,D7		   37.7*(.000143*THRUST+Q*CMQ)AT 2-14
+	 MOVE.W    FCGIN,D6		  (12 BIT A/D)10 VOLTS=35,-10 VOLTS=15
+	 MULS	   #10,D6		  (CG-25) AT 2-15
+	 ASR.L	   #6,D6		   2-9
+	 ADD.W	   FCMC8,D6		   25+(CG-25) AT 2-9
+	 MOVE.W    D6,FCG		   FCG AT 2-9
+	 SUB.W	   FCMC8,D6		   (CG-25)AT 2-9
+	 MULS	   FCMC9,D6		   37.7*.0542*(CG-25) AT 2-17
+	 ASR.L	   #3,D6		   2-14
+	 ADD.L	   D7,D6		   37.7*[.OOO143*TN+Q*CMQ+.0542*(CG-25)
+	 MOVE.W    FVP,D7		   VP AT 2-6
+	 MULS	   FCMCA,D7		   37.7*.000171*VP AT 2-20
+	 ASR.L	   #8,D7		   2-12
+	 MULS	   FQA,D7		   37.7*.000171*VP*QA AT 2-18
+	 ASR.L	   #4,D7		   2-14
+	 SUB.L	   D7,D6		   PARTIAL CM AT 2-14
+	 MOVE.W    FWOW,D7		   2-12
+	 MULS	   FCMC28,D7		   37.7*4*FWOW AT 2-16
+	 ASR.L	   #2,D7		   2-14
+	 SUB.L	   D7,D6		   TOTAL CM AT 2-14
+	 CMP.L	   FCMC15,D6		   QA DOT-200 AT 2-14
+	 BMI.S	   NEXT5		   BRANCH IF LESS THAN 200
+	 MOVE.L    FCMC15,D6		   LIMIT IN D6 AT 2-14
+NEXT5	 CMP.L	   FCMC16,D6		   QA DOT +200 AT 2-14
+	 BPL.S	   NEXT6		   BRANCH IF GREATER THAN -200
+	 MOVE.L    FCMC16,D6		   LIMIT IN D6 AT 2-14
+NEXT6	 ASR.L	   #7,D6		   2-7
+	 MOVE.W    FQADOT,D7		   QADOT (N-1)AT 2-7
+	 MOVE.W    D6,FQADOT		   QADOT(N) AT 2-7
+************************************************************
+*	 QA=INTEGRAL(QA DOT*DT) 			   *
+*	      -30<QA<30 				   *
+*	 NOTE:QA IS STORED AS A LONG WORD AT 2-25 BUT CAN  *
+*	      BE USED AS A WORD AT 2-9			   *
+************************************************************
+	 SUB.W	   D7,D6		   QADOT(N)-QADOT(N-1) AT 2-7
+	 ASR.W	   #1,D6		   1/2(---)AT 2-7
+	 ADD.W	   FQADOT,D6		   3/2QADOT(N)-1/2QADOT(N-1)AT 2-7
+	 MULS	   FCMCD,D6		  .05*QA DOT AT 2-25
+	 ADD.L	   FQA,D6		   FQA(N) AT 2-25
+	 BMI.S	   NEXT7		   BRANCH IF NEGATIVE
+	 CMP.L	   FCMC12,D6		   FQA -30 AT 2-25
+	 BMI.S	   NEXT8		   BRANCH IF FQA <30
+	 MOVE.L    FCMC12,D6		   LIMIT IN D6 AT 2-25
+	 BRA.S	   NEXT8
+NEXT7	 CMP.L	   FCMC14,D6		   QA+30 AT 2-25
+	 BPL.S	   NEXT8		   BRANCH IF QA>-30
+	 MOVE.L    FCMC14,D6		   LIMIT IN D6 AT 2-25
+NEXT8	 MOVE.L    D6,FQA		   QA LIMITED AT 2-25(long)2-9(word)
+**********************************************************************
+*	THETA DOT=(QA*COS PHI-RA*SIN PHI)			     *
+*		   -30<THETA DOT<30				     *
+**********************************************************************
+	 MOVE.W    FQA,D5		   QA AT 2-9
+	 MULS	   FCOSPHI,D5		   QA*COS PHI AT 2-24
+	 MOVE.W    FRA,D6		   RATE OF TURN AT 2-9
+	 MULS	   FSINPHI,D6		   RA*SIN PHI AT 2-24
+	 SUB.L	   D6,D5		   QA COS-RA SIN AT 2-24
+	 CMP.L	   FCMC17,D5		   THETA DOT-30 AT 2-24
+	 BMI.S	   NEXT9		   BRANCH IF THETA DOT <30
+	 MOVE.L    FCMC17,D5		   LIMIT IN D7 AT 2-24
+NEXT9	 CMP.L	   FCMC18,D5		   THETA DOT+30 AT 2-24
+	 BPL.S	   NEXT10		   BRANCH IF THETA DOT>-30
+	 MOVE.L    FCMC18,D5		   LIMIT IN D7 AT 2-24
+NEXT10	 ASR.L	   #8,D5		   2-16
+	 ASR.L	   #8,D5		   2-8
+	 MOVE.W    FTHETDOT,D6		   THETA DOT (N-1) AT 2-8
+	 MOVE.W    D5,FTHETDOT		   THETA DOT (N)AT 2-8
+**********************************************************************
+*	 THETA=INTEGRAL(THETA DOT*DT)				     *
+*		    -16<THETA<30   IN AIR			     *
+*		      0<THETA<30   ON GROUND			     *
+*	 NOTE:THETA IS STORED AS A LONG WORD AT 2-25 BUT CAN BE      *
+*	      USED AS A WORD AT 2-9				     *
+*								     *
+*	      ATTITUDE INDICATER(PITCH A/O)10V=15 DEGREES	     *
+**********************************************************************
+	 SUB.W	   D6,D5
+	 ASR.W	   #1,D5		   1/2THETDOT(N)-1/2THETDOT(N-1)AT 2-8
+	 ADD.W	   FTHETDOT,D5		   3/2THET(N)-1/2THET(N-1)AT 2-8
+	 MULS	   FCMCD,D5		  .05(---) AT 2-26
+	 ASR.L	   #1,D5		   2-25
+	 ADD.L	   FTHETA,D5		   2-25
+	 BMI.S	   NEXT11		   BRANCH IF NEGATIVE
+	 CMP.L	   FCMC12,D5		   THETA -30 AT 2-25
+	 BMI.S	   NEXT12		   BRANCH IF THETA <30
+	 MOVE.L    FCMC12,D5		   30 IN D5 AT 2-25
+	 BRA.S	   NEXT12
+NEXT11	 CMP.L	   FCMC13,D5		   THETA +16 AT 2-25
+	 BPL.S	   NEXT12		   BRANCH IF THETA >-16
+	 MOVE.L    FCMC13,D5		  -16 IN D7 AT 2-25
+NEXT12	 MOVE.L    D5,D4		   LIMITED THETA IN D4,D5
+	 BPL.S	   NEXT13		   BRANCH IF THETA IS POSITIVE
+	 TST.B	   FWOG 		   1=ON GROUND
+	 BEQ.S	   NEXT13		   BRANCH IF NOT ON GROUND
+	 CLR.L	   D5			   ZERO SLICE IF ON GROUND
+NEXT13	 MOVE.L    D5,FTHETA		   THETA(N)LIMITED AT 2-25,2-9
+	 ASR.L	   #8,D5		   THETA AT 2-17
+	 ASR.L	   #7,D5		   THETA AT 2-10
+	 MULS	   FCMC23,D5		   THETA*(1/15)AT 2-22
+	 CMP.L	   FCMC24,D5		   (---)-1 AT 2-22
+	 BMI.S	   NEXT14		   BRANCH IF LESS THAN 1
+	 MOVE.L    FCMC24,D5		   LIMIT IN D5 AT 2-22
+NEXT14	 CMP.L	   FCMC25,D5		   (---)+1 AT 2-22
+	 BPL.S	   NEXT15		   BRANCH IF >-1
+	 MOVE.L    FCMC25,D5		   LIMIT IN D5 AT 2-22
+NEXT15	 ASR.L	   #7,D5		   THETA/15(LIMITED)AT 2-15
+	 BCHG	   #15,D5		   COMPLEMENT SIGN BIT
+	 BTST.B    #IATGFAIL,IFAIL1(A6)    1=GYRO FAILED
+	 BEQ.S	   NEXT16		   BRANCH IF NOT FAILED
+	 CLR.W	   D5			   ZERO IN D5
+NEXT16	 MOVEP.W   D5,OATTPIT(A6)	   PITCH(A/O) 10V=15 DEG
+	 TRAP	   #0			   REAL TIME RETURN TO EXEC
+	 END
+

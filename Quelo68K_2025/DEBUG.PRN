@@ -1,0 +1,2114 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  1
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                            1.           OPT       MEX,CEX,NOPCS
+                            2.  **********************************************************************
+                            3.  *                                                                    *
+                            4.  *        DEBUG     REAL-TIME & BACK-GROUND DEBUG ROUTINES            *
+                            5.  *                                                                    *
+                            6.  *                  VERSION:  2.0  12/07/83   D.R. TRIPP              *
+                            7.  *                                                                    *
+                            8.  **********************************************************************
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  2
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                           10.  **********************************************************************
+                           11.  *                                                                    *
+                           12.  *        EXTERANAL LINKAGE INFORMATION                               *
+                           13.  *                                                                    *
+                           14.  **********************************************************************
+                           15.           XDEF      RXSTAT
+                           16.           XDEF      RXREAD
+                           17.           XDEF      RXRESET
+                           18.           XDEF      RXEND
+                           19.           XDEF      RXDIS
+                           20.           XDEF      RXENA
+                           21.           XDEF      TXSTAT
+                           22.           XDEF      TXWRITE
+                           23.           XDEF      RXINIT
+                           24.  *
+                           25.           XDEF      PSCMD
+                           26.           XDEF      MMCMD
+                           27.           XDEF      CLCMD
+                           28.           XDEF      RECMD
+                           29.           XDEF      TECMD
+                           30.           XDEF      TDCMD
+                           31.           XDEF      TRCMD
+                           32.           XDEF      DCCMD
+                           33.           XDEF      MECMD
+                           34.           XDEF      MDCMD
+                           35.           XDEF      MICMD
+                           36.  *
+                           37.           XDEF      PSMMPARM
+                           38.           XDEF      MEMDPARM
+                           39.           XDEF      SLOOKUP
+                           40.           XDEF      NLOOKUP
+                           41.           XDEF      GETHX
+                           42.           XDEF      GETDC
+                           43.  *
+                           44.           XDEF      DISPLAY
+                           45.           XDEF      DISP4Q
+                           46.           XDEF      SCROLL
+                           47.           XDEF      LOCATE
+                           48.           XDEF      CLS
+                           49.           XDEF      CLR2EOL
+                           50.           XDEF      BLANKS
+                           51.           XDEF      DSPLN
+                           52.           XDEF      DSPB
+                           53.  *
+                           54.           XDEF      INIT4
+                           55.           XDEF      INT4
+                           56.  *
+                           57.           XDEF      RTDEBUG
+                           58.           XDEF      BGDEBUG
+                           59.           XDEF      BGBUGEX
+                           60.  *
+                           61.           XREF      DPCOUNT0
+                           62.           XREF      DPCOUNT
+                           63.           XREF      DPTABLE0
+                           64.           XREF      DPTABLE
+                           65.  *
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  3
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                           66.           XREF      RTNUMBER
+                           67.           XREF      RTLIST
+                           68.           XREF      RTNAME
+                           69.  *
+                           70.           XREF      SBMODRUN
+                           71.           XREF      SMODTOUT
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  4
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                           73.  **********************************************************************
+                           74.  *                                                                    *
+                           75.  *        DEBUG SYMBOL BLOCK (DSB) SYMBOLS                            *
+                           76.  *                                                                    *
+                           77.  **********************************************************************
+                           78.           INCLUDE   DSBSYM.SA
+     # 00000000            79:  DSBNAME  EQU        0       NAME OF SYMBOL
+     # 00000008            80:  DSBADDR  EQU        8       ADDRESS OF SYMBOL
+     # 0000000C            81:  DSBLEN   EQU       12       LENGTH OF SYMBOL
+     # 0000000D            82:  DSBTYPE  EQU       13       TYPE OF SYMBOL
+     # 0000000E            83:  DSBUPD   EQU       14       UPDATE FLAG
+     # 0000000F            84:  DSBSCALE EQU       15       SCALE CODE
+     # 00000010            85:  DSBDATA1 EQU       16       DATA
+     # 00000014            86:  DSBDATA2 EQU       20       DATA N-1
+     # 00000018            87:  DSBARRAY EQU       24       ARRAY CODE (0=NO ARRAY DISPLAY,
+                           88.  **********************************************************************
+                           89.  *                                                                    *
+                           90.  *        DEBUG DATA SEGMENT SYMBOLS                                  *
+                           91.  *                                                                    *
+                           92.  **********************************************************************
+                           93.           INCLUDE   BUGSYM.SA
+     # 00000000            94:  MMFLAG   EQU        0       MEMORY MODIFY FLAG
+     # 00000001            95:  MMTYPE   EQU        1       MEMORY MODIFY TYPE CODE
+     # 00000002            96:  MMNEGFLG EQU        2       MEMORY MODIFY NEGATE FLAG
+     # 00000003            97:  MMLEN    EQU        3       MEMORY MODIFY LENGTH CODE
+     # 00000004            98:  TBUFF    EQU        4       TEMP BUFFER
+     # 00000014            99:  SBUFF    EQU       20       SYMBOL BUFFER
+     # 0000001C           100:  MMADDR   EQU       28       ADDRESS OF CURENT MEMORY MODIFY
+     # 00000020           101:  NOTFIRST EQU       32       FIRST PASS FLAG
+     # 00000021           102:  DCNEG    EQU       33       DC COMMAND NAGATE FLAG
+     # 00000022           103:  MMSCALE  EQU       34       MEMORY MODIFY SCALE CODE
+     # 00000023           104:  MMARRAY  EQU       35       MEMORY MODIFY ARRAY CODE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  5
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          106.  **********************************************************************
+                          107.  *                                                                    *
+                          108.  *        DEBUG DATA-POOL SYMBOLS                                     *
+                          109.  *                                                                    *
+                          110.  **********************************************************************
+                          111.           INCLUDE   DSYM.SA
+     # 00000F00           112:  DSEG      EQU   $00000F00 L 001 L H   DEBUG DATA SEGMENT ADDRESS
+     # 00000F04           113:  DBUFF     EQU   $00000F04 B 080 L H   DEBUG INPUT BUFFER
+     # 00000F54           114:  DBUFFPTR  EQU   $00000F54 L 001 L H   DEBUG INPUT BUFFER POINTER
+     # 00000F58           115:  DBUFFCNT  EQU   $00000F58 B 001 L H   DEBUG INPUT BUFFER COUNT
+     # 00000F59           116:  DBUFFLNE  EQU   $00000F59 B 001 L H   DEBUG INPUT BUFFER LINE COMPLETE FLAG
+     # 00000F5A           117:  DBUFFCHG  EQU   $00000F5A B 001 L H   DEBUG INPUT BUFFER CHANGE FLAG
+     # 00000F5B           118:  D400I     EQU   $00000F5B B 001 L H   DEBUG MVME400 INSTALLED FLAG
+     # 00000F5C           119:  DLIST     EQU   $00000F5C L 128 L H   DEBUG DISPLAY LIST
+     # 0000115C           120:  DCOUNT    EQU   $0000115C W 001 L H   DEBUG DISPLAY LIST COUNT
+     # 0000115E           121:  DSPARE2   EQU   $0000115E W 001 L H   DEBUG SPARE WORD
+     # 00001160           122:  TFRAME    EQU   $00001160 L 001 L D   FRAME TIME ACTUAL
+     # 00001164           123:  TFRAMEA   EQU   $00001164 L 001 L D   FRAME TIME AVERAGE
+     # 00001168           124:  TFRAMEW   EQU   $00001168 L 001 L D   FRAME TIME WORST
+     # 0000116C           125:  TMODULE   EQU   $0000116C W 016 L D   MODULE TIMES ACTUAL
+     # 0000118C           126:  TMODULEA  EQU   $0000118C W 016 L D   MODULE TIMES AVERAGE
+     # 000011AC           127:  TMODULEW  EQU   $000011AC W 016 L D   MODULE TIMES WORST
+     # 000011CC           128:  DSPARE    EQU   $000011CC L 032 L H   DEBUG SPARE LONG WORDS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  6
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          130.  **********************************************************************
+                          131.  *                                                                    *
+                          132.  *        DEBUG SYSTEM CONSTANTS                                      *
+                          133.  *                                                                    *
+                          134.  **********************************************************************
+     # 00000008           135.  BS       EQU       $08                 BACK SPACE
+     # 0000000D           136.  CR       EQU       $0D                 CARIAGE RETURN
+     # 0000000A           137.  LF       EQU       $0A                 LINE FEED
+     # 00000020           138.  SPACE    EQU       $20                 SPACE
+     # 0000002C           139.  COMMA    EQU       $2C                 COMMA
+     # 00000007           140.  BELL     EQU       $07                 BELL TONE
+                          141.  *
+     # 00F03A72           142.  PNT8HX   EQU       $F03A72             VEMbug BINARY LONG TO HEX
+     # 00F03A80           143.  PNT4HX   EQU       $F03A80             VEMbug BINARY WORD TO HEX
+     # 00F03A88           144.  PNT2HX   EQU       $F03A88             VEMbug BINARY BYTE TO HEX
+     # 00F032B4           145.  HEX2DEC  EQU       $F032B4             VEMbug BINARY LONG TO DECIMAL
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  7
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'000000                  147.           SECTION   12
+                          148.  **********************************************************************
+                          149.  *                                                                    *
+                          150.  *        INIT4   INTERRUPT #4  INITALIZER                            *
+                          151.  *                                                                    *
+                          152.  **********************************************************************
+     C'00000000           153.  INIT4    EQU       *
+C'000000  41F8 0F04       154.           LEA       DBUFF,A0            LOAD ADDRESS OF INPUT BUFFER
+C'000004  21C8 0F54       155.           MOVE.L    A0,DBUFFPTR         STORE ADDRESS IN BUFFER POINTER
+C'000008  11FC 0000 0F58  156.           MOVE.B    #0,DBUFFCNT         SET BUFFER COUNT TO ZERO
+C'00000E  4EB9'00001438   157.           JSR       RXINIT              INIT RX FOR INTERRUPTS
+C'000014  4E75            158.           RTS
+                          159.  **********************************************************************
+                          160.  *                                                                    *
+                          161.  *        INT4    INTERRUPT HANDLER (KEYBOARD)                        *
+                          162.  *                                                                    *
+                          163.  **********************************************************************
+     C'00000016           164.  INT4     EQU       *
+C'000016  46FC 2700       165.           MOVE.W    #$2700,SR           MASK INTERRUPT
+C'00001A  48E7 E080       166.           MOVEM.L   D0-D2/A0,-(A7)      SAVE REGISTERS
+C'00001E  4EB9'000013FC   167.           JSR       RXSTAT              GET STATUS FROM RX
+C'000024  4A02            168.           TST.B     D2                  TEST STATUS BITS
+C'000026  6762            169.           BEQ.S     BAD4                BRANCH IF ZERO
+C'000028  2078 0F54       170.           MOVE.L    DBUFFPTR,A0         LOAD BUFFER POINTER
+C'00002C  4EB9'00001428   171.           JSR       RXREAD              READ DATA FROM RX
+C'000032  10C0            172.           MOVE.B    D0,(A0)+            STORE DATA IN BUFFER
+C'000034  5238 0F58       173.           ADDQ.B    #1,DBUFFCNT         INCREMENT BUFFER COUNT
+C'000038  21C8 0F54       174.           MOVE.L    A0,DBUFFPTR         SAVE BUFFER POINTER
+C'00003C  50F8 0F5A       175.           ST.B      DBUFFCHG            SET BUFFER CHANGE FLAG
+C'000040  B03C 0008       176.           CMP.B     #BS,D0              TEST FOR BACK SPACE
+C'000044  661C            177.           BNE.S     TESTCR              BRANCH IF NOT A BACK SPACE
+C'000046  55B8 0F54       178.           SUBQ.L    #2,DBUFFPTR         ADJUST BUFFER POINTER
+C'00004A  5538 0F58       179.           SUBQ.B    #2,DBUFFCNT         ADJUST BUFFER COUNT
+C'00004E  4A38 0F58       180.           TST.B     DBUFFCNT            TEST BUFFER COUNT
+C'000052  6C2A            181.           BGE.S     QUIT4               BRANCH IF GREATER TO END OF HANDLER
+C'000054  52B8 0F54       182.           ADDQ.L    #1,DBUFFPTR         RESET BUFFER POINTER
+C'000058  5238 0F58       183.           ADDQ.B    #1,DBUFFCNT         RESET BUFFER COUNT
+C'00005C  51F8 0F5A       184.           SF.B      DBUFFCHG            CLEAR BUFFER CHANGE FLAG
+C'000060  601C            185.           BRA.S     QUIT4               BRANCH TO END OF HANDLER
+C'000062  B03C 000D       186.  TESTCR   CMP.B     #CR,D0              TEST FOR CARIAGE RETURN
+C'000066  6616            187.           BNE.S     QUIT4               BRANCH TO END OF HANDLER
+C'000068  53B8 0F54       188.           SUBQ.L    #1,DBUFFPTR         ADJUST BUFFER POINTER
+C'00006C  5338 0F58       189.           SUBQ.B    #1,DBUFFCNT         ADJUST BUFFER COUNTER
+C'000070  50F8 0F59       190.           ST.B      DBUFFLNE            SET BUFFER LINE COMPLETE FLAG
+C'000074  51F8 0F5A       191.           SF.B      DBUFFCHG            SET CHANGE FLAG FALSE
+C'000078  4EB9'000013D8   192.           JSR       RXDIS               DISABLE RX
+C'00007E  4CDF 0107       193.  QUIT4    MOVEM.L   (A7)+,D0-D2/A0      RESTORE REGISTERS
+C'000082  4EB9'0000141E   194.           JSR       RXEND               END OF INTERRUPT COMMAND
+C'000088  4E73            195.           RTE
+C'00008A  4EB9'00001414   196.  BAD4     JSR       RXRESET             RESET ERROR CONDITION
+C'000090  60EC            197.           BRA.S     QUIT4               BRANCH TO END OF HANDLER
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  8
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          199.  **********************************************************************
+                          200.  *                                                                    *
+                          201.  *        RTDEBUG   REAL-TIME DEBUG MODULE                            *
+                          202.  *                                                                    *
+                          203.  **********************************************************************
+     C'00000092           204.  RTDEBUG  EQU       *
+C'000092  4A38 115C       205.           TST.B     DCOUNT              TEST DEBUG DSB COUNT
+C'000096  6732            206.           BEQ.S     DONE                QUIT IF ZERO
+C'000098  7800            207.           MOVEQ.L   #0,D4               CLEAR D4
+C'00009A  1838 115C       208.           MOVE.B    DCOUNT,D4           LOAD DEBUG DSB COUNT
+C'00009E  5304            209.           SUBQ.B    #1,D4               ADJUST LOOP COUNT
+C'0000A0  41F8 0F5C       210.           LEA       DLIST,A0            LOAD ADDRESS OF DSB LIST
+     C'000000A4           211.  DLOOP    EQU       *
+C'0000A4  2268 0008       212.           MOVE.L    DSBADDR(A0),A1      LOAD ADDRESS DISPLAY ITEM
+C'0000A8  0C28 0001 000C  213.           CMP.B     #1,DSBLEN(A0)       TEST FOR BYTE LENGTH
+C'0000AE  671C            214.           BEQ.S     LOADB               LOAD A BYTE IF DSBLEN=1
+C'0000B0  0C28 0002 000C  215.           CMP.B     #2,DSBLEN(A0)       TEST FOR WORD LENGTH
+C'0000B6  671A            216.           BEQ.S     LOADW               LOAD A WORD IF DSBLEN=2
+C'0000B8  0C28 0004 000C  217.           CMP.B     #4,DSBLEN(A0)       TEST FOR LONG WORD LENGTH
+C'0000BE  6718            218.           BEQ.S     LOADLW              LOAD A LONG WORD IF DSBLEN=4
+C'0000C0  D1FC 00000020   219.  NEXTDSB  ADD.L     #32,A0              POINT TO NEXT DSB
+C'0000C6  51CC FFDC       220.           DBRA      D4,DLOOP            LOOP 1..N TIMES
+C'0000CA  4E40            221.  DONE     TRAP      #0                  RETURN TO RTEXEC
+                          222.  *
+C'0000CC  1151 0010       223.  LOADB    MOVE.B    (A1),DSBDATA1(A0)   STORE DATA
+C'0000D0  60EE            224.           BRA.S     NEXTDSB             DO NEXT DSB
+C'0000D2  3151 0010       225.  LOADW    MOVE.W    (A1),DSBDATA1(A0)   STORE DATA
+C'0000D6  60E8            226.           BRA.S     NEXTDSB             DO NEXT DSB
+C'0000D8  2151 0010       227.  LOADLW   MOVE.L    (A1),DSBDATA1(A0)   STORE DATA
+C'0000DC  60E2            228.           BRA.S     NEXTDSB             DO NEXT DSB
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  9
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          230.  **********************************************************************
+                          231.  *                                                                    *
+                          232.  *        BGBUGEX   EXCEPTION HANDLER                                 *
+                          233.  *                                                                    *
+                          234.  **********************************************************************
+     C'000000DE           235.  BGBUGEX  EQU       *
+C'0000DE  51D0            236.           SF.B      MMFLAG(A0)          CLEAR MMFLAG
+C'0000E0  B07C 0008       237.           CMP.W     #$0008,D0           TEST FOR BUS ERROR CODE
+C'0000E4  6714            238.           BEQ.S     BUGBUS              BRANCH IF BUS ERROR
+C'0000E6  B07C 000C       239.           CMP.W     #$000C,D0           TEST FOR ADDRESS ERROR CODE
+C'0000EA  6720            240.           BEQ.S     BUGADR              BRANCH IF ADDRESS ERROR
+C'0000EC  47F9'00000146   241.           LEA       EMSG1,A3            LOAD ADDRESS OF ERROR MESSAGE 1
+C'0000F2  4EB9'0000011E   242.           JSR       EDISP               DO ERROR DISPLAY
+C'0000F8  4E42            243.           TRAP      #2                  PUT TASK IN WAIT
+C'0000FA  47F9'00000152   244.  BUGBUS   LEA       EMSG2,A3            LOAD ADDRESS OF ERROR MESSAGE 2
+C'000100  4EB9'0000011E   245.           JSR       EDISP               DO ERROR DISPLAY
+C'000106  4EF9'000003C6   246.           JMP       ENDCMD              RESTART DEBUG
+C'00010C  47F9'0000015C   247.  BUGADR   LEA       EMSG3,A3            LOAD ADDRESS OF ERROR MESSAGE 3
+C'000112  4EB9'0000011E   248.           JSR       EDISP               DO ERROR DISPLAY
+C'000118  4EF9'000003C6   249.           JMP       ENDCMD              RESTART DEBUG
+C'00011E  4EB9'00001340   250.  EDISP    JSR       SCROLL              SCROLL THE SCREEN
+C'000124  7018            251.           MOVE.L    #24,D0              ROW 25
+C'000126  7200            252.           MOVEQ.L   #0,D1               COL 01
+C'000128  4EB9'00001364   253.           JSR       LOCATE              LOCATE 25,0
+C'00012E  4BE8 0004       254.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF TBUFF
+C'000132  2C4D            255.           MOVE.L    A5,A6               COPY BUFFER POINTERS
+C'000134  0C13 0000       256.  EDISP1   CMP.B     #0,(A3)             TEST FOR END CHARACTER
+C'000138  6704            257.           BEQ.S     EDISPL              BRANCH IF END CHARACTER FOUND
+C'00013A  1CDB            258.           MOVE.B    (A3)+,(A6)+         COPY BYTE
+C'00013C  60F6            259.           BRA.S     EDISP1              LOOP UNTIL END CHARACTER
+C'00013E  4EB9'000013B0   260.  EDISPL   JSR       DSPLN               DISPLAY LINE
+C'000144  4E75            261.           RTS                           RETURN
+C'000146  <0>             262.           DS.L      0
+C'000146  44 45 42 55 47  263.  EMSG1    DC.B      'DEBUG ERROR',0
+          20 45 52 52 4F
+          52 00
+C'000152  42 55 53 20 45  264.  EMSG2    DC.B      'BUS ERROR',0
+          52 52 4F 52 00
+C'00015C  41 44 44 52 45  265.  EMSG3    DC.B      'ADDRESS ERROR',0
+          53 53 20 45 52
+          52 4F 52 00
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 10
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          267.  **********************************************************************
+                          268.  *                                                                    *
+                          269.  *        BGDEBUG   BACK-GROUND DEBUG MODULE                          *
+                          270.  *                                                                    *
+                          271.  *                  FUNCTION #1: OUTPUT CONTINOUS DISPLAY WINDOW      *
+                          272.  *                           #2: PROCESS KEYBOARD INPUT COMMANDS      *
+                          273.  *                                                                    *
+                          274.  **********************************************************************
+     C'0000016A           275.  BGDEBUG  EQU       *
+C'00016A  21C8 0F00       276.           MOVE.L    A0,DSEG             SAVE ADDRESS OF DATA SEGMENT
+C'00016E  4A28 0020       277.           TST.B     NOTFIRST(A0)        TEST FIRST PASS FLAG
+C'000172  6612            278.           BNE.S     BUGECHO             BRANCH IF TRUE
+C'000174  4A38 0F5B       279.           TST.B     D400I               TEST FOR MVME400 INSTALLED
+C'000178  6602            280.           BNE.S     VME400I             BRANCH IF VME400 INSTALLED
+C'00017A  4E42            281.           TRAP      #2                  PROGRAM HOLD
+C'00017C  50E8 0020       282.  VME400I  ST.B      NOTFIRST(A0)        SET FLAG TRUE
+C'000180  4EB9'0000137E   283.           JSR       CLS                 CLEAR DEBUG SCREEN
+C'000186  4E41            284.  BUGECHO  TRAP      #1                  HOLD TASK
+C'000188  4A38 0F5A       285.           TST.B     DBUFFCHG            TEST BUFFER CHANGE FLAG
+C'00018C  6730            286.           BEQ.S     BUGON               BRANCH IF FALSE
+C'00018E  51F8 0F5A       287.           SF.B      DBUFFCHG            SET BUFFER CHANGE FLAG TO FALSE
+C'000192  103C 0018       288.           MOVE.B    #24,D0              ROW 25
+C'000196  4A10            289.           TST.B     MMFLAG(A0)          TEST MEMORY MODIFY FLAG
+C'000198  6604            290.           BNE.S     X1                  BRANCH IF TRUE
+C'00019A  7200            291.           MOVEQ.L   #0,D1               COL 1
+C'00019C  6004            292.           BRA.S     X2                  BRANCH TO LOCATE CALL
+C'00019E  123C 0018       293.  X1       MOVE.B    #24,D1              COL 25
+C'0001A2  4EB9'00001364   294.  X2       JSR       LOCATE              LOCATE CURSOR 25,1 OR 25,25
+C'0001A8  4BF8 0F04       295.           LEA       DBUFF,A5            LOAD ADDRESS OF BUFFER
+C'0001AC  2C78 0F54       296.           MOVE.L    DBUFFPTR,A6         LOAD ADDRESS OF BUFFER END + 1
+C'0001B0  1CFC 0020       297.           MOVE.B    #' ',(A6)+          LOAD AN EXTRA BYTE
+C'0001B4  1CFC 0008       298.           MOVE.B    #BS,(A6)+           LOAD A BACK SPACE
+C'0001B8  4EB9'000013B0   299.           JSR       DSPLN               OUTPUT BUFFER
+C'0001BE  4A38 115C       300.  BUGON    TST.B     DCOUNT              TEST DSB COUNT
+C'0001C2  6700 012A       301.           BEQ       BUGINP              BRANCH IF ZERO
+C'0001C6  7E00            302.           MOVEQ.L   #0,D7               CLEAR D7 (LOOP COUNTER)
+C'0001C8  7C00            303.           MOVEQ.L   #0,D6               CLEAR D6 (LINE COUNTER)
+C'0001CA  1E38 115C       304.           MOVE.B    DCOUNT,D7           LOAD DSB COUNT
+C'0001CE  5387            305.           SUBQ.L    #1,D7               ADJUST COUNT
+C'0001D0  43F8 0F5C       306.           LEA       DLIST,A1            LOAD ADDRESS OF FIRST DSB
+C'0001D4  4A29 000E       307.  BUGLP    TST.B     DSBUPD(A1)          TEST DSB UPDATE FLAG
+C'0001D8  676E            308.           BEQ.S     BUGLEN              BRANCH IF FALSE
+C'0001DA  2006            309.           MOVE.L    D6,D0               LOAD LINE COUNTER -1 (ROW)
+C'0001DC  7200            310.           MOVEQ.L   #0,D1               LOAD 0 (COL)
+C'0001DE  4EB9'00001364   311.           JSR       LOCATE              LOCATE AT LINE COUNTER,1
+C'0001E4  4BE8 0004       312.           LEA       TBUFF(A0),A5        LOAD BUFFER ADDRESS
+C'0001E8  2C4D            313.           MOVE.L    A5,A6               COPY BUFFER ADDRESS
+C'0001EA  2CD1            314.           MOVE.L    DSBNAME(A1),(A6)+   COPY NAME PART 1
+C'0001EC  2CE9 0004       315.           MOVE.L    DSBNAME+4(A1),(A6)+ COPY NAME PART 2
+C'0001F0  0C29 0000 0018  316.           CMP.B     #$00,DSBARRAY(A1)   TEST FOR ARRAY DISPLAY
+C'0001F6  6724            317.           BEQ.S     NOTARY              BRANCH IF ZERO (NOT AN ARRAY)
+C'0001F8  1CFC 002B       318.           MOVE.B    #'+',(A6)+          PUT + ON BUFFER
+C'0001FC  7200            319.           MOVEQ.L   #0,D1               CLEAR D1
+C'0001FE  1029 0018       320.           MOVE.B    DSBARRAY(A1),D0     LOAD ARRAY INDEX
+C'000202  4EB9 00F03A88   321.           JSR       PNT2HX              CONVERT TO HEX
+C'000208  1CFC 0020       322.           MOVE.B    #' ',(A6)+          LOAD SPACE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 11
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'00020C  1CFC 0020       323.           MOVE.B    #' ',(A6)+          LOAD SPACE
+C'000210  1CFC 0020       324.           MOVE.B    #' ',(A6)+          LOAD SPACE
+C'000214  4EB9'000013B0   325.           JSR       DSPLN               OUTPUT BUFFER
+C'00021A  600E            326.           BRA.S     ARYDONE             BRANCH ARRAY OUTPUT DONE
+C'00021C  4EB9'000013B0   327.  NOTARY   JSR       DSPLN               OUTPUT BUFFER
+C'000222  7206            328.           MOVEQ.L   #6,D1               LOAD 6
+C'000224  4EB9'0000139E   329.           JSR       BLANKS              OUTPUT 6 BLANKS
+C'00022A  4BE8 0004       330.  ARYDONE  LEA       TBUFF(A0),A5        LOAD BUFFER ADDRESS
+C'00022E  2C4D            331.           MOVE.L    A5,A6               COPY BUFFER ADDRESS
+C'000230  2029 0008       332.           MOVE.L    DSBADDR(A1),D0      LOAD SYMBOL ADDRESS
+C'000234  4EB9 00F03A72   333.           JSR       PNT8HX              CONVERT TO HEX CHARACTERS
+C'00023A  4EB9'000013B0   334.           JSR       DSPLN               OUTPUT BUFFER
+C'000240  7204            335.           MOVEQ.L   #4,D1               LOAD 4
+C'000242  4EB9'0000139E   336.           JSR       BLANKS              OUTPUT 4 BLANKS
+C'000248  7000            337.  BUGLEN   MOVEQ.L   #0,D0               CLEAR D0 FOR DATA
+C'00024A  0C29 0001 000C  338.           CMP.B     #1,DSBLEN(A1)       TEST FOR BYTE LENGTH
+C'000250  6712            339.           BEQ.S     CMPB                COMPARE BYTE
+C'000252  0C29 0002 000C  340.           CMP.B     #2,DSBLEN(A1)       TEST FOR WORD LENGTH
+C'000258  6714            341.           BEQ.S     CMPW                COMPARE WORD
+C'00025A  0C29 0004 000C  342.           CMP.B     #4,DSBLEN(A1)       TEST FOR LONG WORD
+C'000260  6716            343.           BEQ.S     CMPLW               COMPARE LONG WORD
+C'000262  607E            344.           BRA.S     NEXTLP              LENGTH CODE ERROR (SKIP IT)
+C'000264  1029 0010       345.  CMPB     MOVE.B    DSBDATA1(A1),D0     LOAD BYTE
+C'000268  B029 0014       346.           CMP.B     DSBDATA2(A1),D0     COMPARE WITH N-1
+C'00026C  6012            347.           BRA.S     BUG1                CONTINUE
+C'00026E  3029 0010       348.  CMPW     MOVE.W    DSBDATA1(A1),D0     LOAD WORD
+C'000272  B069 0014       349.           CMP.W     DSBDATA2(A1),D0     COMPARE WITH N-1
+C'000276  6008            350.           BRA.S     BUG1                CONTINUE
+C'000278  2029 0010       351.  CMPLW    MOVE.L    DSBDATA1(A1),D0     LOAD LONG WORD
+C'00027C  B0A9 0014       352.           CMP.L     DSBDATA2(A1),D0     COMPARE WITH N-1
+C'000280  6606            353.  BUG1     BNE.S     BUGSTORE            BRANCH IF CHANGE
+C'000282  4A29 000E       354.           TST.B     DSBUPD(A1)          TEST UPDATE FLAG
+C'000286  675A            355.           BEQ.S     NEXTLP              BRANCH IF FALSE
+C'000288  51E9 000E       356.  BUGSTORE SF.B      DSBUPD(A1)          SET UPDATE FLAG TO FALSE
+C'00028C  0C29 0001 000C  357.           CMP.B     #1,DSBLEN(A1)       TEST FOR BYTE LENGTH
+C'000292  6712            358.           BEQ.S     STOREB              STORE A BYTE
+C'000294  0C29 0002 000C  359.           CMP.B     #2,DSBLEN(A1)       TEST FOR WORD LENGTH
+C'00029A  6710            360.           BEQ.S     STOREW              STORE A WORD
+C'00029C  0C29 0004 000C  361.           CMP.B     #4,DSBLEN(A1)       TEST FOR LONG WORD LENGTH
+C'0002A2  670E            362.           BEQ.S     STORELW             STORE A LONG WORD
+C'0002A4  603C            363.           BRA.S     NEXTLP              INVALID LENGTH CODE
+C'0002A6  1340 0014       364.  STOREB   MOVE.B    D0,DSBDATA2(A1)     STORE DATA IN N-1
+C'0002AA  600A            365.           BRA.S     BUGDISP             GO DISPLAY DATA
+C'0002AC  3340 0014       366.  STOREW   MOVE.W    D0,DSBDATA2(A1)     STORE DATA IN N-1
+C'0002B0  6004            367.           BRA.S     BUGDISP             GO DISPLAY DATA
+C'0002B2  2340 0014       368.  STORELW  MOVE.L    D0,DSBDATA2(A1)     STORE DATA IN N-1
+C'0002B6  2800            369.  BUGDISP  MOVE.L    D0,D4               SAVE DATA
+C'0002B8  2006            370.           MOVE.L    D6,D0               LOAD LINE COUNTER-1 (ROW-1)
+C'0002BA  721B            371.           MOVE.L    #27,D1              LOAD COL 28 (COL-1)
+C'0002BC  4EB9'00001364   372.           JSR       LOCATE              LOCATE AT LINE COUNTER,28
+C'0002C2  2004            373.           MOVE.L    D4,D0               RESTORE DATA
+C'0002C4  1629 000D       374.           MOVE.B    DSBTYPE(A1),D3      LOAD TYPE CODE
+C'0002C8  1A29 000F       375.           MOVE.B    DSBSCALE(A1),D5     LOAD SCALE CODE
+C'0002CC  1429 000C       376.           MOVE.B    DSBLEN(A1),D2       LOAD LENGTH CODE
+C'0002D0  4BE8 0004       377.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF BUFFER
+C'0002D4  2C4D            378.           MOVE.L    A5,A6               COPY BUFFER POINTER
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 12
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'0002D6  4EB9'000009DC   379.           JSR       DISPLAY             LOAD BUFFER
+C'0002DC  4EB9'000013B0   380.           JSR       DSPLN               OUTPUT BUFFER
+C'0002E2  D3FC 00000020   381.  NEXTLP   ADD.L     #32,A1              POINT TO NEXT DSB
+C'0002E8  5286            382.           ADDQ.L    #1,D6               INCREMENT LINE COUNTER
+C'0002EA  51CF FEE8       383.           DBRA      D7,BUGLP            LOOP (DCOUNT) TIMES
+C'0002EE  4A38 0F59       384.  BUGINP   TST.B     DBUFFLNE            TEST INPUT LINE COMPLETE FLAG
+C'0002F2  6700 FE92       385.           BEQ       BUGECHO             BRANCH IF INPUT LINE NOT COMPLETE
+C'0002F6  4BF8 0F04       386.           LEA       DBUFF,A5            LOAD ADDRESS OF BUFFER
+C'0002FA  4A10            387.           TST.B     MMFLAG(A0)          TEST MEMORY MODIFY FLAG
+C'0002FC  6762            388.           BEQ.S     BUGCM               BRANCH IF FALSE
+C'0002FE  0C15 002E       389.           CMP.B     #'.',(A5)           TEST PERIOD (EXIT COMMAND)
+C'000302  6752            390.           BEQ.S     MMEXIT              BRANCH EQUAL EXIT COMMAND
+C'000304  0C15 005E       391.           CMP.B     #'^',(A5)           TEST DECREMENT COMMAND
+C'000308  6732            392.           BEQ.S     MMDEC               BRANCH EQUAL DECREMENT COMMAND
+C'00030A  0C15 000D       393.           CMP.B     #CR,(A5)            TEST FOR CR (INCREMENT COMMAND)
+C'00030E  6714            394.           BEQ.S     MMINC               BRANCH EQUAL INCREMENT COMMAND
+C'000310  4EB9'000008B6   395.           JSR       MMINPUT             SCAN DATA INPUT
+C'000316  4A00            396.           TST.B     D0                  TEST RETURN CODE
+C'000318  670A            397.           BEQ.S     MMINC               INCREMENT & RETURN IF OK
+C'00031A  4EB9'000012A8   398.           JSR       MMDISP              REDISPLAY IF ERROR
+C'000320  6000 00AA       399.           BRA       ENDCMDMM            RETURN TO REST OF DEBUG
+C'000324  7000            400.  MMINC    MOVEQ.L   #0,D0               LOAD ZERO
+C'000326  1028 0003       401.           MOVE.B    MMLEN(A0),D0        LOAD MEMORY MODIFY LENGTH CODE
+C'00032A  D0A8 001C       402.           ADD.L     MMADDR(A0),D0       GET NEW ADDRESS
+C'00032E  2140 001C       403.           MOVE.L    D0,MMADDR(A0)       STORE NEW ADDRESS
+C'000332  4EB9'000012A8   404.           JSR       MMDISP              DISPLAY DATA
+C'000338  6000 0092       405.           BRA       ENDCMDMM            BRANCH END OF MM COMMAND
+C'00033C  7000            406.  MMDEC    MOVEQ.L   #0,D0               LOAD ZERO
+C'00033E  7200            407.           MOVEQ.L   #0,D1               LOAD ZERO
+C'000340  2028 001C       408.           MOVE.L    MMADDR(A0),D0       LOAD MEMORY MODIFY ADDRESS
+C'000344  1228 0003       409.           MOVE.B    MMLEN(A0),D1        LOAD MEMORY MODIFY LENGTH CODE
+C'000348  9081            410.           SUB.L     D1,D0               GET NEW ADDRESS
+C'00034A  2140 001C       411.           MOVE.L    D0,MMADDR(A0)       STORE NEW ADDRESS
+C'00034E  4EB9'000012A8   412.           JSR       MMDISP              DISPLAY DATA
+C'000354  6076            413.           BRA.S     ENDCMDMM            BRANCH END OF MM COMMAND
+C'000356  51D0            414.  MMEXIT   SF.B      MMFLAG(A0)          SET MM FLAG TO FLASE
+C'000358  4EB9'00001340   415.           JSR       SCROLL              SCROLL SCREEN
+C'00035E  6066            416.           BRA.S     ENDCMD              BRANCH END OF COMMAND
+C'000360  0C55 5053       417.  BUGCM    CMP.W     #'PS',(A5)          TEST FOR PS COMMAND
+C'000364  6700 0082       418.           BEQ       PSCMD               BRANCH IF PS COMMAND
+C'000368  0C55 4D4D       419.           CMP.W     #'MM',(A5)          TEST FOR MM COMMAND
+C'00036C  6700 00E4       420.           BEQ       MMCMD               BRANCH IF MM COMMAND
+C'000370  0C15 0053       421.           CMP.B     #'S',(A5)           TEST FOR S COMMAND
+C'000374  6700 00DC       422.           BEQ       MMCMD               BRANCH IF S COMMAND
+C'000378  0C55 434C       423.           CMP.W     #'CL',(A5)          TEST FOR CL COMMAND
+C'00037C  6700 011A       424.           BEQ       CLCMD               BRANCH IF CL COMMAND
+C'000380  0C55 5245       425.           CMP.W     #'RE',(A5)          TEST FOR RE COMMAND
+C'000384  6700 010A       426.           BEQ       RECMD               BRANCH IF RE COMMAND
+C'000388  0C55 5445       427.           CMP.W     #'TE',(A5)          TEST FOR TE COMMAND
+C'00038C  6700 011A       428.           BEQ       TECMD               BRANCH IF TE COMMAND
+C'000390  0C55 5444       429.           CMP.W     #'TD',(A5)          TEST FOR TD COMMAND
+C'000394  6700 011A       430.           BEQ       TDCMD               BRANCH IF TD COMMAND
+C'000398  0C55 5452       431.           CMP.W     #'TR',(A5)          TEST FOR TR COMMAND
+C'00039C  6700 011A       432.           BEQ       TRCMD               BRANCH IF TR COMMAND
+C'0003A0  0C55 4443       433.           CMP.W     #'DC',(A5)          TEST FOR DC COMMAND
+C'0003A4  6700 014E       434.           BEQ       DCCMD               BRANCH IF DC COMMAND
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 13
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'0003A8  0C55 4D45       435.           CMP.W     #'ME',(A5)          TEST FOR ME COMMAND
+C'0003AC  6700 01F8       436.           BEQ       MECMD               BRANCH IF ME COMMAND
+C'0003B0  0C55 4D44       437.           CMP.W     #'MD',(A5)          TEST FOR MD COMMAND
+C'0003B4  6700 0204       438.           BEQ       MDCMD               BRANCH IF MD COMMAND
+C'0003B8  0C55 4D49       439.           CMP.W     #'MI',(A5)          TEST FOR MI COMMAND
+C'0003BC  6700 0212       440.           BEQ       MICMD               BRANCH IF MI COMMAND
+C'0003C0  4EB9'00001312   441.  BUGERR   JSR       DISP4Q              DISPLAY ????
+C'0003C6  4EB9'00001340   442.  ENDCMD   JSR       SCROLL              SCROLL THE SCREEN
+C'0003CC  4BF8 0F04       443.  ENDCMDMM LEA       DBUFF,A5            LOAD ADDRESS OF INPUT BUFFER
+C'0003D0  21CD 0F54       444.           MOVE.L    A5,DBUFFPTR         SET BUFFER POINTER
+C'0003D4  11FC 0000 0F58  445.           MOVE.B    #0,DBUFFCNT         SET BUFFER COUNTER
+C'0003DA  51F8 0F59       446.           SF.B      DBUFFLNE            CLEAR BUFFER LINE COMPLETE FLAG
+C'0003DE  4EB9'000013EA   447.           JSR       RXENA               ENABLE RX
+C'0003E4  6000 FDA0       448.  BUGEND   BRA       BUGECHO             REPEAT FOREVER
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 14
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          450.  **********************************************************************
+                          451.  *                                                                    *
+                          452.  *        PSCMD     PUT SYMBOL COMMAND                                *
+                          453.  *                                                                    *
+                          454.  **********************************************************************
+     C'000003E8           455.  PSCMD    EQU       *
+C'0003E8  548D            456.           ADDQ.L    #2,A5               SKIP 'PS'
+C'0003EA  0C15 002C       457.           CMP.B     #',',(A5)           TEST FOR COMMA
+C'0003EE  66D0            458.           BNE.S     BUGERR              BRANCH IF NOT A COMMA
+C'0003F0  528D            459.           ADDQ.L    #1,A5               SKIP ','
+C'0003F2  4EB9'0000069C   460.           JSR       PSMMPARM            PROCESS PARAMETERS
+C'0003F8  4A00            461.           TST.B     D0                  TEST RETURN CODE
+C'0003FA  66C4            462.           BNE.S     BUGERR              BRANCH IF PARM ERRORS
+C'0003FC  2641            463.           MOVE.L    D1,A3               COPY SYMBOL ADDRESS
+C'0003FE  B43C 0001       464.           CMP.B     #1,D2               TEST FOR BYTE TYPE
+C'000402  6604            465.           BNE.S     TSTAE               BRANCH IF NOT BYTE LENGTH
+C'000404  1013            466.           MOVE.B    (A3),D0             TEST FOR BUS ERROR
+C'000406  6002            467.           BRA.S     NOBUSER             CONTINUE ON AS NORMAL
+C'000408  3013            468.  TSTAE    MOVE.W    (A3),D0             TEST FOR ADDRESS ERROR & BUS ERROR
+C'00040A  5238 115C       469.  NOBUSER  ADD.B     #1,DCOUNT           INCREMENT COUNTER
+C'00040E  0C38 0011 115C  470.           CMP.B     #17,DCOUNT          TEST FOR MAX+1
+C'000414  6604            471.           BNE.S     PSON                IF LESS THEN CONTINUE ON
+C'000416  5338 115C       472.           SUB.B     #1,DCOUNT           RESET COUNT TO MAX (16)
+C'00041A  7000            473.  PSON     MOVEQ.L   #0,D0               CLEAR D0
+C'00041C  1038 115C       474.           MOVE.B    DCOUNT,D0           LOAD SYMBOL COUNT
+C'000420  43F8 0F5C       475.           LEA       DLIST,A1            LOAD ADDRESS OF DSB LIST
+C'000424  5380            476.           SUBQ.L    #1,D0               ADJUST COUNTER
+C'000426  C0FC 0020       477.           MULU      #32,D0              MULTIPLY BY DSB SIZE
+C'00042A  D3C0            478.           ADD.L     D0,A1               ADD OFFSET(S) TO ADDRESS
+C'00042C  22A8 0014       479.           MOVE.L    SBUFF(A0),DSBNAME(A1)         LOAD NAME PART 1
+C'000430  2368 0018 0004  480.           MOVE.L    SBUFF+4(A0),DSBNAME+4(A1)     LOAD NAME PART 2
+C'000436  234B 0008       481.           MOVE.L    A3,DSBADDR(A1)      LOAD SYMBOL ADDRESS
+C'00043A  1342 000C       482.           MOVE.B    D2,DSBLEN(A1)       LOAD SYMBOL LENGTH CODE
+C'00043E  1343 000D       483.           MOVE.B    D3,DSBTYPE(A1)      LOAD SYMBOL TYPE CODE
+C'000442  1344 0018       484.           MOVE.B    D4,DSBARRAY(A1)     LOAD SYMBOL ARRAY INDEX
+C'000446  1345 000F       485.           MOVE.B    D5,DSBSCALE(A1)     LOAD SYMBOL SCALE
+C'00044A  50E9 000E       486.           ST.B      DSBUPD(A1)          SET UPDATE FLAG
+C'00044E  6000 FF76       487.           BRA       ENDCMD              RESTART DEBUG
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 15
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          489.  **********************************************************************
+                          490.  *                                                                    *
+                          491.  *        MMCMD     MEMORY MODIFY COMMAND   (ALSO S COMMAND)          *
+                          492.  *                                                                    *
+                          493.  **********************************************************************
+     C'00000452           494.  MMCMD    EQU       *
+C'000452  528D            495.           ADDQ.L    #1,A5               SKIP M OR S
+C'000454  0C15 002C       496.           CMP.B     #',',(A5)           TEST FOR COMMA
+C'000458  670C            497.           BEQ.S     MMCOMMA             BRANCH IF A COMMA
+C'00045A  528D            498.           ADDQ.L    #1,A5               SKIP M
+C'00045C  0C15 002C       499.           CMP.B     #',',(A5)           TEST FOR COMMA
+C'000460  6704            500.           BEQ.S     MMCOMMA             BRANCH IF A COMMA
+C'000462  6000 FF5C       501.           BRA       BUGERR              COMMAND ERROR
+C'000466  528D            502.  MMCOMMA  ADDQ.L    #1,A5               SKIP COMMA
+C'000468  4EB9'0000069C   503.           JSR       PSMMPARM            PROCESS PARAMETERS
+C'00046E  4A00            504.           TST.B     D0                  TEST RETURN CODE
+C'000470  6600 FF4E       505.           BNE       BUGERR              BRANCH IF PARM ERRORS
+C'000474  50D0            506.           ST.B      MMFLAG(A0)          SET MM FLAG
+C'000476  2141 001C       507.           MOVE.L    D1,MMADDR(A0)       SET MM ADDRESS
+C'00047A  1142 0003       508.           MOVE.B    D2,MMLEN(A0)        SET MM LENGTH
+C'00047E  1143 0001       509.           MOVE.B    D3,MMTYPE(A0)       SET MM TYPE
+C'000482  1145 0022       510.           MOVE.B    D5,MMSCALE(A0)      SET MM SCALE
+C'000486  4EB9'000012A8   511.           JSR       MMDISP              DISPLAY MEMORY
+C'00048C  6000 FF3E       512.           BRA       ENDCMDMM            END MM COMMAND
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 16
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          514.  **********************************************************************
+                          515.  *                                                                    *
+                          516.  *        RECMD     RESET LOAD COMMAND                                *
+                          517.  *                                                                    *
+                          518.  **********************************************************************
+     C'00000490           519.  RECMD    EQU       *
+C'000490  4EB9'000013EA   520.           JSR       RXENA               ENABLE RX
+C'000496  4E45            521.           TRAP      #5                  RESET LOAD
+                          522.  **********************************************************************
+                          523.  *                                                                    *
+                          524.  *        CLCMD     CLEAR SCREEN & REMOVE SYMBOLS                     *
+                          525.  *                                                                    *
+                          526.  **********************************************************************
+     C'00000498           527.  CLCMD    EQU       *
+C'000498  4EB9'0000137E   528.           JSR       CLS                 CLEAR SCREEN
+C'00049E  11FC 0000 115C  529.           MOVE.B    #0,DCOUNT           CLEAR COUNT
+C'0004A4  6000 FF20       530.           BRA       ENDCMD              END OF COMMAND
+                          531.  **********************************************************************
+                          532.  *                                                                    *
+                          533.  *        TECMD     TIMER ENABLE COMMAND                              *
+                          534.  *                                                                    *
+                          535.  **********************************************************************
+     C'000004A8           536.  TECMD    EQU       *
+C'0004A8  7001            537.           MOVEQ.L   #1,D0               SET D0 TO TRUE
+C'0004AA  4E47            538.           TRAP      #7                  ENABLE TIMER SYSTEM
+C'0004AC  6000 FF18       539.           BRA       ENDCMD
+                          540.  **********************************************************************
+                          541.  *                                                                    *
+                          542.  *        TDCMD     TIMER DISABLE COMMAND                             *
+                          543.  *                                                                    *
+                          544.  **********************************************************************
+     C'000004B0           545.  TDCMD    EQU       *
+C'0004B0  7000            546.           MOVEQ.L   #0,D0               SET D0 TO FALSE
+C'0004B2  4E47            547.           TRAP      #7                  DISABLE TIMER SYSTEM
+C'0004B4  6000 FF10       548.           BRA       ENDCMD
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 17
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          550.  **********************************************************************
+                          551.  *                                                                    *
+                          552.  *        TRCMD     TIMER RESET COMMAND                               *
+                          553.  *                                                                    *
+                          554.  **********************************************************************
+     C'000004B8           555.  TRCMD    EQU       *
+C'0004B8  700F            556.           MOVE.L    #15,D0              LOAD LOOP COUNT
+C'0004BA  49F8 116C       557.           LEA       TMODULE,A4          LOAD ADDRESS OF MODULE TIMES
+C'0004BE  38FC 0000       558.  TMLP     MOVE.W    #0,(A4)+            CLEAR TIMES
+C'0004C2  51C8 FFFA       559.           DBRA      D0,TMLP             LOOP 16 TIMES
+C'0004C6  700F            560.           MOVE.L    #15,D0              LOAD LOOP COUNT
+C'0004C8  49F8 118C       561.           LEA       TMODULEA,A4         LOAD ADDRESS OF MODULE TIMES
+C'0004CC  38FC 0000       562.  TMALP    MOVE.W    #0,(A4)+            CLEAR TIMES
+C'0004D0  51C8 FFFA       563.           DBRA      D0,TMALP            LOOP 16 TIMES
+C'0004D4  700F            564.           MOVE.L    #15,D0              LOAD LOOP COUNT
+C'0004D6  49F8 11AC       565.           LEA       TMODULEW,A4         LOAD ADDRESS OF MODULE TIME
+C'0004DA  38FC 0000       566.  TMWLP    MOVE.W    #0,(A4)+            CLEAR TIMES
+C'0004DE  51C8 FFFA       567.           DBRA      D0,TMWLP            LOOP 16 TIMES
+C'0004E2  7000            568.           MOVEQ.L   #0,D0               CLEAR D0
+C'0004E4  21C0 1160       569.           MOVE.L    D0,TFRAME           CLEAR FRAME TIME ACTUAL
+C'0004E8  21C0 1164       570.           MOVE.L    D0,TFRAMEA          CLEAR FRAME TIME AVERAGE
+C'0004EC  21C0 1168       571.           MOVE.L    D0,TFRAMEW          CLEAR FRAME TIME WORST CASE
+C'0004F0  6000 FED4       572.           BRA       ENDCMD              LOOP BACK TO DEBUG
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 18
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          574.  **********************************************************************
+                          575.  *                                                                    *
+                          576.  *        DCCMD     DESK CALCULATOR COMMAND                           *
+                          577.  *                                                                    *
+                          578.  **********************************************************************
+     C'000004F4           579.  DCCMD    EQU       *
+C'0004F4  548D            580.           ADDQ.L    #2,A5               SKIP DC
+C'0004F6  0C15 002C       581.           CMP.B     #',',(A5)           TEST FOR COMMA
+C'0004FA  670A            582.           BEQ.S     SKIPDELM            BRANCH EQUAL SKIP DELIMETER
+C'0004FC  0C15 0020       583.           CMP.B     #' ',(A5)           TEST FOR SPACE
+C'000500  6704            584.           BEQ.S     SKIPDELM            BRANCH EQUAL SKIP DELIMETER
+C'000502  6000 FEBC       585.           BRA       BUGERR              INPUT ERROR
+C'000506  528D            586.  SKIPDELM ADDQ.L    #1,A5               SKIP COMMA OR SPACE
+C'000508  0C15 0026       587.           CMP.B     #'&',(A5)           TEST FOR &
+C'00050C  672C            588.           BEQ.S     DCDECP              BRANCH EQUAL DECIMAL WITH PREFIX
+C'00050E  0C15 002D       589.           CMP.B     #'-',(A5)           TEST FOR -
+C'000512  6722            590.           BEQ.S     DCDECNEG            BRANCH EQUAL DECIMAL WITH NEGATIVE
+C'000514  0C15 0024       591.           CMP.B     #'$',(A5)           TEST FOR $
+C'000518  6712            592.           BEQ.S     DCHEXP              BRANCH EQUAL HEX WITH PREFIX
+C'00051A  0C15 0030       593.           CMP.B     #'0',(A5)           TEST FOR ZERO
+C'00051E  6D00 FEA0       594.           BLT       BUGERR              BRANCH IF LESS THAN ZERO (ERROR)
+C'000522  0C15 0039       595.           CMP.B     #'9',(A5)           TEST FOR NINE
+C'000526  6E00 FE98       596.           BGT       BUGERR              BRANCH IF GREATER THAN NINE (ERROR)
+C'00052A  6002            597.           BRA.S     DCHEX               MUST BE HEX NUMBER BY DEFAULT
+C'00052C  528D            598.  DCHEXP   ADDQ.L    #1,A5               SKIP &
+C'00052E  4EB9'0000093E   599.  DCHEX    JSR       GETHX               CONVERT HEX NUMBER TO BINARY
+C'000534  600C            600.           BRA.S     TSTDCERR            GO TEST CONVERT ERROR
+C'000536  50E8 0021       601.  DCDECNEG ST.B      DCNEG(A0)           SET NEG FLAG
+C'00053A  528D            602.  DCDECP   ADDQ.L    #1,A5               SKIP & OR -
+C'00053C  4EB9'0000098E   603.  DCDEC    JSR       GETDC               CONVERT DECIMAL NUMBER TO BINARY
+C'000542  4A00            604.  TSTDCERR TST.B     D0                  TEST RETURN CODE
+C'000544  6600 FE7A       605.           BNE       BUGERR              BRANCH IF TRUE (ERROR)
+C'000548  4A28 0021       606.           TST.B     DCNEG(A0)           TEST NEGATE FLAG
+C'00054C  6706            607.           BEQ.S     NONEG               BRANCH IF FALSE
+C'00054E  4481            608.           NEG.L     D1                  NEGATE BINARY NUMBER
+C'000550  51E8 0021       609.           SF.B      DCNEG(A0)           CLEAR NEGATE FLAG
+C'000554  2E01            610.  NONEG    MOVE.L    D1,D7               SAVE DATA
+C'000556  4EB9'00001340   611.           JSR       SCROLL              SCROLL THE SCREEN
+C'00055C  7018            612.           MOVE.L    #24,D0              LOAD ROW 25
+C'00055E  7200            613.           MOVEQ.L   #0,D1               LOAD COL 0
+C'000560  4EB9'00001364   614.           JSR       LOCATE              LOACAT AT 25,0
+C'000566  4BE8 0004       615.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF BUFFER
+C'00056A  2C4D            616.           MOVE.L    A5,A6               COPY BUFFER POINTER
+C'00056C  2CFC 4845583D   617.           MOVE.L    #'HEX=',(A6)+       LOAD TEXT
+C'000572  2007            618.           MOVE.L    D7,D0               COPY DATA
+C'000574  4EB9 00F03A72   619.           JSR       PNT8HX              CONVERT TO HEX
+C'00057A  4EB9'000013B0   620.           JSR       DSPLN               DISPLAY BUFFER
+C'000580  7204            621.           MOVEQ.L   #4,D1               LOAD BLANK COUNT
+C'000582  4EB9'0000139E   622.           JSR       BLANKS              OUTPUT 4 BALNKS
+C'000588  4BE8 0004       623.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF BUFFER
+C'00058C  2C4D            624.           MOVE.L    A5,A6               COPY BUFFER POINTER
+C'00058E  2CFC 4445433D   625.           MOVE.L    #'DEC=',(A6)+       LOAD TEXT
+C'000594  2007            626.           MOVE.L    D7,D0               COPY DATA
+C'000596  4EB9 00F032B4   627.           JSR       HEX2DEC             CONVERT TO DECIMAL
+C'00059C  4EB9'000013B0   628.           JSR       DSPLN               DISPLAY BUFFER
+C'0005A2  6000 FE22       629.           BRA       ENDCMD
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 19
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          631.  **********************************************************************
+                          632.  *                                                                    *
+                          633.  *        MECMD     MODULE ENABLE COMMAND                             *
+                          634.  *                                                                    *
+                          635.  **********************************************************************
+     C'000005A6           636.  MECMD    EQU       *
+C'0005A6  4EB9'000007D8   637.           JSR       MEMDPARM            PROCESS PARAMETERS
+C'0005AC  4A00            638.           TST.B     D0                  TEST RETURN CODE
+C'0005AE  6600 FE10       639.           BNE       BUGERR              INPUT ERROR
+C'0005B2  7400            640.           MOVEQ.L   #0,D2               CLEAR FLAG (ENABLE MODULE)
+C'0005B4  4E46            641.           TRAP      #6                  ENABLE MODULE NUMBER IN D1
+C'0005B6  6000 FE0E       642.           BRA       ENDCMD
+                          643.  **********************************************************************
+                          644.  *                                                                    *
+                          645.  *        MDCMD     MODULE DISABLE COMMAND                            *
+                          646.  *                                                                    *
+                          647.  **********************************************************************
+     C'000005BA           648.  MDCMD    EQU       *
+C'0005BA  4EB9'000007D8   649.           JSR       MEMDPARM            PROCESS PARAMETERS
+C'0005C0  4A00            650.           TST.B     D0                  TEST RETURN CODE
+C'0005C2  6600 FDFC       651.           BNE       BUGERR              INPUT ERROR
+C'0005C6  143C 00FF       652.           MOVE.B    #$FF,D2             SET FLAG (DISABLE MODULE)
+C'0005CA  4E46            653.           TRAP      #6                  DISABLE MODULE NUMBER IN D1
+C'0005CC  6000 FDF8       654.           BRA       ENDCMD
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 20
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          656.  **********************************************************************
+                          657.  *                                                                    *
+                          658.  *        MICMD     MODULE INFORMATION COMMAND                        *
+                          659.  *                                                                    *
+                          660.  **********************************************************************
+     C'000005D0           661.  MICMD    EQU       *
+C'0005D0  4EB9'000007D8   662.           JSR       MEMDPARM            PROCESS PARAMETERS
+C'0005D6  4A00            663.           TST.B     D0                  TEST RETURN CODE
+C'0005D8  6600 FDE6       664.           BNE       BUGERR              INPUT ERROR
+C'0005DC  2E01            665.           MOVE.L    D1,D7               SAVE MODULE NUMBER
+C'0005DE  2C01            666.           MOVE.L    D1,D6               SAVE MODULE NUMBER
+C'0005E0  2A01            667.           MOVE.L    D1,D5               SAVE MODULE NUMBER
+C'0005E2  4EB9'00001340   668.           JSR       SCROLL              SCROLL THE SCREEN
+C'0005E8  7018            669.           MOVE.L    #24,D0              ROW 25
+C'0005EA  7200            670.           MOVEQ.L   #0,D1               COL 0
+C'0005EC  4EB9'00001364   671.           JSR       LOCATE              LOCATE 25,0
+C'0005F2  4BE8 0014       672.           LEA       SBUFF(A0),A5        LOAD ADDRESS OF SBUFF
+C'0005F6  2C4D            673.           MOVE.L    A5,A6               COPY BUFFER POINTER
+C'0005F8  508E            674.           ADDQ.L    #8,A6               POINT A6 TO END+1
+C'0005FA  4EB9'000013B0   675.           JSR       DSPLN               OUTPUT BUFFER
+C'000600  7204            676.           MOVEQ.L   #4,D1               LOAD 4 COUNT
+C'000602  4EB9'0000139E   677.           JSR       BLANKS              OUTPUT 4 BLANKS
+C'000608  4BE8 0004       678.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF TBUFF
+C'00060C  2C4D            679.           MOVE.L    A5,A6               COPY BUFFER POINTER
+                          680.  *
+C'00060E  49F9'00000000   681.           LEA       RTLIST,A4           LOAD ADDRESS OF REAL-TIME JUMP LIST
+C'000614  E78F            682.           LSL.L     #3,D7               MULTIPLY BY 8
+C'000616  D9C7            683.           ADD.L     D7,A4               ADD OFFSET
+                          684.  *
+C'000618  47F9'00000000   685.           LEA       SBMODRUN,A3         LOAD ADDRESS OF MODULE ENABLE FLAGS
+C'00061E  D7C6            686.           ADD.L     D6,A3               ADD OFFSET
+                          687.  *
+C'000620  45F9'00000000   688.           LEA       SMODTOUT,A2         LOAD ADDRESS OF MODULE TIMEOUT LIST
+C'000626  E58D            689.           LSL.L     #2,D5               MULTIPLY BY 4
+C'000628  D5C5            690.           ADD.L     D5,A2               ADD OFFSET
+                          691.  *
+C'00062A  202C 0004       692.           MOVE.L    4(A4),D0            LOAD JUMP ADDRESS
+C'00062E  4EB9 00F03A72   693.           JSR       PNT8HX              CONVERT TO HEX
+C'000634  1CFC 0020       694.           MOVE.B    #' ',(A6)+          LOAD SPACE
+C'000638  1CFC 0020       695.           MOVE.B    #' ',(A6)+          LOAD SPACE
+C'00063C  7000            696.           MOVEQ.L   #0,D0               CLEAR D0
+C'00063E  1014            697.           MOVE.B    (A4),D0             LOAD FRAME MASK
+C'000640  4EB9 00F03A88   698.           JSR       PNT2HX              CONVERT TO HEX
+C'000646  1CFC 0020       699.           MOVE.B    #' ',(A6)+          LOAD SPACE
+C'00064A  1CBC 0055       700.           MOVE.B    #'U',(A6)           LOAD USER
+C'00064E  0C2C 0000 0001  701.           CMP.B     #$00,1(A4)          TEST FOR USER MODE
+C'000654  6704            702.           BEQ.S     ISUSER              BRANCH IF USER FLAG
+C'000656  1CBC 0050       703.           MOVE.B    #'P',(A6)           LOAD PRIV
+C'00065A  528E            704.  ISUSER   ADDQ.L    #1,A6               INCREMENT POINTER
+C'00065C  1CFC 0020       705.           MOVE.B    #' ',(A6)+          LOAD SPACE
+C'000660  1CBC 0041       706.           MOVE.B    #'A',(A6)           LOAD ASSEMBLE
+C'000664  0C2C 0000 0002  707.           CMP.B     #$00,2(A4)          TEST FOR ASSEMBLE CODE
+C'00066A  6704            708.           BEQ.S     ISASSM              BRANCH IF USER FLAG
+C'00066C  1CBC 0046       709.           MOVE.B    #'F',(A6)           LOAD FORTRAN
+C'000670  528E            710.  ISASSM   ADDQ.L    #1,A6               INCREMENT POINTER
+C'000672  1CFC 0020       711.           MOVE.B    #' ',(A6)+          LOAD SPACE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 21
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'000676  1CBC 0045       712.           MOVE.B    #'E',(A6)           LOAD ENABLED
+C'00067A  0C13 0000       713.           CMP.B     #$00,(A3)           TEST FOR ENABLED CODE
+C'00067E  6704            714.           BEQ.S     ISENAB              BRANCH IF ENABLED
+C'000680  1CBC 0044       715.           MOVE.B    #'D',(A6)           LOAD DISABLE
+C'000684  528E            716.  ISENAB   ADDQ.L    #1,A6               INCREMENT POINTER
+C'000686  1CFC 0020       717.           MOVE.B    #' ',(A6)+          LOAD SPACE
+C'00068A  2012            718.           MOVE.L    (A2),D0             LOAD TIMEOUT COUNT
+C'00068C  4EB9 00F032B4   719.           JSR       HEX2DEC             CONVERT TO DECIMAL
+C'000692  4EB9'000013B0   720.           JSR       DSPLN               OUTPUT BUFFER
+C'000698  6000 FD2C       721.           BRA       ENDCMD
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 22
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          723.  **********************************************************************
+                          724.  *                                                                    *
+                          725.  *        PSMMPARM  PS & MM COMMAND PARAMETER SCANNER                 *
+                          726.  *                                                                    *
+                          727.  *                  FORM:  XX,<SYMBOL>                                *
+                          728.  *                         XX,<ADDRESS>[,<LEN>][,<TYPE>]              *
+                          729.  *                         <LEN> = B|W|L                              *
+                          730.  *                         <TYPE> = H|D|F|Snn                         *
+                          731.  *                                                                    *
+                          732.  *                  INPUT: A5=POINTER TO BUFFER                       *
+                          733.  *                                                                    *
+                          734.  *                  OUTPUT: D0 = RETURN CODE (0=OK,1=ERROR)           *
+                          735.  *                          D1 = ADDRESS                              *
+                          736.  *                          D2 = LENGTH (1=BYTE,2=WORD,4=LONG WORD)   *
+                          737.  *                          D3 = TYPE (0=HEX,1=DEC,2=FLOAT,3=SCALED   *
+                          738.  *                          D4 = ARRAY INDEX (0=NONE,1-255 ARRAY)     *
+                          739.  *                          D5 = SCALE (0-31)                         *
+                          740.  *                                                                    *
+                          741.  **********************************************************************
+     C'0000069C           742.  PSMMPARM EQU       *
+C'00069C  0C15 0024       743.           CMP.B     #'$',(A5)           TEST FOR DOLLAR SIGN
+C'0006A0  6700 0082       744.           BEQ       GETDS               BRANCH IF EQUAL
+C'0006A4  0C15 0030       745.           CMP.B     #'0',(A5)           TEST FOR ZERO
+C'0006A8  6D08            746.           BLT.S     TSTSYM              BRANCH IF < ZERO
+C'0006AA  0C15 0039       747.           CMP.B     #'9',(A5)           TEST FOR NINE
+C'0006AE  6E02            748.           BGT.S     TSTSYM              BRANCH IF > NINE
+C'0006B0  6074            749.           BRA.S     GETHEX              IS A HEX NUMBER
+C'0006B2  7008            750.  TSTSYM   MOVEQ.L   #8,D0               LOAD COUNT
+C'0006B4  4DE8 0014       751.           LEA       SBUFF(A0),A6        LOAD ADDRESS OF SYMBOL BUFFER
+C'0006B8  217C 20202020   752.           MOVE.L    #'    ',SBUFF(A0)   STORE BLANKS
+          0014
+C'0006C0  217C 20202020   753.           MOVE.L    #'    ',SBUFF+4(A0) STORE BLANKS
+          0018
+C'0006C8  0C15 000D       754.  SYMLOOP  CMP.B     #CR,(A5)            TEST FOR CR
+C'0006CC  670E            755.           BEQ.S     ENDSYM              BRANCH IF CR
+C'0006CE  0C15 002B       756.           CMP.B     #'+',(A5)           TEST FOR +
+C'0006D2  6708            757.           BEQ.S     ENDSYM              BRANCH IF +
+C'0006D4  1CDD            758.           MOVE.B    (A5)+,(A6)+         COPY NAME
+C'0006D6  51C8 FFF0       759.           DBRA      D0,SYMLOOP          LOOP 8 TIMES
+C'0006DA  6044            760.           BRA.S     PARMERR             TOO MANY CHARS
+C'0006DC  4DE8 0014       761.  ENDSYM   LEA       SBUFF(A0),A6        LOAD ADDRESS OF SYMBOL BUFFER
+C'0006E0  4EB9'0000081A   762.           JSR       SLOOKUP             LOOKUP SYMBOL
+C'0006E6  4A00            763.           TST.B     D0                  TEST RETURN CODE
+C'0006E8  6636            764.           BNE.S     PARMERR             BRANCH IF NOT ZERO
+C'0006EA  B83C 0001       765.           CMP.B     #$01,D4             TEST ARRAY CODE
+C'0006EE  670E            766.           BEQ.S     NOTARRAY            BRANCH IF EQUAL
+C'0006F0  2E01            767.           MOVE.L    D1,D7               SAVE ADDRESS
+C'0006F2  0C15 002B       768.           CMP.B     #'+',(A5)           TEST FOR +
+C'0006F6  670A            769.           BEQ.S     ISARRAY             BRANCH IF EQUAL
+C'0006F8  0C15 000D       770.           CMP.B     #CR,(A5)            TEST FOR CR
+C'0006FC  6622            771.           BNE.S     PARMERR             BRANCH IF NOT EQUAL
+C'0006FE  7800            772.  NOTARRAY MOVEQ.L   #0,D4               CLEAR ARRAY INDEX
+C'000700  4E75            773.           RTS
+C'000702  528D            774.  ISARRAY  ADDQ.L    #1,A5               SKIP +
+C'000704  4EB9'0000098E   775.           JSR       GETDC               CONVERT DECIMAL NUMBER
+C'00070A  4A00            776.           TST.B     D0                  TEST RETURN CODE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 23
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'00070C  6612            777.           BNE.S     PARMERR             BRANCH IF NOT EQUAL
+C'00070E  B2BC 000000FF   778.           CMP.L     #255,D1             TEST FOR MAX INDEX
+C'000714  6E0A            779.           BGT.S     PARMERR             INPUT ERROR (INDEX TOO LARGE)
+C'000716  2801            780.           MOVE.L    D1,D4               LOAD ARRAY INDEX
+C'000718  5381            781.           SUBQ.L    #1,D1               ADJUST INDEX VALUE
+C'00071A  C2C2            782.           MULU      D2,D1               MULTIPLY BY SIZE
+C'00071C  D287            783.           ADD.L     D7,D1               ADD BASE AND OFFSET
+C'00071E  4E75            784.           RTS
+C'000720  7001            785.  PARMERR  MOVEQ.L   #1,D0               SET RETURN CODE
+C'000722  4E75            786.           RTS
+C'000724  528D            787.  GETDS    ADDQ.L    #1,A5               SKIP DOLLAR SIGN
+C'000726  217C 20202020   788.  GETHEX   MOVE.L    #'    ',SBUFF(A0)   STORE BLANKS
+          0014
+C'00072E  217C 20202020   789.           MOVE.L    #'    ',SBUFF+4(A0) STORE BLANKS
+          0018
+C'000736  4EB9'0000093E   790.           JSR       GETHX               SCAN HEX NUMBER
+C'00073C  4A00            791.           TST.B     D0                  TEST RETURN CODE
+C'00073E  66E0            792.           BNE.S     PARMERR             BRANCH IF NOT ZERO
+C'000740  0C15 002C       793.           CMP.B     #',',(A5)           TEST FOR COMMA
+C'000744  670A            794.           BEQ.S     GETLEN              BRANCH IF COMMA
+C'000746  7402            795.           MOVEQ.L   #2,D2               SET LENGTH CODE TO WORD
+C'000748  7600            796.           MOVEQ.L   #0,D3               SET TYPE CODE TO HEX
+C'00074A  7800            797.           MOVEQ.L   #0,D4               CLEAR ARRAY INDEX
+C'00074C  7000            798.           MOVEQ.L   #0,D0               SET RETURN CODE
+C'00074E  4E75            799.           RTS
+C'000750  528D            800.  GETLEN   ADDQ.L    #1,A5               SKIP COMMA
+C'000752  0C15 0042       801.           CMP.B     #'B',(A5)           TEST FOR BYTE CODE
+C'000756  670E            802.           BEQ.S     LENB                BRANCH IF B
+C'000758  0C15 0057       803.           CMP.B     #'W',(A5)           TEST FOR WORD CODE
+C'00075C  670C            804.           BEQ.S     LENW                BRANCH IF W
+C'00075E  0C15 004C       805.           CMP.B     #'L',(A5)           TEST FOR LONG CODE
+C'000762  670A            806.           BEQ.S     LENL                BRANCH IF L
+C'000764  60BA            807.           BRA.S     PARMERR             INVALID LENGTH CODE
+C'000766  7401            808.  LENB     MOVEQ.L   #1,D2               SET LENGTH CODE
+C'000768  6006            809.           BRA.S     TTYPE               BRANCH TO TYPE CHECK
+C'00076A  7402            810.  LENW     MOVEQ.L   #2,D2               SET LENGTH CODE
+C'00076C  6002            811.           BRA.S     TTYPE               BRANCH TO TYPE CHECK
+C'00076E  7404            812.  LENL     MOVEQ.L   #4,D2               SET LENGTH CODE
+C'000770  528D            813.  TTYPE    ADDQ.L    #1,A5               SKIP LENGTH CODE
+C'000772  0C15 002C       814.           CMP.B     #',',(A5)           TEST FOR COMMA
+C'000776  6708            815.           BEQ.S     TESTT               BRANCH IF COMMA
+C'000778  7600            816.           MOVEQ.L   #0,D3               SET TYPE CODE TO HEX
+C'00077A  7800            817.           MOVEQ.L   #0,D4               CLEAR ARRAY INDEX
+C'00077C  7000            818.           MOVEQ.L   #0,D0               SET RETURN CODE
+C'00077E  4E75            819.           RTS
+C'000780  528D            820.  TESTT    ADDQ.L    #1,A5               SKIP COMMA
+C'000782  0C15 0048       821.           CMP.B     #'H',(A5)           TEST FOR HEX CODE
+C'000786  6714            822.           BEQ.S     HTYPE               BRANCH IF H CODE
+C'000788  0C15 0044       823.           CMP.B     #'D',(A5)           TEST FOR DECIMAL CODE
+C'00078C  6712            824.           BEQ.S     DTYPE               BRANCH IF D CODE
+C'00078E  0C15 0046       825.           CMP.B     #'F',(A5)           TEST FOR FLOAT CODE
+C'000792  6710            826.           BEQ.S     FTYPE               BRANCH IF F CODE
+C'000794  0C15 0053       827.           CMP.B     #'S',(A5)           TEST FOR SCALE CODE
+C'000798  670E            828.           BEQ.S     STYPE               BRANCH IF S TYPE
+C'00079A  6084            829.           BRA       PARMERR             INVALID TYPE CODE
+C'00079C  7600            830.  HTYPE    MOVEQ.L   #0,D3               SET TYPE CODE TO HEX
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 24
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'00079E  6032            831.           BRA.S     TDONE               BRANCH TYPE DONE
+C'0007A0  7601            832.  DTYPE    MOVEQ.L   #1,D3               SET TYPE CODE TO DECIMAL
+C'0007A2  602E            833.           BRA.S     TDONE               BRANCH TYPE DONE
+C'0007A4  7602            834.  FTYPE    MOVEQ.L   #2,D3               SET TYPE CODE TO FLOAT
+C'0007A6  602A            835.           BRA.S     TDONE               BRANCH TYPE DONE
+C'0007A8  528D            836.  STYPE    ADDQ.L    #1,A5               SKIP S
+C'0007AA  7603            837.           MOVEQ.L   #3,D3               SET TYPE CODE TO SCALE
+C'0007AC  2F01            838.           MOVE.L    D1,-(A7)            SAVE D1
+C'0007AE  4EB9'0000098E   839.           JSR       GETDC               GET DECIMAL NUMBER
+C'0007B4  4A00            840.           TST.B     D0                  TEST RETURN CODE
+C'0007B6  6600 FF68       841.           BNE       PARMERR             BRANCH IF ERROR
+C'0007BA  2A01            842.           MOVE.L    D1,D5               SET SCALE VALUE
+C'0007BC  221F            843.           MOVE.L    (A7)+,D1            RESTORE D1
+C'0007BE  BABC 0000001F   844.           CMP.L     #31,D5              TEST TO MAX VALUE
+C'0007C4  6E00 FF5A       845.           BGT       PARMERR             BRANCH IF ERROR
+C'0007C8  BABC 00000000   846.           CMP.L     #0,D5               TEST TO MIN VALUE
+C'0007CE  6D00 FF50       847.           BLT       PARMERR             BRANCH IF ERROR
+C'0007D2  7800            848.  TDONE    MOVEQ.L   #0,D4               CLEAR ARRAY INDEX
+C'0007D4  7000            849.           MOVEQ.L   #0,D0               SET RETURN CODE
+C'0007D6  4E75            850.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 25
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          852.  **********************************************************************
+                          853.  *                                                                    *
+                          854.  *        MEMDPARM  PROCESS PARAMETERS FOR ME & MD & MI COMMAND       *
+                          855.  *                                                                    *
+                          856.  *                  FORM:     XX,<MODULE>                             *
+                          857.  *                                                                    *
+                          858.  *                  INPUT:    A5 = POINTER TO BUFFER                  *
+                          859.  *                                                                    *
+                          860.  *                  OUTPUT:   D1 = MODULE NUMBER                      *
+                          861.  *                                                                    *
+                          862.  **********************************************************************
+     C'000007D8           863.  MEMDPARM EQU       *
+C'0007D8  548D            864.           ADDQ.L    #2,A5               SKIP ME OR MD
+C'0007DA  0C15 002C       865.           CMP.B     #',',(A5)           TEST FOR COMMA
+C'0007DE  6636            866.           BNE.S     PARMER              INPUT ERROR
+C'0007E0  528D            867.           ADDQ.L    #1,A5               SKIP COMMA
+C'0007E2  7008            868.           MOVEQ.L   #8,D0               LOAD LOOP COUNT
+C'0007E4  4DE8 0014       869.           LEA       SBUFF(A0),A6        LOAD ADDRESS OF SYMBOL BUFFER
+C'0007E8  217C 20202020   870.           MOVE.L    #'    ',SBUFF(A0)   LOAD BLANKS
+          0014
+C'0007F0  217C 20202020   871.           MOVE.L    #'    ',SBUFF+4(A0) LOAD BLANKS
+          0018
+C'0007F8  0C15 000D       872.  NMLOOP   CMP.B     #CR,(A5)            TEST FOR CR
+C'0007FC  6708            873.           BEQ.S     ENDNAME             BRANCH IF END FOUND
+C'0007FE  1CDD            874.           MOVE.B    (A5)+,(A6)+         LOAD A BYTE
+C'000800  51C8 FFF6       875.           DBRA      D0,NMLOOP           LOOP MAX 9 TIMES
+C'000804  6010            876.           BRA.S     PARMER              INPUT ERROR
+C'000806  4DE8 0014       877.  ENDNAME  LEA       SBUFF(A0),A6        LOAD ADDRESS OF SYMBOL BUFFER
+C'00080A  4EB9'00000880   878.           JSR       NLOOKUP             LOOKUP NAME
+C'000810  4A00            879.           TST.B     D0                  TEST RETURN CODE
+C'000812  6602            880.           BNE.S     PARMER              INPUT ERROR
+C'000814  4E75            881.           RTS
+C'000816  7001            882.  PARMER   MOVEQ.L   #1,D0               SET RETURN CODE
+C'000818  4E75            883.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 26
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          885.  **********************************************************************
+                          886.  *                                                                    *
+                          887.  *        SLOOKUP   SYMBOL LOOKUP                                     *
+                          888.  *                                                                    *
+                          889.  *                  INPUT:    A6 = POINTER TO SYMBOL BUFFER           *
+                          890.  *                                                                    *
+                          891.  *                  OUTPUT:   D0 = RETURN CODE (0=OK,1=ERROR)         *
+                          892.  *                            D1 = ADDRESS                            *
+                          893.  *                            D2 = LENGTH (1=BYTE,2=WORD,4=LONG WORD) *
+                          894.  *                            D3 = TYPE (0=HEX,1=DEC,2=FLOAT,3=SCALED *
+                          895.  *                            D4 = ARRAY (1-255)                      *
+                          896.  *                            D5 = SCALE (0-31)                       *
+                          897.  *                                                                    *
+                          898.  **********************************************************************
+     C'0000081A           899.  SLOOKUP  EQU        *
+C'00081A  7E00            900.           MOVEQ.L   #0,D7                         CLEAR FLAG
+C'00081C  3039'00000000   901.           MOVE.W    DPCOUNT,D0                    LOAD NUMBER OF DP SYMBOLS
+C'000822  5340            902.           SUBQ.W    #1,D0                         ADJUST COUNT
+C'000824  49F9'00000000   903.           LEA       DPTABLE,A4                    LOAD ADDRESS OF TABLE
+                          904.  *
+C'00082A  7201            905.  SGLOB    MOVEQ.L   #1,D1                         CLEAR D1
+C'00082C  2401            906.           MOVE.L    D1,D2                         CLEAR D2
+C'00082E  2601            907.           MOVE.L    D1,D3                         CLEAR D3
+C'000830  2801            908.           MOVE.L    D1,D4                         CLEAR D4
+C'000832  2A01            909.           MOVE.L    D1,D5                         CLEAR D5
+                          910.  *
+C'000834  2216            911.  SUPLP    MOVE.L    (A6),D1                       LOAD NAME PART 1
+C'000836  B294            912.           CMP.L     (A4),D1                       TEST NAME PART 1
+C'000838  6622            913.           BNE.S     NXTDP                         BRANCH NOT EQUAL NEXT DP
+C'00083A  222E 0004       914.           MOVE.L    4(A6),D1                      LOAD NAME PART 2
+C'00083E  B2AC 0004       915.           CMP.L     4(A4),D1                      TEST NAME PART 2
+C'000842  6618            916.           BNE.S     NXTDP                         BRANCH NOT EQUAL NEXT DP
+                          917.  *
+C'000844  222C 0008       918.           MOVE.L    8(A4),D1                      LOAD ADDRESS
+C'000848  142C 000C       919.           MOVE.B    12(A4),D2                     LOAD LENGTH CODE
+C'00084C  162C 000D       920.           MOVE.B    13(A4),D3                     LOAD TYPE CODE
+C'000850  182C 000E       921.           MOVE.B    14(A4),D4                     LOAD ARRAY CODE
+C'000854  1A2C 000F       922.           MOVE.B    15(A4),D5                     LOAD SCALE CODE
+C'000858  7000            923.           MOVEQ.L   #0,D0                         SET RETURN CODE
+C'00085A  4E75            924.           RTS
+                          925.  *
+C'00085C  D9FC 00000010   926.  NXTDP    ADD.L     #16,A4                        POINT TO NEXT ENTRY IN TABLE
+C'000862  51C8 FFD0       927.           DBRA      D0,SUPLP                      LOOP DPCOUNT TIMES
+                          928.  *
+C'000866  4A07            929.           TST.B     D7                            TEST FLAG
+C'000868  6612            930.           BNE.S     SLEND                         BRANCH IF SET
+                          931.  *
+C'00086A  50C7            932.           ST.B      D7                            SET FLAG
+C'00086C  3039'00000000   933.           MOVE.W    DPCOUNT0,D0                   LOAD NUMBER OF DP SYMBOLS
+C'000872  5340            934.           SUBQ.W    #1,D0                         ADJUST COUNT
+C'000874  49F9'00000000   935.           LEA       DPTABLE0,A4                   LOAD ADDRESS OF TABLE
+C'00087A  60AE            936.           BRA.S     SGLOB                         LOOK INTO GLOBAL TABLE
+                          937.  *
+C'00087C  7001            938.  SLEND    MOVEQ.L   #1,D0                         NOT FOUND SET ERROR CODE
+C'00087E  4E75            939.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 27
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          941.  **********************************************************************
+                          942.  *                                                                    *
+                          943.  *        NLOOKUP   MODULE NAME LOOKUP                                *
+                          944.  *                                                                    *
+                          945.  *                  INPUT:    A6 = POINTER TO SYMBOL BUFFER           *
+                          946.  *                                                                    *
+                          947.  *                  OUTPUT:   D0 = RETURN CODE (0=OK,1=ERROR)         *
+                          948.  *                            D1 = MODULE NUMBER                      *
+                          949.  *                                                                    *
+                          950.  **********************************************************************
+     C'00000880           951.  NLOOKUP  EQU       *
+C'000880  2039'00000000   952.           MOVE.L    RTNUMBER,D0         LOAD NUMBER OF REAL-TIME MODULES
+C'000886  5380            953.           SUBQ.L    #1,D0               ADJUST NUMBER
+C'000888  49F9'00000000   954.           LEA       RTNAME,A4           LOAD ADDRESS OF NAME TABLE
+C'00088E  2216            955.  NUPLP    MOVE.L    (A6),D1             LOAD NAME PART 1
+C'000890  B294            956.           CMP.L     (A4),D1             TEST NAME
+C'000892  6618            957.           BNE.S     NXTNM               BRANCH NOT EQUAL NEXT NAME
+C'000894  222E 0004       958.           MOVE.L    4(A6),D1            LOAD NAME PART 2
+C'000898  B2AC 0004       959.           CMP.L     4(A4),D1            TEST NAME
+C'00089C  660E            960.           BNE.S     NXTNM               BRANCH NOT EQUAL NEXT NAME
+C'00089E  2239'00000000   961.           MOVE.L    RTNUMBER,D1         LOAD NUMBER OF REAL-TIME MODULES
+C'0008A4  9280            962.           SUB.L     D0,D1               GET MODULE NUMBER
+C'0008A6  5381            963.           SUBQ.L    #1,D1               ADJUST NUMBER
+C'0008A8  7000            964.           MOVEQ.L   #0,D0               SET RETURN CODE
+C'0008AA  4E75            965.           RTS
+C'0008AC  508C            966.  NXTNM    ADDQ.L    #8,A4               INCREMENT TO NEXT NAME
+C'0008AE  51C8 FFDE       967.           DBRA      D0,NUPLP            LOOP RTNUMBER-1 TIMES
+C'0008B2  7001            968.           MOVEQ.L   #1,D0               SET RETURN CODE (ERROR)
+C'0008B4  4E75            969.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 28
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                          971.  **********************************************************************
+                          972.  *                                                                    *
+                          973.  *        MMINPUT   MM COMMMAND DATA INPUT SCANNER                    *
+                          974.  *                                                                    *
+                          975.  **********************************************************************
+     C'000008B6           976.  MMINPUT  EQU       *
+C'0008B6  0C15 0024       977.           CMP.B     #'$',(A5)           TEST FOR $
+C'0008BA  6730            978.           BEQ.S     MMHEXIN             MUST BE HEX NUMBER
+C'0008BC  0C15 0026       979.           CMP.B     #'&',(A5)           TEST FOR &
+C'0008C0  6738            980.           BEQ.S     MMDECIN             MUST BE  DECIMAL NUMBER
+C'0008C2  0C15 002D       981.           CMP.B     #'-',(A5)           TEST FOR -
+C'0008C6  57E8 0002       982.           SEQ.B     MMNEGFLG(A0)        SET MINUS FLAG IF -
+C'0008CA  672E            983.           BEQ.S     MMDECIN             MUST BE DECIMAL NUMBER
+C'0008CC  0C15 0030       984.           CMP.B     #'0',(A5)           TEST FOR ZERO
+C'0008D0  6D16            985.           BLT.S     MMERRIN             INPUT ERROR
+C'0008D2  0C15 0039       986.           CMP.B     #'9',(A5)           TEST FOR NINE
+C'0008D6  6E10            987.           BGT.S     MMERRIN             INPUT ERROR
+C'0008D8  0C28 0000 0001  988.           CMP.B     #0,MMTYPE(A0)       TEST FOR HEX TYPE
+C'0008DE  670E            989.           BEQ.S     MMHXC               MUST BE HEX NUMBER
+C'0008E0  0C28 0001 0001  990.           CMP.B     #1,MMTYPE(A0)       TEST FOR DECIMAL TYPE
+C'0008E6  6714            991.           BEQ.S     MMDCC               MUST BE DECIMAL NUMBER
+C'0008E8  7001            992.  MMERRIN  MOVEQ.L   #1,D0               SET ERROR RETURN CODE
+C'0008EA  4E75            993.           RTS
+C'0008EC  528D            994.  MMHEXIN  ADDQ.L    #1,A5               SKIP $
+C'0008EE  4EB9'0000093E   995.  MMHXC    JSR       GETHX               CONVERT HEX NUMBER
+C'0008F4  4A00            996.           TST.B     D0                  TEST RETURN CODE
+C'0008F6  671A            997.           BEQ.S     MMSTORE             BRANCH IF FALSE
+C'0008F8  60EE            998.           BRA.S     MMERRIN             INPUT ERROR
+C'0008FA  528D            999.  MMDECIN  ADDQ.L    #1,A5               SKIP & OR -
+C'0008FC  4EB9'0000098E  1000.  MMDCC    JSR       GETDC               CONVERT DECIMAL NUMBER
+C'000902  4A00           1001.           TST.B     D0                  TEST RETURN CODE
+C'000904  66E2           1002.           BNE.S     MMERRIN             BRANCH IF TRUE INPUT ERROR
+C'000906  4A28 0002      1003.           TST.B     MMNEGFLG(A0)        TEST FOR NEGATE
+C'00090A  6706           1004.           BEQ.S     MMSTORE             BRANCH IF FALSE
+C'00090C  4481           1005.           NEG.L     D1                  NEGATE ANSWER
+C'00090E  51E8 0002      1006.           SF.B      MMNEGFLG(A0)        SET NEGATE FLAG FALSE
+C'000912  2868 001C      1007.  MMSTORE  MOVE.L    MMADDR(A0),A4       LOAD MM ADDRESS
+C'000916  0C28 0001 0003 1008.           CMP.B     #1,MMLEN(A0)        TEST BYTE LENGTH
+C'00091C  6712           1009.           BEQ.S     MMSTB               BRANCH EQUAL STORE BYTE
+C'00091E  0C28 0002 0003 1010.           CMP.B     #2,MMLEN(A0)        TEST WORD LENGTH
+C'000924  670E           1011.           BEQ.S     MMSTW               BRANCH EQUAL STORE WORD
+C'000926  0C28 0004 0003 1012.           CMP.B     #4,MMLEN(A0)        TEST LONG WORD LENGTH
+C'00092C  670A           1013.           BEQ.S     MMSTL               BRANCH EQUAL STORE LONG WORD
+C'00092E  60B8           1014.           BRA.S     MMERRIN             INPUT ERROR
+C'000930  1881           1015.  MMSTB    MOVE.B    D1,(A4)             STORE BYTE
+C'000932  6006           1016.           BRA.S     MMSTEND             STORE END
+C'000934  3881           1017.  MMSTW    MOVE.W    D1,(A4)             STORE WORD
+C'000936  6002           1018.           BRA.S     MMSTEND             STORE END
+C'000938  2881           1019.  MMSTL    MOVE.L    D1,(A4)             STORE LONG WORD
+C'00093A  7000           1020.  MMSTEND  MOVEQ.L   #0,D0               SET RETURN CODE
+C'00093C  4E75           1021.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 29
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                         1023.  **********************************************************************
+                         1024.  *                                                                    *
+                         1025.  *        GETHX     SCANS HEX NUMBER IN BUFFER                        *
+                         1026.  *                                                                    *
+                         1027.  *                  INPUT:  A5 = POINTER TO BUFFER                    *
+                         1028.  *                                                                    *
+                         1029.  *                  OUTPUT: D0 = RETURN CODE (0=OK,1=ERROR)           *
+                         1030.  *                          D1 = NUMBER IN BINARY                     *
+                         1031.  *                                                                    *
+                         1032.  **********************************************************************
+     C'0000093E          1033.  GETHX    EQU       *
+C'00093E  2F02           1034.           MOVE.L    D2,-(A7)            SAVE D2
+C'000940  7000           1035.           MOVEQ.L   #0,D0               CLEAR D0
+C'000942  2200           1036.           MOVE.L    D0,D1               CLEAR D1
+C'000944  2401           1037.           MOVE.L    D1,D2               CLEAR D2
+C'000946  1415           1038.           MOVE.B    (A5),D2             LOAD FIRST CHARACTER
+C'000948  B43C 0030      1039.  CNTHX    CMP.B     #'0',D2             TEST FOR ZERO
+C'00094C  6D3C           1040.           BLT.S     HXERR               BRANCH LESS THAN HEX ERROR
+C'00094E  B43C 0039      1041.           CMP.B     #'9',D2             TEST FOR NINE
+C'000952  6E06           1042.           BGT.S     TESTAF              BRANCH GREATER THAN TEST A-F
+C'000954  943C 0030      1043.           SUB.B     #'0',D2             ADJUST TO BINARY
+C'000958  6010           1044.           BRA.S     NEXTD               BRANCH AND PROCESS NEXT DIGIT
+C'00095A  B43C 0041      1045.  TESTAF   CMP.B     #'A',D2             TEST FOR A
+C'00095E  6D2A           1046.           BLT.S     HXERR               BRANCH LESS THAN HEX ERROR
+C'000960  B43C 0046      1047.           CMP.B     #'F',D2             TEST FOR F
+C'000964  6E24           1048.           BGT.S     HXERR               BRANCH GREATER THAN HEX ERROR
+C'000966  943C 0037      1049.           SUB.B     #'A'-10,D2          ADJUST TO BINARY
+C'00096A  E989           1050.  NEXTD    LSL.L     #4,D1               MULTIPLY BY 16
+C'00096C  D282           1051.           ADD.L     D2,D1               ADD TO BINARY
+C'00096E  528D           1052.           ADDQ.L    #1,A5               INCREMENT POINTER
+C'000970  1415           1053.           MOVE.B    (A5),D2             LOAD CHARACTER
+C'000972  B43C 002C      1054.           CMP.B     #',',D2             TEST FOR COMMA
+C'000976  670E           1055.           BEQ.S     ENDHX               BRANCH EQUAL END HEX
+C'000978  B43C 0020      1056.           CMP.B     #' ',D2             TEST FOR BLANK
+C'00097C  6708           1057.           BEQ.S     ENDHX               BRANCH EQUAL END HEX
+C'00097E  B43C 000D      1058.           CMP.B     #CR,D2              TEST FOR CR
+C'000982  6702           1059.           BEQ.S     ENDHX               BRANCH EQUAL END HEX
+C'000984  60C2           1060.           BRA.S     CNTHX               BRANCH CONTINUE HEX
+C'000986  241F           1061.  ENDHX    MOVE.L    (A7)+,D2            RESTORE D2
+C'000988  4E75           1062.           RTS
+C'00098A  7001           1063.  HXERR    MOVEQ.L   #1,D0               SET ERROR RETURN CODE
+C'00098C  60F8           1064.           BRA.S     ENDHX               BRANCH TO END HEX
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 30
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                         1066.  **********************************************************************
+                         1067.  *                                                                    *
+                         1068.  *        GETDC     SCANS DECIMAL NUMBER IN BUFFER                    *
+                         1069.  *                                                                    *
+                         1070.  *                  INPUT:  A5 = POINTER TO BUFFER                    *
+                         1071.  *                                                                    *
+                         1072.  *                  OUTPUT: D0 = RETURN CODE (0=OK,1=ERROR)           *
+                         1073.  *                          D1 = NUMBER IN BINARY                     *
+                         1074.  *                                                                    *
+                         1075.  **********************************************************************
+     C'0000098E          1076.  GETDC    EQU       *
+C'00098E  2F02           1077.           MOVE.L    D2,-(A7)            SAVE D2
+C'000990  7200           1078.           MOVEQ.L   #0,D1               CLEAR D1
+C'000992  2401           1079.           MOVE.L    D1,D2               CLEAR D2
+C'000994  1415           1080.           MOVE.B    (A5),D2             LOAD FIRST CHARACTER
+C'000996  B43C 0030      1081.  CNTDC    CMP.B     #'0',D2             TEST FOR ZERO
+C'00099A  6D3A           1082.           BLT.S     DCERR               BRANCH LESS THAN DEC ERROR
+C'00099C  B43C 0039      1083.           CMP.B     #'9',D2             TEST FOR NINE
+C'0009A0  6E34           1084.           BGT.S     DCERR               BRANCH GREATER THAN DEC ERROR
+C'0009A2  943C 0030      1085.           SUB.B     #'0',D2             ADJUST TO BINARY
+C'0009A6  2001           1086.           MOVE.L    D1,D0               COPY DECIMAL NUMBER
+C'0009A8  4840           1087.           SWAP      D0                  LSH,MSH
+C'0009AA  C2FC 000A      1088.           MULU      #10,D1              10 * LSH
+C'0009AE  C0FC 000A      1089.           MULU      #10,D0              10 * MSH
+C'0009B2  4840           1090.           SWAP      D0                  PUT LSH IN MSH POSITION
+C'0009B4  D280           1091.           ADD.L     D0,D1               ADD TWO PRODUCTS
+C'0009B6  D282           1092.           ADD.L     D2,D1               ADD DIGIT TO BASE
+C'0009B8  528D           1093.           ADDQ.L    #1,A5               INCREMENT POINTER
+C'0009BA  1415           1094.           MOVE.B    (A5),D2             LOAD CHARACTER
+C'0009BC  B43C 002C      1095.           CMP.B     #',',D2             TEST FOR COMMA
+C'0009C0  670E           1096.           BEQ.S     ENDDC               BRANCH EQUAL END DEC
+C'0009C2  B43C 0020      1097.           CMP.B     #' ',D2             TEST FOR BLANK
+C'0009C6  6708           1098.           BEQ.S     ENDDC               BRANCH EQUAL END DEC
+C'0009C8  B43C 000D      1099.           CMP.B     #CR,D2              TEST FOR CR
+C'0009CC  6702           1100.           BEQ.S     ENDDC               BRANCH EQUAL END DEC
+C'0009CE  60C6           1101.           BRA.S     CNTDC               BRANCH CONTINUE DEC
+C'0009D0  7000           1102.  ENDDC    MOVEQ.L   #0,D0               CLEAR ERROR RETURN CODE
+C'0009D2  241F           1103.           MOVE.L    (A7)+,D2            RESTORE D2
+C'0009D4  4E75           1104.           RTS                           RETURN
+C'0009D6  7001           1105.  DCERR    MOVEQ.L   #1,D0               SET ERROR RETURN CODE
+C'0009D8  241F           1106.           MOVE.L    (A7)+,D2            RESTORE D2
+C'0009DA  4E75           1107.           RTS                           RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 31
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                         1109.  **********************************************************************
+                         1110.  *                                                                    *
+                         1111.  *        DISPLAY   DATA DISPLAY ROUTINE                              *
+                         1112.  *                                                                    *
+                         1113.  *                  INPUT: D0 = DATA                                  *
+                         1114.  *                         D2 = LEN (1=BYTE,2=WORD,4=LONG WORD)       *
+                         1115.  *                         D3 = TYPE (0=HEX,1=DEC,2=FLOAT,3=SCALED)   *
+                         1116.  *                         D4 = ARRAY (1-255)                         *
+                         1117.  *                         D5 = SCALE (0-31)                          *
+                         1118.  *                                                                    *
+                         1119.  *                  OUTPUT: CHARACTER OUTPUT ON BUFFER A5,A6          *
+                         1120.  *                                                                    *
+                         1121.  **********************************************************************
+     C'000009DC          1122.  DISPLAY  EQU       *
+C'0009DC  B63C 0000      1123.           CMP.B     #0,D3               TEST FOR HEX
+C'0009E0  6700 00A0      1124.           BEQ       DISPHX              GO DISPLAY HEX
+C'0009E4  B63C 0001      1125.           CMP.B     #1,D3               TEST FOR DEC
+C'0009E8  6770           1126.           BEQ.S     DISPDC              GO DISPLAY DEC
+C'0009EA  B63C 0003      1127.           CMP.B     #3,D3               TEST FOR SCALED INTEGER
+C'0009EE  6704           1128.           BEQ.S     DISPSC              GO DISPLAY SCALED
+C'0009F0  6000 0090      1129.           BRA       DISPHX              GO DISPLAY HEX ANYWAY
+C'0009F4  48E7 0304      1130.  DISPSC   MOVEM.L   D6/D7/A5,-(A7)      SAVE D6/D7
+C'0009F8  B43C 0002      1131.           CMP.B     #2,D2               TEST FOR WORD LENGTH
+C'0009FC  6602           1132.           BNE.S     SCD4                MUST BE LONG WORD
+C'0009FE  48C0           1133.           EXT.L     D0                  EXTEND WORD TO LONG WORD
+C'000A00  4A80           1134.  SCD4     TST.L     D0                  TEST FOR POSITIVE
+C'000A02  6A06           1135.           BPL.S     SCPOS               BRANCH IF POSITIVE
+C'000A04  4480           1136.           NEG.L     D0                  MAKE IT POSITIVE
+C'000A06  1CFC 002D      1137.           MOVE.B    #'-',(A6)+          PUT - INTO BUFFER
+C'000A0A  2C00           1138.  SCPOS    MOVE.L    D0,D6               COPY DATA
+C'000A0C  EAA6           1139.           ASR.L     D5,D6               INTEGER PART
+C'000A0E  2E00           1140.           MOVE.L    D0,D7               COPY DATA
+C'000A10  2006           1141.           MOVE.L    D6,D0               SHIFT BY SCALE
+C'000A12  4EB9 00F032B4  1142.           JSR       HEX2DEC             DISPLAY DECIMAL
+C'000A18  1CFC 002E      1143.           MOVE.B    #'.',(A6)+          PUT . INTO BUFFER
+C'000A1C  BA3C 0009      1144.           CMP.B     #9,D5               TEST FOR SCALE 2-9
+C'000A20  6E04           1145.           BGT.S     SHIFTR              BRANCH IF GREATER
+C'000A22  6D0A           1146.           BLT.S     SHIFTL              BRANCH IF LESS
+C'000A24  6010           1147.           BRA.S     FRAC                EQUAL TO 2-9
+C'000A26  9A3C 0009      1148.  SHIFTR   SUB.B     #9,D5               ADJUST SCALE
+C'000A2A  EAA7           1149.           ASR.L     D5,D7               PUT TOP 9 FRACTION BITS DOWN
+C'000A2C  6008           1150.           BRA.S     FRAC                NOW EQUAL TO 2-9
+C'000A2E  4405           1151.  SHIFTL   NEG.B     D5                  NEGATE SCALE
+C'000A30  DA3C 0009      1152.           ADD.B     #9,D5               ADJUST SCALE
+C'000A34  EBA7           1153.           ASL.L     D5,D7               NOW EQUAL TO 2-9
+C'000A36  CEBC 000001FF  1154.  FRAC     AND.L     #$000001FF,D7       CLEAR ALL BUT LAST 9 BITS
+C'000A3C  4BF9'00000AA8  1155.           LEA       FRACTAB,A5          LOAD ADDRESS OF TABLE
+C'000A42  E58F           1156.           LSL.L     #2,D7               MULTIPLY OFFSET BY 4
+C'000A44  DBC7           1157.           ADD.L     D7,A5               ADD OFFSET TO BASE ADDRESS
+C'000A46  7E03           1158.           MOVEQ.L   #3,D7               LOAD LOOP COUNT
+C'000A48  1CDD           1159.  FRACLP   MOVE.B    (A5)+,(A6)+         LOAD FRACION INTO BUFFER
+C'000A4A  51CF FFFC      1160.           DBRA      D7,FRACLP           LOOP 4 TIMES
+C'000A4E  4EB9'00001394  1161.           JSR       CLR2EOL             CLEAR TO END OF LINE
+C'000A54  4CDF 20C0      1162.           MOVEM.L   (A7)+,D6/D7/A5      RESTORE D6/D7/A5
+C'000A58  4E75           1163.           RTS                           RETURN
+C'000A5A  B43C 0001      1164.  DISPDC   CMP.B     #1,D2               TEST FOR BYTE LENGTH
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 32
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'000A5E  6708           1165.           BEQ.S     DSD1                GO EXTEND AND DISPLAY DEC BYTE
+C'000A60  B43C 0002      1166.           CMP.B     #2,D2               TEST FOR WORD LENGTH
+C'000A64  6708           1167.           BEQ.S     DSD2                GO EXTEND AND DISPLAY DEC WORD
+C'000A66  6008           1168.           BRA.S     DISPH2D             GO DISPLAY DEC LONG WORD
+C'000A68  4880           1169.  DSD1     EXT.W     D0                  EXTEND BYTE TO WORD
+C'000A6A  48C0           1170.           EXT.L     D0                  EXTEND WORD TO LONG WORD
+C'000A6C  6002           1171.           BRA.S     DISPH2D             GO DISPLAY DEC LONG WORD
+C'000A6E  48C0           1172.  DSD2     EXT.L     D0                  EXTEND WORD TO LONG WORD
+C'000A70  4EB9 00F032B4  1173.  DISPH2D  JSR       HEX2DEC             VMEBUG BINARY TO DEC SUBROUTINE
+C'000A76  1CFC 0020      1174.           MOVE.B    #' ',(A6)+          PUT SPACE IN BUFFER
+C'000A7A  4EB9'00001394  1175.           JSR       CLR2EOL             CLEAR TO END OF LINE
+C'000A80  4E75           1176.           RTS                           RETURN
+C'000A82  B43C 0001      1177.  DISPHX   CMP.B     #1,D2               TEST FOR BYTE LENGTH
+C'000A86  6708           1178.           BEQ.S     DS1                 GO DISPLAY HEX BYTE
+C'000A88  B43C 0002      1179.           CMP.B     #2,D2               TEST FOR WORD LENGTH
+C'000A8C  670A           1180.           BEQ.S     DS2                 GO DISPLAY HEX WORD
+C'000A8E  6010           1181.           BRA.S     DS4                 GO DISPLAY HEX LONG WORD
+C'000A90  4EB9 00F03A88  1182.  DS1      JSR       PNT2HX              VMEBUG BINARY BYTE TO HEX
+C'000A96  4E75           1183.           RTS                           RETURN
+C'000A98  4EB9 00F03A80  1184.  DS2      JSR       PNT4HX              VMEBUG BINARY WORD TO HEX
+C'000A9E  4E75           1185.           RTS                           RETURN
+C'000AA0  4EB9 00F03A72  1186.  DS4      JSR       PNT8HX              VMEBUG BINARY LONG WORD TO HEX
+C'000AA6  4E75           1187.           RTS                           RETURN
+     C'00000AA8          1188.  FRACTAB  EQU       *
+C'000AA8  30 30 30 30    1189.           DC.B      '0000'
+C'000AAC  30 30 32 30    1190.           DC.B      '0020'
+C'000AB0  30 30 33 39    1191.           DC.B      '0039'
+C'000AB4  30 30 35 39    1192.           DC.B      '0059'
+C'000AB8  30 30 37 38    1193.           DC.B      '0078'
+C'000ABC  30 30 39 38    1194.           DC.B      '0098'
+C'000AC0  30 31 31 37    1195.           DC.B      '0117'
+C'000AC4  30 31 33 37    1196.           DC.B      '0137'
+C'000AC8  30 31 35 36    1197.           DC.B      '0156'
+C'000ACC  30 31 37 36    1198.           DC.B      '0176'
+C'000AD0  30 31 39 35    1199.           DC.B      '0195'
+C'000AD4  30 32 31 35    1200.           DC.B      '0215'
+C'000AD8  30 32 33 34    1201.           DC.B      '0234'
+C'000ADC  30 32 35 34    1202.           DC.B      '0254'
+C'000AE0  30 32 37 33    1203.           DC.B      '0273'
+C'000AE4  30 32 39 33    1204.           DC.B      '0293'
+C'000AE8  30 33 31 32    1205.           DC.B      '0312'
+C'000AEC  30 33 33 32    1206.           DC.B      '0332'
+C'000AF0  30 33 35 32    1207.           DC.B      '0352'
+C'000AF4  30 33 37 31    1208.           DC.B      '0371'
+C'000AF8  30 33 39 31    1209.           DC.B      '0391'
+C'000AFC  30 34 31 30    1210.           DC.B      '0410'
+C'000B00  30 34 33 30    1211.           DC.B      '0430'
+C'000B04  30 34 34 39    1212.           DC.B      '0449'
+C'000B08  30 34 36 39    1213.           DC.B      '0469'
+C'000B0C  30 34 38 38    1214.           DC.B      '0488'
+C'000B10  30 35 30 38    1215.           DC.B      '0508'
+C'000B14  30 35 32 37    1216.           DC.B      '0527'
+C'000B18  30 35 34 37    1217.           DC.B      '0547'
+C'000B1C  30 35 36 36    1218.           DC.B      '0566'
+C'000B20  30 35 38 36    1219.           DC.B      '0586'
+C'000B24  30 36 30 35    1220.           DC.B      '0605'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 33
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'000B28  30 36 32 35    1221.           DC.B      '0625'
+C'000B2C  30 36 34 35    1222.           DC.B      '0645'
+C'000B30  30 36 36 34    1223.           DC.B      '0664'
+C'000B34  30 36 38 34    1224.           DC.B      '0684'
+C'000B38  30 37 30 33    1225.           DC.B      '0703'
+C'000B3C  30 37 32 33    1226.           DC.B      '0723'
+C'000B40  30 37 34 32    1227.           DC.B      '0742'
+C'000B44  30 37 36 32    1228.           DC.B      '0762'
+C'000B48  30 37 38 31    1229.           DC.B      '0781'
+C'000B4C  30 38 30 31    1230.           DC.B      '0801'
+C'000B50  30 38 32 30    1231.           DC.B      '0820'
+C'000B54  30 38 34 30    1232.           DC.B      '0840'
+C'000B58  30 38 35 39    1233.           DC.B      '0859'
+C'000B5C  30 38 37 39    1234.           DC.B      '0879'
+C'000B60  30 38 39 38    1235.           DC.B      '0898'
+C'000B64  30 39 31 38    1236.           DC.B      '0918'
+C'000B68  30 39 33 38    1237.           DC.B      '0938'
+C'000B6C  30 39 35 37    1238.           DC.B      '0957'
+C'000B70  30 39 37 37    1239.           DC.B      '0977'
+C'000B74  30 39 39 36    1240.           DC.B      '0996'
+C'000B78  31 30 31 36    1241.           DC.B      '1016'
+C'000B7C  31 30 33 35    1242.           DC.B      '1035'
+C'000B80  31 30 35 35    1243.           DC.B      '1055'
+C'000B84  31 30 37 34    1244.           DC.B      '1074'
+C'000B88  31 30 39 34    1245.           DC.B      '1094'
+C'000B8C  31 31 31 33    1246.           DC.B      '1113'
+C'000B90  31 31 33 33    1247.           DC.B      '1133'
+C'000B94  31 31 35 32    1248.           DC.B      '1152'
+C'000B98  31 31 37 32    1249.           DC.B      '1172'
+C'000B9C  31 31 39 31    1250.           DC.B      '1191'
+C'000BA0  31 32 31 31    1251.           DC.B      '1211'
+C'000BA4  31 32 33 30    1252.           DC.B      '1230'
+C'000BA8  31 32 35 30    1253.           DC.B      '1250'
+C'000BAC  31 32 37 30    1254.           DC.B      '1270'
+C'000BB0  31 32 38 39    1255.           DC.B      '1289'
+C'000BB4  31 33 30 39    1256.           DC.B      '1309'
+C'000BB8  31 33 32 38    1257.           DC.B      '1328'
+C'000BBC  31 33 34 38    1258.           DC.B      '1348'
+C'000BC0  31 33 36 37    1259.           DC.B      '1367'
+C'000BC4  31 33 38 37    1260.           DC.B      '1387'
+C'000BC8  31 34 30 36    1261.           DC.B      '1406'
+C'000BCC  31 34 32 36    1262.           DC.B      '1426'
+C'000BD0  31 34 34 35    1263.           DC.B      '1445'
+C'000BD4  31 34 36 35    1264.           DC.B      '1465'
+C'000BD8  31 34 38 34    1265.           DC.B      '1484'
+C'000BDC  31 35 30 34    1266.           DC.B      '1504'
+C'000BE0  31 35 32 33    1267.           DC.B      '1523'
+C'000BE4  31 35 34 33    1268.           DC.B      '1543'
+C'000BE8  31 35 36 32    1269.           DC.B      '1562'
+C'000BEC  31 35 38 32    1270.           DC.B      '1582'
+C'000BF0  31 36 30 32    1271.           DC.B      '1602'
+C'000BF4  31 36 32 31    1272.           DC.B      '1621'
+C'000BF8  31 36 34 31    1273.           DC.B      '1641'
+C'000BFC  31 36 36 30    1274.           DC.B      '1660'
+C'000C00  31 36 38 30    1275.           DC.B      '1680'
+C'000C04  31 36 39 39    1276.           DC.B      '1699'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 34
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'000C08  31 37 31 39    1277.           DC.B      '1719'
+C'000C0C  31 37 33 38    1278.           DC.B      '1738'
+C'000C10  31 37 35 38    1279.           DC.B      '1758'
+C'000C14  31 37 37 37    1280.           DC.B      '1777'
+C'000C18  31 37 39 37    1281.           DC.B      '1797'
+C'000C1C  31 38 31 36    1282.           DC.B      '1816'
+C'000C20  31 38 33 36    1283.           DC.B      '1836'
+C'000C24  31 38 35 35    1284.           DC.B      '1855'
+C'000C28  31 38 37 35    1285.           DC.B      '1875'
+C'000C2C  31 38 39 35    1286.           DC.B      '1895'
+C'000C30  31 39 31 34    1287.           DC.B      '1914'
+C'000C34  31 39 33 34    1288.           DC.B      '1934'
+C'000C38  31 39 35 33    1289.           DC.B      '1953'
+C'000C3C  31 39 37 33    1290.           DC.B      '1973'
+C'000C40  31 39 39 32    1291.           DC.B      '1992'
+C'000C44  32 30 31 32    1292.           DC.B      '2012'
+C'000C48  32 30 33 31    1293.           DC.B      '2031'
+C'000C4C  32 30 35 31    1294.           DC.B      '2051'
+C'000C50  32 30 37 30    1295.           DC.B      '2070'
+C'000C54  32 30 39 30    1296.           DC.B      '2090'
+C'000C58  32 31 30 39    1297.           DC.B      '2109'
+C'000C5C  32 31 32 39    1298.           DC.B      '2129'
+C'000C60  32 31 34 38    1299.           DC.B      '2148'
+C'000C64  32 31 36 38    1300.           DC.B      '2168'
+C'000C68  32 31 38 38    1301.           DC.B      '2188'
+C'000C6C  32 32 30 37    1302.           DC.B      '2207'
+C'000C70  32 32 32 37    1303.           DC.B      '2227'
+C'000C74  32 32 34 36    1304.           DC.B      '2246'
+C'000C78  32 32 36 36    1305.           DC.B      '2266'
+C'000C7C  32 32 38 35    1306.           DC.B      '2285'
+C'000C80  32 33 30 35    1307.           DC.B      '2305'
+C'000C84  32 33 32 34    1308.           DC.B      '2324'
+C'000C88  32 33 34 34    1309.           DC.B      '2344'
+C'000C8C  32 33 36 33    1310.           DC.B      '2363'
+C'000C90  32 33 38 33    1311.           DC.B      '2383'
+C'000C94  32 34 30 32    1312.           DC.B      '2402'
+C'000C98  32 34 32 32    1313.           DC.B      '2422'
+C'000C9C  32 34 34 31    1314.           DC.B      '2441'
+C'000CA0  32 34 36 31    1315.           DC.B      '2461'
+C'000CA4  32 34 38 30    1316.           DC.B      '2480'
+C'000CA8  32 35 30 30    1317.           DC.B      '2500'
+C'000CAC  32 35 32 30    1318.           DC.B      '2520'
+C'000CB0  32 35 33 39    1319.           DC.B      '2539'
+C'000CB4  32 35 35 39    1320.           DC.B      '2559'
+C'000CB8  32 35 37 38    1321.           DC.B      '2578'
+C'000CBC  32 35 39 38    1322.           DC.B      '2598'
+C'000CC0  32 36 31 37    1323.           DC.B      '2617'
+C'000CC4  32 36 33 37    1324.           DC.B      '2637'
+C'000CC8  32 36 35 36    1325.           DC.B      '2656'
+C'000CCC  32 36 37 36    1326.           DC.B      '2676'
+C'000CD0  32 36 39 35    1327.           DC.B      '2695'
+C'000CD4  32 37 31 35    1328.           DC.B      '2715'
+C'000CD8  32 37 33 34    1329.           DC.B      '2734'
+C'000CDC  32 37 35 34    1330.           DC.B      '2754'
+C'000CE0  32 37 37 33    1331.           DC.B      '2773'
+C'000CE4  32 37 39 33    1332.           DC.B      '2793'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 35
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'000CE8  32 38 31 32    1333.           DC.B      '2812'
+C'000CEC  32 38 33 32    1334.           DC.B      '2832'
+C'000CF0  32 38 35 32    1335.           DC.B      '2852'
+C'000CF4  32 38 37 31    1336.           DC.B      '2871'
+C'000CF8  32 38 39 31    1337.           DC.B      '2891'
+C'000CFC  32 39 31 30    1338.           DC.B      '2910'
+C'000D00  32 39 33 30    1339.           DC.B      '2930'
+C'000D04  32 39 34 39    1340.           DC.B      '2949'
+C'000D08  32 39 36 39    1341.           DC.B      '2969'
+C'000D0C  32 39 38 38    1342.           DC.B      '2988'
+C'000D10  33 30 30 38    1343.           DC.B      '3008'
+C'000D14  33 30 32 37    1344.           DC.B      '3027'
+C'000D18  33 30 34 37    1345.           DC.B      '3047'
+C'000D1C  33 30 36 36    1346.           DC.B      '3066'
+C'000D20  33 30 38 36    1347.           DC.B      '3086'
+C'000D24  33 31 30 35    1348.           DC.B      '3105'
+C'000D28  33 31 32 35    1349.           DC.B      '3125'
+C'000D2C  33 31 34 35    1350.           DC.B      '3145'
+C'000D30  33 31 36 34    1351.           DC.B      '3164'
+C'000D34  33 31 38 34    1352.           DC.B      '3184'
+C'000D38  33 32 30 33    1353.           DC.B      '3203'
+C'000D3C  33 32 32 33    1354.           DC.B      '3223'
+C'000D40  33 32 34 32    1355.           DC.B      '3242'
+C'000D44  33 32 36 32    1356.           DC.B      '3262'
+C'000D48  33 32 38 31    1357.           DC.B      '3281'
+C'000D4C  33 33 30 31    1358.           DC.B      '3301'
+C'000D50  33 33 32 30    1359.           DC.B      '3320'
+C'000D54  33 33 34 30    1360.           DC.B      '3340'
+C'000D58  33 33 35 39    1361.           DC.B      '3359'
+C'000D5C  33 33 37 39    1362.           DC.B      '3379'
+C'000D60  33 33 39 38    1363.           DC.B      '3398'
+C'000D64  33 34 31 38    1364.           DC.B      '3418'
+C'000D68  33 34 33 38    1365.           DC.B      '3438'
+C'000D6C  33 34 35 37    1366.           DC.B      '3457'
+C'000D70  33 34 37 37    1367.           DC.B      '3477'
+C'000D74  33 34 39 36    1368.           DC.B      '3496'
+C'000D78  33 35 31 36    1369.           DC.B      '3516'
+C'000D7C  33 35 33 35    1370.           DC.B      '3535'
+C'000D80  33 35 35 35    1371.           DC.B      '3555'
+C'000D84  33 35 37 34    1372.           DC.B      '3574'
+C'000D88  33 35 39 34    1373.           DC.B      '3594'
+C'000D8C  33 36 31 33    1374.           DC.B      '3613'
+C'000D90  33 36 33 33    1375.           DC.B      '3633'
+C'000D94  33 36 35 32    1376.           DC.B      '3652'
+C'000D98  33 36 37 32    1377.           DC.B      '3672'
+C'000D9C  33 36 39 31    1378.           DC.B      '3691'
+C'000DA0  33 37 31 31    1379.           DC.B      '3711'
+C'000DA4  33 37 33 30    1380.           DC.B      '3730'
+C'000DA8  33 37 35 30    1381.           DC.B      '3750'
+C'000DAC  33 37 37 30    1382.           DC.B      '3770'
+C'000DB0  33 37 38 39    1383.           DC.B      '3789'
+C'000DB4  33 38 30 39    1384.           DC.B      '3809'
+C'000DB8  33 38 32 38    1385.           DC.B      '3828'
+C'000DBC  33 38 34 38    1386.           DC.B      '3848'
+C'000DC0  33 38 36 37    1387.           DC.B      '3867'
+C'000DC4  33 38 38 37    1388.           DC.B      '3887'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 36
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'000DC8  33 39 30 36    1389.           DC.B      '3906'
+C'000DCC  33 39 32 36    1390.           DC.B      '3926'
+C'000DD0  33 39 34 35    1391.           DC.B      '3945'
+C'000DD4  33 39 36 35    1392.           DC.B      '3965'
+C'000DD8  33 39 38 34    1393.           DC.B      '3984'
+C'000DDC  34 30 30 34    1394.           DC.B      '4004'
+C'000DE0  34 30 32 33    1395.           DC.B      '4023'
+C'000DE4  34 30 34 33    1396.           DC.B      '4043'
+C'000DE8  34 30 36 32    1397.           DC.B      '4062'
+C'000DEC  34 30 38 32    1398.           DC.B      '4082'
+C'000DF0  34 31 30 32    1399.           DC.B      '4102'
+C'000DF4  34 31 32 31    1400.           DC.B      '4121'
+C'000DF8  34 31 34 31    1401.           DC.B      '4141'
+C'000DFC  34 31 36 30    1402.           DC.B      '4160'
+C'000E00  34 31 38 30    1403.           DC.B      '4180'
+C'000E04  34 31 39 39    1404.           DC.B      '4199'
+C'000E08  34 32 31 39    1405.           DC.B      '4219'
+C'000E0C  34 32 33 38    1406.           DC.B      '4238'
+C'000E10  34 32 35 38    1407.           DC.B      '4258'
+C'000E14  34 32 37 37    1408.           DC.B      '4277'
+C'000E18  34 32 39 37    1409.           DC.B      '4297'
+C'000E1C  34 33 31 36    1410.           DC.B      '4316'
+C'000E20  34 33 33 36    1411.           DC.B      '4336'
+C'000E24  34 33 35 35    1412.           DC.B      '4355'
+C'000E28  34 33 37 35    1413.           DC.B      '4375'
+C'000E2C  34 33 39 35    1414.           DC.B      '4395'
+C'000E30  34 34 31 34    1415.           DC.B      '4414'
+C'000E34  34 34 33 34    1416.           DC.B      '4434'
+C'000E38  34 34 35 33    1417.           DC.B      '4453'
+C'000E3C  34 34 37 33    1418.           DC.B      '4473'
+C'000E40  34 34 39 32    1419.           DC.B      '4492'
+C'000E44  34 35 31 32    1420.           DC.B      '4512'
+C'000E48  34 35 33 31    1421.           DC.B      '4531'
+C'000E4C  34 35 35 31    1422.           DC.B      '4551'
+C'000E50  34 35 37 30    1423.           DC.B      '4570'
+C'000E54  34 35 39 30    1424.           DC.B      '4590'
+C'000E58  34 36 30 39    1425.           DC.B      '4609'
+C'000E5C  34 36 32 39    1426.           DC.B      '4629'
+C'000E60  34 36 34 38    1427.           DC.B      '4648'
+C'000E64  34 36 36 38    1428.           DC.B      '4668'
+C'000E68  34 36 38 38    1429.           DC.B      '4688'
+C'000E6C  34 37 30 37    1430.           DC.B      '4707'
+C'000E70  34 37 32 37    1431.           DC.B      '4727'
+C'000E74  34 37 34 36    1432.           DC.B      '4746'
+C'000E78  34 37 36 36    1433.           DC.B      '4766'
+C'000E7C  34 37 38 35    1434.           DC.B      '4785'
+C'000E80  34 38 30 35    1435.           DC.B      '4805'
+C'000E84  34 38 32 34    1436.           DC.B      '4824'
+C'000E88  34 38 34 34    1437.           DC.B      '4844'
+C'000E8C  34 38 36 33    1438.           DC.B      '4863'
+C'000E90  34 38 38 33    1439.           DC.B      '4883'
+C'000E94  34 39 30 32    1440.           DC.B      '4902'
+C'000E98  34 39 32 32    1441.           DC.B      '4922'
+C'000E9C  34 39 34 31    1442.           DC.B      '4941'
+C'000EA0  34 39 36 31    1443.           DC.B      '4961'
+C'000EA4  34 39 38 30    1444.           DC.B      '4980'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 37
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'000EA8  35 30 30 30    1445.           DC.B      '5000'
+C'000EAC  35 30 32 30    1446.           DC.B      '5020'
+C'000EB0  35 30 33 39    1447.           DC.B      '5039'
+C'000EB4  35 30 35 39    1448.           DC.B      '5059'
+C'000EB8  35 30 37 38    1449.           DC.B      '5078'
+C'000EBC  35 30 39 38    1450.           DC.B      '5098'
+C'000EC0  35 31 31 37    1451.           DC.B      '5117'
+C'000EC4  35 31 33 37    1452.           DC.B      '5137'
+C'000EC8  35 31 35 36    1453.           DC.B      '5156'
+C'000ECC  35 31 37 36    1454.           DC.B      '5176'
+C'000ED0  35 31 39 35    1455.           DC.B      '5195'
+C'000ED4  35 32 31 35    1456.           DC.B      '5215'
+C'000ED8  35 32 33 34    1457.           DC.B      '5234'
+C'000EDC  35 32 35 34    1458.           DC.B      '5254'
+C'000EE0  35 32 37 33    1459.           DC.B      '5273'
+C'000EE4  35 32 39 33    1460.           DC.B      '5293'
+C'000EE8  35 33 31 32    1461.           DC.B      '5312'
+C'000EEC  35 33 33 32    1462.           DC.B      '5332'
+C'000EF0  35 33 35 32    1463.           DC.B      '5352'
+C'000EF4  35 33 37 31    1464.           DC.B      '5371'
+C'000EF8  35 33 39 31    1465.           DC.B      '5391'
+C'000EFC  35 34 31 30    1466.           DC.B      '5410'
+C'000F00  35 34 33 30    1467.           DC.B      '5430'
+C'000F04  35 34 34 39    1468.           DC.B      '5449'
+C'000F08  35 34 36 39    1469.           DC.B      '5469'
+C'000F0C  35 34 38 38    1470.           DC.B      '5488'
+C'000F10  35 35 30 38    1471.           DC.B      '5508'
+C'000F14  35 35 32 37    1472.           DC.B      '5527'
+C'000F18  35 35 34 37    1473.           DC.B      '5547'
+C'000F1C  35 35 36 36    1474.           DC.B      '5566'
+C'000F20  35 35 38 36    1475.           DC.B      '5586'
+C'000F24  35 36 30 35    1476.           DC.B      '5605'
+C'000F28  35 36 32 35    1477.           DC.B      '5625'
+C'000F2C  35 36 34 35    1478.           DC.B      '5645'
+C'000F30  35 36 36 34    1479.           DC.B      '5664'
+C'000F34  35 36 38 34    1480.           DC.B      '5684'
+C'000F38  35 37 30 33    1481.           DC.B      '5703'
+C'000F3C  35 37 32 33    1482.           DC.B      '5723'
+C'000F40  35 37 34 32    1483.           DC.B      '5742'
+C'000F44  35 37 36 32    1484.           DC.B      '5762'
+C'000F48  35 37 38 31    1485.           DC.B      '5781'
+C'000F4C  35 38 30 31    1486.           DC.B      '5801'
+C'000F50  35 38 32 30    1487.           DC.B      '5820'
+C'000F54  35 38 34 30    1488.           DC.B      '5840'
+C'000F58  35 38 35 39    1489.           DC.B      '5859'
+C'000F5C  35 38 37 39    1490.           DC.B      '5879'
+C'000F60  35 38 39 38    1491.           DC.B      '5898'
+C'000F64  35 39 31 38    1492.           DC.B      '5918'
+C'000F68  35 39 33 38    1493.           DC.B      '5938'
+C'000F6C  35 39 35 37    1494.           DC.B      '5957'
+C'000F70  35 39 37 37    1495.           DC.B      '5977'
+C'000F74  35 39 39 36    1496.           DC.B      '5996'
+C'000F78  36 30 31 36    1497.           DC.B      '6016'
+C'000F7C  36 30 33 35    1498.           DC.B      '6035'
+C'000F80  36 30 35 35    1499.           DC.B      '6055'
+C'000F84  36 30 37 34    1500.           DC.B      '6074'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 38
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'000F88  36 30 39 34    1501.           DC.B      '6094'
+C'000F8C  36 31 31 33    1502.           DC.B      '6113'
+C'000F90  36 31 33 33    1503.           DC.B      '6133'
+C'000F94  36 31 35 32    1504.           DC.B      '6152'
+C'000F98  36 31 37 32    1505.           DC.B      '6172'
+C'000F9C  36 31 39 31    1506.           DC.B      '6191'
+C'000FA0  36 32 31 31    1507.           DC.B      '6211'
+C'000FA4  36 32 33 30    1508.           DC.B      '6230'
+C'000FA8  36 32 35 30    1509.           DC.B      '6250'
+C'000FAC  36 32 37 30    1510.           DC.B      '6270'
+C'000FB0  36 32 38 39    1511.           DC.B      '6289'
+C'000FB4  36 33 30 39    1512.           DC.B      '6309'
+C'000FB8  36 33 32 38    1513.           DC.B      '6328'
+C'000FBC  36 33 34 38    1514.           DC.B      '6348'
+C'000FC0  36 33 36 37    1515.           DC.B      '6367'
+C'000FC4  36 33 38 37    1516.           DC.B      '6387'
+C'000FC8  36 34 30 36    1517.           DC.B      '6406'
+C'000FCC  36 34 32 36    1518.           DC.B      '6426'
+C'000FD0  36 34 34 35    1519.           DC.B      '6445'
+C'000FD4  36 34 36 35    1520.           DC.B      '6465'
+C'000FD8  36 34 38 34    1521.           DC.B      '6484'
+C'000FDC  36 35 30 34    1522.           DC.B      '6504'
+C'000FE0  36 35 32 33    1523.           DC.B      '6523'
+C'000FE4  36 35 34 33    1524.           DC.B      '6543'
+C'000FE8  36 35 36 32    1525.           DC.B      '6562'
+C'000FEC  36 35 38 32    1526.           DC.B      '6582'
+C'000FF0  36 36 30 32    1527.           DC.B      '6602'
+C'000FF4  36 36 32 31    1528.           DC.B      '6621'
+C'000FF8  36 36 34 31    1529.           DC.B      '6641'
+C'000FFC  36 36 36 30    1530.           DC.B      '6660'
+C'001000  36 36 38 30    1531.           DC.B      '6680'
+C'001004  36 36 39 39    1532.           DC.B      '6699'
+C'001008  36 37 31 39    1533.           DC.B      '6719'
+C'00100C  36 37 33 38    1534.           DC.B      '6738'
+C'001010  36 37 35 38    1535.           DC.B      '6758'
+C'001014  36 37 37 37    1536.           DC.B      '6777'
+C'001018  36 37 39 37    1537.           DC.B      '6797'
+C'00101C  36 38 31 36    1538.           DC.B      '6816'
+C'001020  36 38 33 36    1539.           DC.B      '6836'
+C'001024  36 38 35 35    1540.           DC.B      '6855'
+C'001028  36 38 37 35    1541.           DC.B      '6875'
+C'00102C  36 38 39 35    1542.           DC.B      '6895'
+C'001030  36 39 31 34    1543.           DC.B      '6914'
+C'001034  36 39 33 34    1544.           DC.B      '6934'
+C'001038  36 39 35 33    1545.           DC.B      '6953'
+C'00103C  36 39 37 33    1546.           DC.B      '6973'
+C'001040  36 39 39 32    1547.           DC.B      '6992'
+C'001044  37 30 31 32    1548.           DC.B      '7012'
+C'001048  37 30 33 31    1549.           DC.B      '7031'
+C'00104C  37 30 35 31    1550.           DC.B      '7051'
+C'001050  37 30 37 30    1551.           DC.B      '7070'
+C'001054  37 30 39 30    1552.           DC.B      '7090'
+C'001058  37 31 30 39    1553.           DC.B      '7109'
+C'00105C  37 31 32 39    1554.           DC.B      '7129'
+C'001060  37 31 34 38    1555.           DC.B      '7148'
+C'001064  37 31 36 38    1556.           DC.B      '7168'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 39
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'001068  37 31 38 38    1557.           DC.B      '7188'
+C'00106C  37 32 30 37    1558.           DC.B      '7207'
+C'001070  37 32 32 37    1559.           DC.B      '7227'
+C'001074  37 32 34 36    1560.           DC.B      '7246'
+C'001078  37 32 36 36    1561.           DC.B      '7266'
+C'00107C  37 32 38 35    1562.           DC.B      '7285'
+C'001080  37 33 30 35    1563.           DC.B      '7305'
+C'001084  37 33 32 34    1564.           DC.B      '7324'
+C'001088  37 33 34 34    1565.           DC.B      '7344'
+C'00108C  37 33 36 33    1566.           DC.B      '7363'
+C'001090  37 33 38 33    1567.           DC.B      '7383'
+C'001094  37 34 30 32    1568.           DC.B      '7402'
+C'001098  37 34 32 32    1569.           DC.B      '7422'
+C'00109C  37 34 34 31    1570.           DC.B      '7441'
+C'0010A0  37 34 36 31    1571.           DC.B      '7461'
+C'0010A4  37 34 38 30    1572.           DC.B      '7480'
+C'0010A8  37 35 30 30    1573.           DC.B      '7500'
+C'0010AC  37 35 32 30    1574.           DC.B      '7520'
+C'0010B0  37 35 33 39    1575.           DC.B      '7539'
+C'0010B4  37 35 35 39    1576.           DC.B      '7559'
+C'0010B8  37 35 37 38    1577.           DC.B      '7578'
+C'0010BC  37 35 39 38    1578.           DC.B      '7598'
+C'0010C0  37 36 31 37    1579.           DC.B      '7617'
+C'0010C4  37 36 33 37    1580.           DC.B      '7637'
+C'0010C8  37 36 35 36    1581.           DC.B      '7656'
+C'0010CC  37 36 37 36    1582.           DC.B      '7676'
+C'0010D0  37 36 39 35    1583.           DC.B      '7695'
+C'0010D4  37 37 31 35    1584.           DC.B      '7715'
+C'0010D8  37 37 33 34    1585.           DC.B      '7734'
+C'0010DC  37 37 35 34    1586.           DC.B      '7754'
+C'0010E0  37 37 37 33    1587.           DC.B      '7773'
+C'0010E4  37 37 39 33    1588.           DC.B      '7793'
+C'0010E8  37 38 31 32    1589.           DC.B      '7812'
+C'0010EC  37 38 33 32    1590.           DC.B      '7832'
+C'0010F0  37 38 35 32    1591.           DC.B      '7852'
+C'0010F4  37 38 37 31    1592.           DC.B      '7871'
+C'0010F8  37 38 39 31    1593.           DC.B      '7891'
+C'0010FC  37 39 31 30    1594.           DC.B      '7910'
+C'001100  37 39 33 30    1595.           DC.B      '7930'
+C'001104  37 39 34 39    1596.           DC.B      '7949'
+C'001108  37 39 36 39    1597.           DC.B      '7969'
+C'00110C  37 39 38 38    1598.           DC.B      '7988'
+C'001110  38 30 30 38    1599.           DC.B      '8008'
+C'001114  38 30 32 37    1600.           DC.B      '8027'
+C'001118  38 30 34 37    1601.           DC.B      '8047'
+C'00111C  38 30 36 36    1602.           DC.B      '8066'
+C'001120  38 30 38 36    1603.           DC.B      '8086'
+C'001124  38 31 30 35    1604.           DC.B      '8105'
+C'001128  38 31 32 35    1605.           DC.B      '8125'
+C'00112C  38 31 34 35    1606.           DC.B      '8145'
+C'001130  38 31 36 34    1607.           DC.B      '8164'
+C'001134  38 31 38 34    1608.           DC.B      '8184'
+C'001138  38 32 30 33    1609.           DC.B      '8203'
+C'00113C  38 32 32 33    1610.           DC.B      '8223'
+C'001140  38 32 34 32    1611.           DC.B      '8242'
+C'001144  38 32 36 32    1612.           DC.B      '8262'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 40
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'001148  38 32 38 31    1613.           DC.B      '8281'
+C'00114C  38 33 30 31    1614.           DC.B      '8301'
+C'001150  38 33 32 30    1615.           DC.B      '8320'
+C'001154  38 33 34 30    1616.           DC.B      '8340'
+C'001158  38 33 35 39    1617.           DC.B      '8359'
+C'00115C  38 33 37 39    1618.           DC.B      '8379'
+C'001160  38 33 39 38    1619.           DC.B      '8398'
+C'001164  38 34 31 38    1620.           DC.B      '8418'
+C'001168  38 34 33 38    1621.           DC.B      '8438'
+C'00116C  38 34 35 37    1622.           DC.B      '8457'
+C'001170  38 34 37 37    1623.           DC.B      '8477'
+C'001174  38 34 39 36    1624.           DC.B      '8496'
+C'001178  38 35 31 36    1625.           DC.B      '8516'
+C'00117C  38 35 33 35    1626.           DC.B      '8535'
+C'001180  38 35 35 35    1627.           DC.B      '8555'
+C'001184  38 35 37 34    1628.           DC.B      '8574'
+C'001188  38 35 39 34    1629.           DC.B      '8594'
+C'00118C  38 36 31 33    1630.           DC.B      '8613'
+C'001190  38 36 33 33    1631.           DC.B      '8633'
+C'001194  38 36 35 32    1632.           DC.B      '8652'
+C'001198  38 36 37 32    1633.           DC.B      '8672'
+C'00119C  38 36 39 31    1634.           DC.B      '8691'
+C'0011A0  38 37 31 31    1635.           DC.B      '8711'
+C'0011A4  38 37 33 30    1636.           DC.B      '8730'
+C'0011A8  38 37 35 30    1637.           DC.B      '8750'
+C'0011AC  38 37 37 30    1638.           DC.B      '8770'
+C'0011B0  38 37 38 39    1639.           DC.B      '8789'
+C'0011B4  38 38 30 39    1640.           DC.B      '8809'
+C'0011B8  38 38 32 38    1641.           DC.B      '8828'
+C'0011BC  38 38 34 38    1642.           DC.B      '8848'
+C'0011C0  38 38 36 37    1643.           DC.B      '8867'
+C'0011C4  38 38 38 37    1644.           DC.B      '8887'
+C'0011C8  38 39 30 36    1645.           DC.B      '8906'
+C'0011CC  38 39 32 36    1646.           DC.B      '8926'
+C'0011D0  38 39 34 35    1647.           DC.B      '8945'
+C'0011D4  38 39 36 35    1648.           DC.B      '8965'
+C'0011D8  38 39 38 34    1649.           DC.B      '8984'
+C'0011DC  39 30 30 34    1650.           DC.B      '9004'
+C'0011E0  39 30 32 33    1651.           DC.B      '9023'
+C'0011E4  39 30 34 33    1652.           DC.B      '9043'
+C'0011E8  39 30 36 32    1653.           DC.B      '9062'
+C'0011EC  39 30 38 32    1654.           DC.B      '9082'
+C'0011F0  39 31 30 32    1655.           DC.B      '9102'
+C'0011F4  39 31 32 31    1656.           DC.B      '9121'
+C'0011F8  39 31 34 31    1657.           DC.B      '9141'
+C'0011FC  39 31 36 30    1658.           DC.B      '9160'
+C'001200  39 31 38 30    1659.           DC.B      '9180'
+C'001204  39 31 39 39    1660.           DC.B      '9199'
+C'001208  39 32 31 39    1661.           DC.B      '9219'
+C'00120C  39 32 33 38    1662.           DC.B      '9238'
+C'001210  39 32 35 38    1663.           DC.B      '9258'
+C'001214  39 32 37 37    1664.           DC.B      '9277'
+C'001218  39 32 39 37    1665.           DC.B      '9297'
+C'00121C  39 33 31 36    1666.           DC.B      '9316'
+C'001220  39 33 33 36    1667.           DC.B      '9336'
+C'001224  39 33 35 35    1668.           DC.B      '9355'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 41
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'001228  39 33 37 35    1669.           DC.B      '9375'
+C'00122C  39 33 39 35    1670.           DC.B      '9395'
+C'001230  39 34 31 34    1671.           DC.B      '9414'
+C'001234  39 34 33 34    1672.           DC.B      '9434'
+C'001238  39 34 35 33    1673.           DC.B      '9453'
+C'00123C  39 34 37 33    1674.           DC.B      '9473'
+C'001240  39 34 39 32    1675.           DC.B      '9492'
+C'001244  39 35 31 32    1676.           DC.B      '9512'
+C'001248  39 35 33 31    1677.           DC.B      '9531'
+C'00124C  39 35 35 31    1678.           DC.B      '9551'
+C'001250  39 35 37 30    1679.           DC.B      '9570'
+C'001254  39 35 39 30    1680.           DC.B      '9590'
+C'001258  39 36 30 39    1681.           DC.B      '9609'
+C'00125C  39 36 32 39    1682.           DC.B      '9629'
+C'001260  39 36 34 38    1683.           DC.B      '9648'
+C'001264  39 36 36 38    1684.           DC.B      '9668'
+C'001268  39 36 38 38    1685.           DC.B      '9688'
+C'00126C  39 37 30 37    1686.           DC.B      '9707'
+C'001270  39 37 32 37    1687.           DC.B      '9727'
+C'001274  39 37 34 36    1688.           DC.B      '9746'
+C'001278  39 37 36 36    1689.           DC.B      '9766'
+C'00127C  39 37 38 35    1690.           DC.B      '9785'
+C'001280  39 38 30 35    1691.           DC.B      '9805'
+C'001284  39 38 32 34    1692.           DC.B      '9824'
+C'001288  39 38 34 34    1693.           DC.B      '9844'
+C'00128C  39 38 36 33    1694.           DC.B      '9863'
+C'001290  39 38 38 33    1695.           DC.B      '9883'
+C'001294  39 39 30 32    1696.           DC.B      '9902'
+C'001298  39 39 32 32    1697.           DC.B      '9922'
+C'00129C  39 39 34 31    1698.           DC.B      '9941'
+C'0012A0  39 39 36 31    1699.           DC.B      '9961'
+C'0012A4  39 39 38 30    1700.           DC.B      '9980'
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 42
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                         1702.  **********************************************************************
+                         1703.  *                                                                    *
+                         1704.  *        MMDISP    MEMORY MODIFY DISPLAY SUBROUTINE                  *
+                         1705.  *                                                                    *
+                         1706.  **********************************************************************
+     C'000012A8          1707.  MMDISP   EQU       *
+C'0012A8  4EB9'00001340  1708.           JSR       SCROLL              SCROLL SCREEN
+C'0012AE  103C 0018      1709.           MOVE.B    #24,D0              LOAD ROW 25
+C'0012B2  7200           1710.           MOVEQ.L   #0,D1               LOAD COL 1
+C'0012B4  4EB9'00001364  1711.           JSR       LOCATE              LOACATE AT 25,1
+C'0012BA  4BE8 0004      1712.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF BUFFER
+C'0012BE  2C4D           1713.           MOVE.L    A5,A6               COPY BUFFER ADDRESS
+C'0012C0  2028 001C      1714.           MOVE.L    MMADDR(A0),D0       LOAD ADDRESS VALUE
+C'0012C4  4EB9 00F03A72  1715.           JSR       PNT8HX              CONVERT TO ASCII
+C'0012CA  2CFC 20202020  1716.           MOVE.L    #'    ',(A6)+       LOAD BLANKS
+C'0012D0  7000           1717.           MOVEQ.L   #0,D0               CLEAR D0
+C'0012D2  2868 001C      1718.           MOVE.L    MMADDR(A0),A4       LOAD ADDRESS
+C'0012D6  1428 0003      1719.           MOVE.B    MMLEN(A0),D2        LOAD LENGTH CODE
+C'0012DA  B43C 0001      1720.           CMP.B     #1,D2               TEST BYTE CODE
+C'0012DE  6714           1721.           BEQ.S     MMB                 DISPLAY BYTE
+C'0012E0  B43C 0002      1722.           CMP.B     #2,D2               TEST WORD CODE
+C'0012E4  6712           1723.           BEQ.S     MMW                 DISPLAY WORD
+C'0012E6  B43C 0004      1724.           CMP.B     #4,D2               TEST LONG WORD CODE
+C'0012EA  6710           1725.           BEQ.S     MML                 DISPLAY LONG WORD
+C'0012EC  4EB9'000013B0  1726.           JSR       DSPLN               DISPLAY BUFFER
+C'0012F2  4E75           1727.           RTS
+C'0012F4  1014           1728.  MMB      MOVE.B    (A4),D0             LOAD BYTE
+C'0012F6  6006           1729.           BRA.S     MMD1                DISPLAY BYTE
+C'0012F8  3014           1730.  MMW      MOVE.W    (A4),D0             LOAD WORD
+C'0012FA  6002           1731.           BRA.S     MMD1                DISPLAY WORD
+C'0012FC  2014           1732.  MML      MOVE.L    (A4),D0             LOAD LONG WORD
+C'0012FE  1628 0001      1733.  MMD1     MOVE.B    MMTYPE(A0),D3       LOAD TYPE CODE
+C'001302  1A28 0022      1734.           MOVE.B    MMSCALE(A0),D5      LOAD SCALE CODE
+C'001306  4EBA F6D4      1735.           JSR       DISPLAY             CONVERT DATA TO ASCII
+C'00130A  4EB9'000013B0  1736.           JSR       DSPLN               DISPLAY BUFFER
+C'001310  4E75           1737.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 43
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                         1739.  **********************************************************************
+                         1740.  *                                                                    *
+                         1741.  *        DISP4Q    DISPLAY ???? ON DEBUG TERMINAL (ERROR)            *
+                         1742.  *                                                                    *
+                         1743.  **********************************************************************
+     C'00001312          1744.  DISP4Q   EQU       *
+C'001312  4EB9'00001340  1745.           JSR       SCROLL              SCROLL THE SCREEN
+C'001318  103C 0018      1746.           MOVE.B    #24,D0              ROW 24
+C'00131C  123C 0000      1747.           MOVE.B    #00,D1              COL 00
+C'001320  4EB9'00001364  1748.           JSR       LOCATE              LOCATE CURSOR AT 24,0
+C'001326  4BE8 0004      1749.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF TEMP BUFFER
+C'00132A  2C4D           1750.           MOVE.L    A5,A6               COPY BUFFER ADDRESS
+C'00132C  2CFC 3F3F3F3F  1751.           MOVE.L    #'????',(A6)+       COPY ???? INTO BUFFER
+C'001332  4EB9'000013B0  1752.           JSR       DSPLN               OUTPUT TO TERMINAL
+C'001338  4EB9'00001340  1753.           JSR       SCROLL              SCROLL THE SCREEN
+C'00133E  4E75           1754.           RTS
+                         1755.  **********************************************************************
+                         1756.  *                                                                    *
+                         1757.  *        SCROLL    SCROLL THE SCREEN FROM LINE 17                    *
+                         1758.  *                                                                    *
+                         1759.  **********************************************************************
+     C'00001340          1760.  SCROLL   EQU       *
+C'001340  103C 0011      1761.           MOVE.B    #17,D0              ROW 17
+C'001344  123C 0000      1762.           MOVE.B    #00,D1              COL 00
+C'001348  4EB9'00001364  1763.           JSR       LOCATE              LOCATE CURSOR AT 17,0
+C'00134E  4BE8 0004      1764.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF TEMP BUFFFER
+C'001352  2C4D           1765.           MOVE.L    A5,A6               COPY BUFFER ADDRESS
+C'001354  1CFC 001B      1766.           MOVE.B    #$1B,(A6)+          LEAD IN CODE
+C'001358  1CFC 0013      1767.           MOVE.B    #$13,(A6)+          DELETE LINE CODE
+C'00135C  4EB9'000013B0  1768.           JSR       DSPLN               OUTPUT TO TERMINAL
+C'001362  4E75           1769.           RTS
+                         1770.  **********************************************************************
+                         1771.  *                                                                    *
+                         1772.  *        LOCATE    LOCATE CURSOR (D0=ROW,D1=COL)                     *
+                         1773.  *                                                                    *
+                         1774.  **********************************************************************
+     C'00001364          1775.  LOCATE   EQU       *
+C'001364  4BE8 0004      1776.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF TEMP BUFFER
+C'001368  2C4D           1777.           MOVE.L    A5,A6               COPY BUFFER ADDRESS
+C'00136A  1CFC 001B      1778.           MOVE.B    #$1B,(A6)+          LEAD IN CODE
+C'00136E  1CFC 0011      1779.           MOVE.B    #$11,(A6)+          LOCATE CODE
+C'001372  1CC1           1780.           MOVE.B    D1,(A6)+            COL POSITION
+C'001374  1CC0           1781.           MOVE.B    D0,(A6)+            ROW POSITION
+C'001376  4EB9'000013B0  1782.           JSR       DSPLN               OUTPUT TO TERMINAL
+C'00137C  4E75           1783.           RTS
+                         1784.  **********************************************************************
+                         1785.  *                                                                    *
+                         1786.  *        CLS       CLEAR SCREEN                                      *
+                         1787.  *                                                                    *
+                         1788.  **********************************************************************
+     C'0000137E          1789.  CLS      EQU       *
+C'00137E  4BE8 0004      1790.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF TEMP BUFFER
+C'001382  2C4D           1791.           MOVE.L    A5,A6               COPY BUFFER ADDRESS
+C'001384  1CFC 001B      1792.           MOVE.B    #$1B,(A6)+          LEAD IN CODE
+C'001388  1CFC 001C      1793.           MOVE.B    #$1C,(A6)+          CLEAR SCREEN CODE
+C'00138C  4EB9'000013B0  1794.           JSR       DSPLN               OUTPUT TO TERMINAL
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 44
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+C'001392  4E75           1795.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 45
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                         1797.  **********************************************************************
+                         1798.  *                                                                    *
+                         1799.  *        CLR2EOL   CLEAR TO END OF LINE                              *
+                         1800.  *                                                                    *
+                         1801.  **********************************************************************
+     C'00001394          1802.  CLR2EOL  EQU       *
+C'001394  1CFC 001B      1803.           MOVE.B    #$1B,(A6)+          LEAD IN CODE
+C'001398  1CFC 000F      1804.           MOVE.B    #$0F,(A6)+          CLEAR 2 END OF LINE
+C'00139C  4E75           1805.           RTS
+                         1806.  **********************************************************************
+                         1807.  *                                                                    *
+                         1808.  *        BLANKS    DISPLAY BLANKS TO DEBUG TERMINAL  D1=NUMBER       *
+                         1809.  *                                                                    *
+                         1810.  **********************************************************************
+     C'0000139E          1811.  BLANKS   EQU       *
+C'00139E  5381           1812.           SUBQ.L    #1,D1               ADJUST LOOP COUNTER
+C'0013A0  103C 0020      1813.  SPLP     MOVE.B    #' ',D0             LOAD BLANK
+C'0013A4  4EB9'000013C2  1814.           JSR       DSPB                OUTPUT CHARACTER
+C'0013AA  51C9 FFF4      1815.           DBRA      D1,SPLP             LOOP FOR COUNT IN D1
+C'0013AE  4E75           1816.           RTS
+                         1817.  **********************************************************************
+                         1818.  *                                                                    *
+                         1819.  *        DSPLN     DISPLAY LINE TO DEBUG TERMINAL                    *
+                         1820.  *                                                                    *
+                         1821.  *                  A5 = START  A6 = END + 1                          *
+                         1822.  *                                                                    *
+                         1823.  **********************************************************************
+     C'000013B0          1824.  DSPLN    EQU       *
+C'0013B0  2F00           1825.           MOVE.L    D0,-(A7)            SAVE D0 ON STACK
+C'0013B2  101D           1826.  CDSPLN   MOVE.B    (A5)+,D0            LOAD BYTE TO OUTPUT
+C'0013B4  4EB9'000013C2  1827.           JSR       DSPB                DISPLAY THE BYTE
+C'0013BA  BDCD           1828.           CMP.L     A5,A6               COMPARE TO END POINTER
+C'0013BC  66F4           1829.           BNE.S     CDSPLN              BRANCH IF NOT EQUAL
+C'0013BE  201F           1830.           MOVE.L    (A7)+,D0            RESTORE D0 FROM STACK
+C'0013C0  4E75           1831.           RTS
+                         1832.  **********************************************************************
+                         1833.  *                                                                    *
+                         1834.  *        DSPB      DISPLAY BYTE (D0=DATA)                            *
+                         1835.  *                                                                    *
+                         1836.  **********************************************************************
+     C'000013C2          1837.  DSPB     EQU       *
+C'0013C2  4EB9'00001408  1838.           JSR       TXSTAT    TEST TX STATUS
+C'0013C8  4A02           1839.           TST.B     D2        TEST FOR ZERO
+C'0013CA  6708           1840.           BEQ.S     HOLDIT    HOLD IF NOT ZERO
+C'0013CC  4EB9'00001430  1841.           JSR       TXWRITE   OUTPUT DATA
+C'0013D2  4E75           1842.           RTS
+C'0013D4  4E41           1843.  HOLDIT   TRAP      #1        HOLD TASK
+C'0013D6  60EA           1844.           BRA.S     DSPB      TRY AGAIN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 46
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                         1846.  **********************************************************************
+                         1847.  *                                                                    *
+                         1848.  *        LOW LEVEL I/O SUPPORT TO SERIAL PORT                        *
+                         1849.  *                                                                    *
+                         1850.  **********************************************************************
+     # 00FE61C9          1851.  NECA     EQU       $FE61C9             NEC PORT A
+     # 00FE61CB          1852.  NECB     EQU       $FE61CB             NEC PORT B
+                         1853.  **********************************************************************
+                         1854.  *                                                                    *
+                         1855.  *        RXDIS     DISABLE RX                                        *
+                         1856.  *                                                                    *
+                         1857.  **********************************************************************
+     C'000013D8          1858.  RXDIS    EQU       *
+C'0013D8  13FC 0003      1859.           MOVE.B    #$03,NECB+4         POINT TO REGISTER THREE
+          00FE61CF
+C'0013E0  13FC 00E0      1860.           MOVE.B    #$E0,NECB+4         DISABLE RX
+          00FE61CF
+C'0013E8  4E75           1861.           RTS
+                         1862.  **********************************************************************
+                         1863.  *                                                                    *
+                         1864.  *        RXENA     ENABLE RX                                         *
+                         1865.  *                                                                    *
+                         1866.  **********************************************************************
+     C'000013EA          1867.  RXENA    EQU       *
+C'0013EA  13FC 0003      1868.           MOVE.B    #$03,NECB+4         POINT TO REGISTER THREE
+          00FE61CF
+C'0013F2  13FC 00E1      1869.           MOVE.B    #$E1,NECB+4         ENABLE RX
+          00FE61CF
+C'0013FA  4E75           1870.           RTS
+                         1871.  **********************************************************************
+                         1872.  *                                                                    *
+                         1873.  *        RXSTAT    STATUS OF RX  (D2=01 RX FULL,D2=00 RX NOT FULL)   *
+                         1874.  *                                                                    *
+                         1875.  **********************************************************************
+     C'000013FC          1876.  RXSTAT   EQU       *
+C'0013FC  1439 00FE61CF  1877.           MOVE.B    NECB+4,D2           READ STATUS BITS
+C'001402  C43C 0001      1878.           AND.B     #$01,D2             MASK OFF TOP 7 BITS
+C'001406  4E75           1879.           RTS
+                         1880.  **********************************************************************
+                         1881.  *                                                                    *
+                         1882.  *        TXSTAT    STATUS OF TX  (D2=04 TX READY,D2=00 TX NOT READY) *
+                         1883.  *                                                                    *
+                         1884.  **********************************************************************
+     C'00001408          1885.  TXSTAT   EQU       *
+C'001408  1439 00FE61CF  1886.           MOVE.B    NECB+4,D2           READ STATUS BITS
+C'00140E  C43C 0004      1887.           AND.B     #$04,D2             MASK OFF EXTRA BITS
+C'001412  4E75           1888.           RTS
+                         1889.  **********************************************************************
+                         1890.  *                                                                    *
+                         1891.  *        RXRESET   RESET RX AFTER ERROR                              *
+                         1892.  *                                                                    *
+                         1893.  **********************************************************************
+     C'00001414          1894.  RXRESET  EQU       *
+C'001414  13FC 0030      1895.           MOVE.B    #$30,NECB+4         RESET RX (CLEAR ERROR)
+          00FE61CF
+C'00141C  4E75           1896.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 47
+D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+   ...
+
+                         1898.  **********************************************************************
+                         1899.  *                                                                    *
+                         1900.  *        RXEND     END OF INTERRUPT COMMAND TO RX                    *
+                         1901.  *                                                                    *
+                         1902.  **********************************************************************
+     C'0000141E          1903.  RXEND    EQU       *
+C'00141E  13FC 0038      1904.           MOVE.B    #$38,NECB+4         END OF INTERRUPT COMMAND
+          00FE61CF
+C'001426  4E75           1905.           RTS
+                         1906.  **********************************************************************
+                         1907.  *                                                                    *
+                         1908.  *        RXREAD    READ DATA FROM RX   (D0=DATA)                     *
+                         1909.  *                                                                    *
+                         1910.  **********************************************************************
+     C'00001428          1911.  RXREAD   EQU       *
+C'001428  1039 00FE61CB  1912.           MOVE.B    NECB,D0             READ DATA
+C'00142E  4E75           1913.           RTS
+                         1914.  **********************************************************************
+                         1915.  *                                                                    *
+                         1916.  *        TXWRITE   WRITE DATA TO TX    (D0=DATA)                     *
+                         1917.  *                                                                    *
+                         1918.  **********************************************************************
+     C'00001430          1919.  TXWRITE  EQU       *
+C'001430  13C0 00FE61CB  1920.           MOVE.B    D0,NECB             WRITE DATA
+C'001436  4E75           1921.           RTS
+                         1922.  **********************************************************************
+                         1923.  *                                                                    *
+                         1924.  *        RXINIT    RX INITALIZER  (TURN ON INTERRUPTS)               *
+                         1925.  *                                                                    *
+                         1926.  **********************************************************************
+     C'00001438          1927.  RXINIT   EQU       *
+C'001438  13FC 0001      1928.           MOVE.B    #$01,NECB+4         POINT TO REGISTER ONE
+          00FE61CF
+C'001440  13FC 0018      1929.           MOVE.B    #$18,NECB+4         ENABLE RX INTERRUPTS
+          00FE61CF
+C'001448  4E75           1930.           RTS
+C'00144A                 1931.           END
+    0 Errors
+                *
+                         1926.  **********************************************************************
+     C'00001438   

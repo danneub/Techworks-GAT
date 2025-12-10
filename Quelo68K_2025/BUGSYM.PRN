@@ -1,0 +1,22 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:47:18     ...Page  1
+D:BUGSYM.LTX , D:BUGSYM.PRN , D:BUGSYM.SYM = D:BUGSYM.SA
+   ...
+
+     # 00000000             1.  MMFLAG   EQU        0       MEMORY MODIFY FLAG
+     # 00000001             2.  MMTYPE   EQU        1       MEMORY MODIFY TYPE CODE
+     # 00000002             3.  MMNEGFLG EQU        2       MEMORY MODIFY NEGATE FLAG
+     # 00000003             4.  MMLEN    EQU        3       MEMORY MODIFY LENGTH CODE
+     # 00000004             5.  TBUFF    EQU        4       TEMP BUFFER
+     # 00000014             6.  SBUFF    EQU       20       SYMBOL BUFFER
+     # 0000001C             7.  MMADDR   EQU       28       ADDRESS OF CURENT MEMORY MODIFY
+     # 00000020             8.  NOTFIRST EQU       32       FIRST PASS FLAG
+     # 00000021             9.  DCNEG    EQU       33       DC COMMAND NAGATE FLAG
+     # 00000022            10.  MMSCALE  EQU       34       MEMORY MODIFY SCALE CODE
+     # 00000023            11.  MMARRAY  EQU       35       MEMORY MODIFY ARRAY CODE
+    0 Errors
+# 00000014             6.  SBUFF    EQU       20       SYMBOL BUFFER
+     # 0000001C             7.  MMADDR   EQU       28       ADDRESS OF CURENT MEMORY MODIFY
+     # 00000020             8.  NOTFIRST EQU       32       FIRST PASS FLAG
+     # 00000021             9.  DCNEG    EQU       33       DC COMMAND NAGATE FLAG
+     # 00000022            10.  MMSCALE  EQU       34       MEMORY MODIFY SCALE CODE
+     # 00000023            11.  MMARRAY  EQU    

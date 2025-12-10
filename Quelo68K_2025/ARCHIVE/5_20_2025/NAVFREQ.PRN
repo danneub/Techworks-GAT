@@ -1,0 +1,1226 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page  1
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+                            1.           OPT       MEX,CEX,NOPCS
+                            2.           XDEF      NAVFREQ
+                            3.  *
+                            4.           INCLUDE   NSYM.SA
+     # 00001594             5:  NADF1FRQ  EQU   $00001594 L 001 L H   ADF 1 FREQUENCY
+     # 00001598             6:  NADF1STA  EQU   $00001598 L 001 L H   ADF 1 STATION BUFFER ADDRESS
+     # 0000159C             7:  NA1IDNT1  EQU   $0000159C L 001 L H   ADF 1 IDENT WORD 1
+     # 000015A0             8:  NA1IDNT2  EQU   $000015A0 L 001 L H   ADF 1 IDENT WORD 2
+     # 000015A4             9:  NADF2FRQ  EQU   $000015A4 L 001 L H   ADF 2 FREQUENCY
+     # 000015A8            10:  NADF2STA  EQU   $000015A8 L 001 L H   ADF 2 STATION BUFFER ADDRESS
+     # 000015AC            11:  NA2IDNT1  EQU   $000015AC L 001 L H   ADF 2 IDENT WORD 1
+     # 000015B0            12:  NA2IDNT2  EQU   $000015B0 L 001 L H   ADF 2 IDENT WORD 2
+     # 000015B4            13:  NAV1FREQ  EQU   $000015B4 L 001 L H   NAV 1 FREQUENCY               HZ
+     # 000015B8            14:  NAV2FREQ  EQU   $000015B8 L 001 L H   NAV 2 FREQUENCY               HZ
+     # 000015BC            15:  NAV1STA   EQU   $000015BC L 001 L H   NAV 1 STATION BUFFER ADDRESS
+     # 000015C0            16:  NAV2STA   EQU   $000015C0 L 001 L H   NAV 2 STATION BUFFER ADDRESS
+     # 000015C4            17:  NDIST2    EQU   $000015C4 L 001 L S24 DISTANCE FROM CLOSEST FIELD   DEG2
+     # 000015C8            18:  NGLAT     EQU   $000015C8 L 001 L S23 AIRCRAFT LATITUDE             DEG       +
+     # 000015CC            19:  NGLON     EQU   $000015CC L 001 L S23 AIRCRAFT LONGITUDE            DEG       +
+     # 000015D0            20:  NV1IDNT1  EQU   $000015D0 L 001 L H   NAV 1 IDENT WORD 1
+     # 000015D4            21:  NV1IDNT2  EQU   $000015D4 L 001 L H   NAV 1 IDENT WORD 2
+     # 000015D8            22:  NV2IDNT1  EQU   $000015D8 L 001 L H   NAV 2 IDENT WORD 1
+     # 000015DC            23:  NV2IDNT2  EQU   $000015DC L 001 L H   NAV 2 IDENT WORD 2
+     # 000015E0            24:  ND1IDNT1  EQU   $000015E0 L 001 L H   DME 1 IDENT WORD 1
+     # 000015E4            25:  ND1IDNT2  EQU   $000015E4 L 001 L H   DME 1 IDENT WORD 2
+     # 000015E8            26:  ND2IDNT1  EQU   $000015E8 L 001 L H   DME 2 IDENT WORD 1
+     # 000015EC            27:  ND2IDNT2  EQU   $000015EC L 001 L H   DME 2 IDENT WORD 2
+     # 000015F0            28:  NADF1ERR  EQU   $000015F0 L 001 L H   ADF 1 FREQUENCY ERROR         HZ        +
+     # 000015F4            29:  NADF2ERR  EQU   $000015F4 L 001 L H   ADF 2 FREQUENCY ERROR         HZ        +
+     # 000015F8            30:  NRAGAS    EQU   $000015F8 L 001 L S08 DIST ALONG RNWY HEADING       FEET      +
+     # 000015FC            31:  NRBGAS    EQU   $000015FC L 001 L S08 DIST ACROSS RNWY HEADING      FEET      +
+     # 00001600            32:  NRGAS2    EQU   $00001600 L 001 L S11 GROUND RANGE TO STATION SQUARED N.M.**2 +
+     # 00001604            33:  NRRAS2    EQU   $00001604 L 001 L S11 SLANT RANGE TO STATION SQUARED N.M.**2  +
+     # 00001608            34:  NSACF     EQU   $00001608 L 001 L H   CLOSEST AIRPORT ADDRESS
+     # 0000160C            35:  NMKRSA    EQU   $0000160C L 001 L H   ADDRESS OF NEAREST MARKER BEACON
+     # 00001610            36:  NDME1STA  EQU   $00001610 L 001 L H   DME1 STATION ADDRESS
+     # 00001614            37:  NDME2STA  EQU   $00001614 L 001 L H   DME2 STATION ADDRESS
+     # 00001618            38:  NAPTPSA   EQU   $00001618 L 001 L H   NEAREST AIRPORT PRESELECT STATION ADDR
+     # 0000161C            39:  NAPTRNG2  EQU   $0000161C L 001 L S24 NEAREST AIRPORT RANGE SQUARED
+     # 00001620            40:  NMKRRNG2  EQU   $00001620 L 001 L S24 NEAREST MARKER RANGE SQUARED
+     # 00001624            41:  NTABNAV1  EQU   $00001624 L 001 L H   STATION ADDR OF GOOD STA
+     # 00001628            42:  NTABNAV2  EQU   $00001628 L 001 L H   STATION ADDR OF GOOD STA
+     # 0000162C            43:  NCENLAT   EQU   $0000162C L 001 L S23 MAP CENTER LAT
+     # 00001630            44:  NCENLON   EQU   $00001630 L 001 L S23 MAP CENTER LON
+     # 00001634            45:  NRSLEW    EQU   $00001634 L 001 L S23 CHART RECORDER SLEW RATE
+     # 00001638            46:  NRXGASL   EQU   $00001638 L 001 L S23 NRXGASL IS DELTA LAT IN LONG WORD
+     # 0000163C            47:  NRYGASL   EQU   $0000163C L 001 L S23 NRYGASL IS DELTA LON IN LONG WORD
+     # 00001640            48:  N3KBAND   EQU   $00001640 L 001 L H   3000 * ADF BAND NUMBER
+     # 00001644            49:  NENGFREQ  EQU   $00001644 L 001 L H
+     # 00001648            50:  NSPARE1   EQU   $00001648 L 001 L H   NAV SPARE LONG WORD 1
+     # 0000164C            51:  NSPARE2   EQU   $0000164C L 001 L H   NAV SPARE LONG WORD 2
+     # 00001650            52:  NSPARE3   EQU   $00001650 L 001 L H   NAV SPARE LONG WORD 3
+     # 00001654            53:  NSPARE4   EQU   $00001654 L 001 L H   NAV SPARE LONG WORD 4
+     # 00001658            54:  NSPARE5   EQU   $00001658 L 001 L H   NAV SPARE LONG WORD 5
+     # 0000165C            55:  NSPARE6   EQU   $0000165C L 001 L H   NAV SPARE LONG WORD 6
+     # 00001660            56:  NSPARE7   EQU   $00001660 L 001 L H   NAV SPARE LONG WORD 7
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page  2
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+     # 00001664            57:  NSPARE8   EQU   $00001664 L 001 L H   NAV SPARE LONG WORD 8
+     # 00001668            58:  NADF1BRG  EQU   $00001668 W 001 L S06 ADF MAG BEARING TO STATION    DEG
+     # 0000166A            59:  NADF1CTR  EQU   $0000166A W 001 L H   ADF TONE KFG COUNTER          .1 SEC
+     # 0000166C            60:  NADF1DEV  EQU   $0000166C W 001 L S06 ADF 1 DEVIATION               DEG
+     # 0000166E            61:  NADF1RNG  EQU   $0000166E W 001 L S00 ADF 1 STATION RANGE           NAUTICAL MI
+     # 00001670            62:  NADF2RNG  EQU   $00001670 W 001 L S00 ADF 2 STATION RANGE           NAUTICAL MI
+     # 00001672            63:  NADF2BRG  EQU   $00001672 W 001 L S06 ADF 2 MAG BEARING TO STATION  DEG
+     # 00001674            64:  NADF2CTR  EQU   $00001674 W 001 L H   ADF 2 TONE KFG COUNTER        .1 SEC
+     # 00001676            65:  NADF2DEV  EQU   $00001676 W 001 L S06 ADF 2 DEVIATION               DEG
+     # 00001678            66:  NAV1BRG   EQU   $00001678 W 001 L S06 NAV 1 BEARING TO STATION      DEG
+     # 0000167A            67:  NAV2BRG   EQU   $0000167A W 001 L S06 NAV 2 BEARING TO STATION      DEG
+     # 0000167C            68:  NAV1CTR   EQU   $0000167C W 001 L H   NAV 1 KFG COUNTER             .1 SEC
+     # 0000167E            69:  NAV2CTR   EQU   $0000167E W 001 L H   NAV 2 KFG COUNTER             .1 SEC
+     # 00001680            70:  NAV1OBS   EQU   $00001680 W 001 L S06 NAV 1 OMNIBEARING SELECT      DEG
+     # 00001682            71:  NAV2OBS   EQU   $00001682 W 001 L S06 NAV 2 OMNIBEARING SELECT      DEG
+     # 00001684            72:  NCDI1DEG  EQU   $00001684 W 001 L S06 NAV 1 COURSE DEVIATION        DEG
+     # 00001686            73:  NCDI2DEG  EQU   $00001686 W 001 L S06 NAV 2 COURSE DEVIATION        DEG
+     # 00001688            74:  NGCLAT    EQU   $00001688 W 001 L S15 COSINE OF LATITUDE
+     # 0000168A            75:  NGCLATIN  EQU   $0000168A W 001 L S07 INVERSE OF NGCLAT
+     # 0000168C            76:  NGFE      EQU   $0000168C W 001 L S00 FIELD ELEVATION               FEET
+     # 0000168E            77:  NGGA      EQU   $0000168E W 001 L S00 NAV GEOMETRIC ALTITUDE        FEET
+     # 00001690            78:  NGS       EQU   $00001690 W 001 L S04 NAV GROUND SPEED              KNOTS     +
+     # 00001692            79:  NHRA      EQU   $00001692 W 001 L S00 NAV HEIGHT ABOVE GROUND       FEET      +
+     # 00001694            80:  NGSD1DEG  EQU   $00001694 W 001 L S06 AIRCRAFT GLIDESLOPE           DEG       +
+     # 00001696            81:  NIMCTR    EQU   $00001696 W 001 L H   IM COUNTER                    .1SEC     +
+     # 00001698            82:  NMAGVAR   EQU   $00001698 W 001 L S06 MAGNETIC VARIATION            DEG       +
+     # 0000169A            83:  NMMCTR    EQU   $0000169A W 001 L H   MM COUNTER KFG                .1SEC     +
+     # 0000169C            84:  NOMCTR    EQU   $0000169C W 001 L H   OM COUNTER KFG                .1SEC     +
+     # 0000169E            85:  NPSIGA    EQU   $0000169E W 001 L S06 NAV AIRCRAFT TRUE HEADING      DEG      +
+     # 000016A0            86:  NPSIMH    EQU   $000016A0 W 001 L S06 NAV AIRCRAFT MAG HEADING       DEG      +
+     # 000016A2            87:  NPSIIH    EQU   $000016A2 W 001 L S06 NAV AIRCRAFT INDICATED HEADING DEG      +
+     # 000016A4            88:  NUEW      EQU   $000016A4 W 001 L S04 N-S VELOCITY WITH WIND         FPS      +
+     # 000016A6            89:  NVEW      EQU   $000016A6 W 001 L S04 E-W VELOCITY WITH WIND         FPS      +
+     # 000016A8            90:  NADF1RAW  EQU   $000016A8 W 001 L H   ADF N-1 RAW FREQUENCY                   +
+     # 000016AA            91:  NRASIN    EQU   $000016AA W 001 L S15 SINE OF AVERAGE LATITUDE                +
+     # 000016AC            92:  NRACOS    EQU   $000016AC W 001 L S15 COSINE OF AVERAGE LATITUDE              +
+     # 000016AE            93:  NRXGAS    EQU   $000016AE W 001 L S12 DELTA LAT BETWEEN STATION & A/C DEG     +
+     # 000016B0            94:  NRYGAS    EQU   $000016B0 W 001 L S12 DELTA LON BETWEEN STATION & A/C DEG     +
+     # 000016B2            95:  NRBRG     EQU   $000016B2 W 001 L S06 MAGNETIC BEARING TO STATION   DEG       +
+     # 000016B4            96:  NRRGAS    EQU   $000016B4 W 001 L S06 GROUND RANGE TO STATION       N.M.      +
+     # 000016B6            97:  NRZGAS    EQU   $000016B6 W 001 L S00 HEIGHT ABOVE STATION          FEET      +
+     # 000016B8            98:  NRRRAS    EQU   $000016B8 W 001 L S06 SLANT RANGE TO STATION        N.M.      +
+     # 000016BA            99:  NGBIAS    EQU   $000016BA W 001 L S06 GROUND BIAS
+     # 000016BC           100:  NSPSIB    EQU   $000016BC W 001 L S15 SIN BIAS HEADING
+     # 000016BE           101:  NCPSIB    EQU   $000016BE W 001 L S15 COS BIAS HEADING
+     # 000016C0           102:  NGVNS     EQU   $000016C0 W 001 L S04 N-S GROUND VELOCITY
+     # 000016C2           103:  NGVEW     EQU   $000016C2 W 001 L S04 E-W GROUND VELOCITY
+     # 000016C4           104:  NDME1CTR  EQU   $000016C4 W 001 L H   DME1 COUNTER
+     # 000016C6           105:  NDME2CTR  EQU   $000016C6 W 001 L H   DME2 COUNTER
+     # 000016C8           106:  NVTC1CTR  EQU   $000016C8 W 001 L H   VTC 1 COUNTER
+     # 000016CA           107:  NVTC2CTR  EQU   $000016CA W 001 L H   VTC 2 COUNTER
+     # 000016CC           108:  NK1       EQU   $000016CC W 001 L H   CONSTANT USED IN NAV1
+     # 000016CE           109:  NK2       EQU   $000016CE W 001 L H   CONSTANT USED IN NAV1
+     # 000016D0           110:  NK3       EQU   $000016D0 W 001 L H   CONSTANT USED IN NAV1
+     # 000016D2           111:  NE        EQU   $000016D2 W 001 L H   TEMP STORE USED IN NAV1
+     # 000016D4           112:  NCRS1COS  EQU   $000016D4 W 001 L S15 NAV 1 SEL COURSE COSINE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page  3
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+     # 000016D6           113:  NCRS1SIN  EQU   $000016D6 W 001 L S15 NAV 1 SEL COURSE SINE
+     # 000016D8           114:  NCRS2COS  EQU   $000016D8 W 001 L S15 NAV 2 SEL COURSE COSINE
+     # 000016DA           115:  NCRS2SIN  EQU   $000016DA W 001 L S15 NAV 2 SEL COURSE SINE
+     # 000016DC           116:  NSYNCS    EQU   $000016DC W 001 L S15 COMPASS SYNC POT SINE
+     # 000016DE           117:  NSYNCC    EQU   $000016DE W 001 L S15 COMPASS SYNC POT COSINE
+     # 000016E0           118:  NSYNCDEG  EQU   $000016E0 W 001 L S06 COMPASS SYNC POT DEGREES
+     # 000016E2           119:  NRSCALE   EQU   $000016E2 W 001 L S00 CHART RECORDER SCALE
+     # 000016E4           120:  USETHD    EQU   $000016E4 W 001 L S06 SET NEW HEADING
+     # 000016E6           121:  NCONRAD   EQU   $000016E6 W 001 L S06 CONE OF CONFUSION RADIUS IN NM          +
+     # 000016E8           122:  NAV1GS    EQU   $000016E8 W 001 L S15 NAV1 GLIDE SLOPE AO                     +
+     # 000016EA           123:  NAV2GS    EQU   $000016EA W 001 L S15 NAV2 GLIDE SLOPE AO                     +
+     # 000016EC           124:  NAV1LR    EQU   $000016EC W 001 L S15 NAV1 CDI NEEDLE AO                      +
+     # 000016EE           125:  NAV2LR    EQU   $000016EE W 001 L S15 NAV2 CDI NEEDLE AO                      +
+     # 000016F0           126:  NGSTAN    EQU   $000016F0 W 001 L S12 GLIDE SLOPE TAN
+     # 000016F2           127:  NBASEREG  EQU   $000016F2 W 001 L S06 BASE REGISTER FOR NATAN2 ROUTINE
+     # 000016F4           128:  NITCOUNT  EQU   $000016F4 W 001 L H   ITERATION COUNTER
+     # 000016F6           129:  NSPAREW1  EQU   $000016F6 W 001 L H   NAV SPARE WORD 1
+     # 000016F8           130:  NSPAREW2  EQU   $000016F8 W 001 L H   NAV SPARE WORD 2
+     # 000016FA           131:  NSPAREW3  EQU   $000016FA W 001 L H   NAV SPARE WORD 3
+     # 000016FC           132:  NSPAREW4  EQU   $000016FC W 001 L H   NAV SPARE WORD 4
+     # 000016FE           133:  NSPAREW5  EQU   $000016FE W 001 L H   NAV SPARE WORD 5
+     # 00001700           134:  NSPAREW6  EQU   $00001700 W 001 L H   NAV SPARE WORD 6
+     # 00001702           135:  NSPAREW7  EQU   $00001702 W 001 L H   NAV SPARE WORD 7
+     # 00001704           136:  NSPAREW8  EQU   $00001704 W 001 L H   NAV SPARE WORD 8
+     # 00001706           137:  NICOM1SQ  EQU   $00001706 W 001 L H   TEMP STORE OF ICOM1SQ INPUT
+     # 00001708           138:  NICOM2SQ  EQU   $00001708 W 001 L H   TEMP STORE OF ICOM2SQ INPUT
+     # 0000170A           139:  NMKRLVL   EQU   $0000170A B 001 L H   MARKER LEVEL
+     # 0000170B           140:  NLF1LOS   EQU   $0000170B B 001 L H   ADF 1 IN LINE OF SIGHT
+     # 0000170C           141:  NADF1TUN  EQU   $0000170C B 001 L H   ADF 1 STATION ID ENABLE
+     # 0000170D           142:  NADF2TUN  EQU   $0000170D B 001 L H   ADF 2 STATION ID ENABLE
+     # 0000170E           143:  NAV1TUN   EQU   $0000170E B 001 L H   NAV 1 STATION ID ENABLE
+     # 0000170F           144:  NAV2TUN   EQU   $0000170F B 001 L H   NAV 2 STATION ID ENABLE
+     # 00001710           145:  NAVFRZ    EQU   $00001710 B 001 L H   NAV FREEZE
+     # 00001711           146:  NBWOW     EQU   $00001711 B 001 L H   NAV WEIGHT ON WHEELS
+     # 00001712           147:  NIMTONE   EQU   $00001712 B 001 L H   IM TONE ENABLE
+     # 00001713           148:  NIN1GSF   EQU   $00001713 B 001 L H   NAV 1 GLIDESLOPE FLAG
+     # 00001714           149:  NINIT     EQU   $00001714 B 001 L H   NAV INITIALIZATION FLAG
+     # 00001715           150:  NMMTONE   EQU   $00001715 B 001 L H   MM TONE ENABLE
+     # 00001716           151:  NOMTONE   EQU   $00001716 B 001 L H   OM TONE ENABLE
+     # 00001717           152:  NRWR1     EQU   $00001717 B 001 L H   IN RANGE 1 FLAG
+     # 00001718           153:  NRWR2     EQU   $00001718 B 001 L H   IN RANGE 2 FLAG
+     # 00001719           154:  NRWR3     EQU   $00001719 B 001 L H   IN RANGE 3 FLAG
+     # 0000171A           155:  NRLOS     EQU   $0000171A B 001 L H   IN LINE OF SIGHT FLAG
+     # 0000171B           156:  NMKRVL    EQU   $0000171B B 001 L H   MARKER BEACON STATION VALIDITY
+     # 0000171C           157:  NDME1TUN  EQU   $0000171C B 001 L H   DME1 TUNED FLAG
+     # 0000171D           158:  NDME2TUN  EQU   $0000171D B 001 L H   DME2 TUNED FLAG
+     # 0000171E           159:  NIMKEY    EQU   $0000171E B 001 L H   INNER MARKER KEY
+     # 0000171F           160:  NAMRA     EQU   $0000171F B 001 L H   INNER MARKER RANGE
+     # 00001720           161:  NMMRA     EQU   $00001720 B 001 L H   MIDDLE MARKER RANGE
+     # 00001721           162:  NOMRA     EQU   $00001721 B 001 L H   OUTER MARKER RANGE
+     # 00001722           163:  NVTC1     EQU   $00001722 B 001 L H
+     # 00001723           164:  NVTC2     EQU   $00001723 B 001 L H
+     # 00001724           165:  NAV1VOL   EQU   $00001724 B 001 L H   NAV1 VOLUME
+     # 00001725           166:  NAV2VOL   EQU   $00001725 B 001 L H   NAV2 VOLUME
+     # 00001726           167:  NLF1VOL   EQU   $00001726 B 001 L H
+     # 00001727           168:  NCOM1OP   EQU   $00001727 B 001 L H   COMM1 OPERABLE FLAG
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page  4
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+     # 00001728           169:  NCOM2OP   EQU   $00001728 B 001 L H   COMM2 OPERABLE FLAG
+     # 00001729           170:  NMKRSNS   EQU   $00001729 B 001 L H   MARKER SENSE
+     # 0000172A           171:  NIPFLAG   EQU   $0000172A B 001 L H   INITIAL POS FLAG
+     # 0000172B           172:  UHDSET    EQU   $0000172B B 001 L H   INITIAL POS HEADING FLAG
+     # 0000172C           173:  NMMKEY    EQU   $0000172C B 001 L H   MIDDLE MARKER KEY
+     # 0000172D           174:  NOMKEY    EQU   $0000172D B 001 L H   OUTER MARKER KEY
+     # 0000172E           175:  NAV1KY    EQU   $0000172E B 001 L H   NAV 1 KEY
+     # 0000172F           176:  NAV2KY    EQU   $0000172F B 001 L H   NAV 2 KEY
+     # 00001730           177:  NDM1KY    EQU   $00001730 B 001 L H   DME 1 KEY
+     # 00001731           178:  NDM2KY    EQU   $00001731 B 001 L H   DME 2 KEY
+     # 00001732           179:  NLF1KY    EQU   $00001732 B 001 L H   ADF 1 KEY
+     # 00001733           180:  NLF2KY    EQU   $00001733 B 001 L H   ADF 1 KEY
+     # 00001734           181:  NNV1VOL   EQU   $00001734 B 001 L H   TEMP STORE OF ONV1VOL
+     # 00001735           182:  NNV2VOL   EQU   $00001735 B 001 L H   TEMP STORE OF ONV2VOL
+     # 00001736           183:  NCDI1DO   EQU   $00001736 B 001 L H   TEMP STORE OF OCDI1DO
+     # 00001737           184:  NCDI2DO   EQU   $00001737 B 001 L H   TEMP STORE OF OCDI2DO
+     # 00001738           185:  NDMECTL   EQU   $00001738 B 001 L H
+     # 00001739           186:  NENGAMP   EQU   $00001739 B 001 L H
+     # 0000173A           187:  NPROPAMP  EQU   $0000173A B 001 L H
+     # 0000173B           188:  NRUMBLE   EQU   $0000173B B 001 L H   RUMBLE
+     # 0000173C           189:  NSTALL    EQU   $0000173C B 001 L H   STALL WARNING
+     # 0000173D           190:  NCOM1SQ   EQU   $0000173D B 001 L H   TEMP STORE OF OCOM1SQ
+     # 0000173E           191:  NCOM2SQ   EQU   $0000173E B 001 L H   TEMP STORE OF OCOM2SQ
+     # 0000173F           192:  NCOM1VOL  EQU   $0000173F B 001 L H TEMP STORE OF OCOM1VOL
+     # 00001740           193:  NCOM2VOL  EQU   $00001740 B 001 L H TEMP STORE OF OCOM2VOL
+     # 00001741           194:  NASCONT1  EQU   $00001741 B 001 L H TEMP STORE OF OASCONT1
+     # 00001742           195:  NASCONT2  EQU   $00001742 B 001 L H TEMP STORE OF OASCONT2
+     # 00001743           196:  NASCONT3  EQU   $00001743 B 001 L H TEMP STORE OF OASCONT3
+     # 00001744           197:  NMKRDOB   EQU   $00001744 B 001 L H TEMP STORE FOR OMKRDO
+     # 00001745           198:  NDS1DO15  EQU   $00001745 B 001 L H TEMP STORE FOR ODS1DO15 ON C006-4
+     # 00001746           199:  NSPAREB1  EQU   $00001746 B 001 L H   SPARE BYTE 1
+     # 00001747           200:  NSPAREB2  EQU   $00001747 B 001 L H   SPARE BYTE 2
+     # 00001748           201:  NSPAREB3  EQU   $00001748 B 001 L H   SPARE BYTE 3
+     # 00001749           202:  NSPAREB4  EQU   $00001749 B 001 L H   SPARE BYTE 4
+     # 0000174A           203:  NSPAREB5  EQU   $0000174A B 001 L H   SPARE BYTE 5
+     # 0000174B           204:  NSPAREB6  EQU   $0000174B B 001 L H   SPARE BYTE 6
+     # 0000174C           205:  NSPAREB7  EQU   $0000174C B 001 L H   SPARE BYTE 7
+     # 0000174D           206:  NSPAREB8  EQU   $0000174D B 001 L H   SPARE BYTE 8
+     # 0000174E           207:  NSPAREB9  EQU   $0000174E B 001 L H   SPARE BYTE 9
+     # 0000174F           208:  NSPAREBA  EQU   $0000174F B 001 L H   SPARE BYTE 10
+                          209.           INCLUDE   IO.SA
+     # 00000205           210:  OFUELLT      EQU    $00000205           LEFT FUEL QTY            0V=0,+10V=25 G
+     # 00000209           211:  OFUELRT      EQU    $00000209           RIGHT FUEL QTY           0V=0,+10V=25 G
+     # 00000211           212:  OOILP        EQU    $00000211           OIL PRESSURE             0V=0,+10V=100
+     # 00000215           213:  OCYLT        EQU    $00000215           CYL. HEAD TEMP.          0V=0,+10V=460
+     # 00000201           214:  OOILT        EQU    $00000201           OIL TEMP                 0V=0,+10V=260
+                          215:  *
+     # 00000221           216:  ITHR1        EQU    $00000221           THROTTLE                 +10V=FULL,+4.6
+     # 00000225           217:  IMIX1        EQU    $00000225           MIXTURE                  +3.3V=FULL RIC
+     # 00000229           218:  ICARBH1      EQU    $00000229           CARB. HEAT               -3.3V=ON,-10V=
+     # 00000231           219:  IPROP1       EQU    $00000231           PROP.                    -4.93V=MAX,-10
+                          220:  *
+     # 00000241           221:  IELEV        EQU    $00000241           ELEVATOR CONTROL          +7.33V=UP,-7V
+     # 00000245           222:  IAIL         EQU    $00000245           AILERON CONTROL           +6.5V=RT,-6.5
+     # 00000249           223:  IRUD         EQU    $00000249           RUDDER CONTROL            +3.5V=RT,-3.5
+     # 00000251           224:  IELEVT       EQU    $00000251           ELEVATOR TRIM             +7V=UP,-2.3V=
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page  5
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+                          225:  *
+     # 00000261           226:  OTURNP       EQU    $00000261           TURN NEEDLE               +10V=6 NW RT,
+     # 00000265           227:  OBALLP       EQU    $00000265           BALL                      +10V=1.6 BW R
+                          228:  *
+     # 00000271           229:  OIRCP        EQU    $00000271           R/C                       +10V=2000 FT
+                          230:  *
+     # 00000281           231:  OALTMP       EQU    $00000281           ALTIMETER                 0V=-1000 FT,-
+                          232:  *
+     # 00000291           233:  OIASP        EQU    $00000291           INDICATED AIRSPEED        0V=0 MPH,+10V
+                          234:  *
+     # 000002A1           235:  OIRPM        EQU    $000002A1           RPM                       0V=0 RPM,+10V
+                          236:  *
+     # 000002B1           237:  OIMAP1       EQU    $000002B1           MAP                       0V=29.92 IN H
+                          238:  *
+     # 000002C9           239:  OATTPIT      EQU    $000002C9           ATTITUDE PITCH            +10V=15 DEG U
+     # 000002C5           240:  OATTROLS     EQU    $000002C5           ATTITUDE ROLL SIN         +10V=SIN 90 D
+     # 000002C1           241:  OATTROLC     EQU    $000002C1           ATTITUDE ROLL COS         +10V=COS 0 DE
+                          242:  *
+     # 000002D1           243:  IMPSDI1      EQU    $000002D1           PANEL SWITCHES #1
+     # 00000007           244:  IMSTSW       EQU    7                   MASTER SWITCH ON
+     # 00000006           245:  IIGNST       EQU    6                   IGNITION SWITCH START
+     # 00000005           246:  IIGNBT       EQU    5                   IGNITION SWITCH BOTH
+     # 00000004           247:  IIGNRT       EQU    4                   IGNITION SWITCH RIGHT
+     # 00000003           248:  IIGNLT       EQU    3                   IGNITION SWITCH LEFT
+     # 00000002           249:  IRMI1ADF     EQU    2                   RMI #1 PTR ADF
+     # 00000000           250:  ILINKPWR     EQU    0                   1=LINKAGE POWER ON
+     # 000002D3           251:  IMPSDI2      EQU    $000002D3           PANEL SWITCHES #2
+     # 00000007           252:  IPARKBK      EQU    7                   PARKING BRAKE ON
+     # 00000006           253:  IFLAPUP      EQU    6                   FLAP SWITCH UP
+     # 00000005           254:  IFLAPHLF     EQU    5                   FLAP SWITCH 1/2
+     # 00000004           255:  IFLAPDN      EQU    4                   FLAP SWITCH DOWN
+     # 00000003           256:  IMONNAV1     EQU    3                   MONITOR NAV1
+     # 00000002           257:  IMONNAV2     EQU    2                   MONITOR NAV2
+     # 00000001           258:  IMONADF1     EQU    1                   MONITOR ADF1
+     # 00000000           259:  IXRCOM1      EQU    0                   XMIT/REC COMM1
+                          260:  *
+     # 0000040D           261:  INAV1F1      EQU    $0000040D           NAV1 FREQ WORD 1
+     # 00000007           262:  I117NAV1     EQU    7                   NAV1 117
+     # 00000006           263:  I116NAV1     EQU    6                   NAV1 116
+     # 00000005           264:  I115NAV1     EQU    5                   NAV1 115
+     # 00000004           265:  I114NAV1     EQU    4                   NAV1 114
+     # 00000003           266:  I113NAV1     EQU    3                   NAV1 113
+     # 00000002           267:  I112NAV1     EQU    2                   NAV1 112
+     # 00000001           268:  I111NAV1     EQU    1                   NAV1 111
+     # 00000000           269:  I110NAV1     EQU    0                   NAV1 110
+     # 00000411           270:  INAV1F2      EQU    $00000411           NAV1 FREQ WORD 2
+     # 00000007           271:  I109NAV1     EQU    7                   NAV1 109
+     # 00000006           272:  I108NAV1     EQU    6                   NAV1 108
+     # 00000005           273:  I9THNAV1     EQU    5                   NAV1 .9
+     # 00000004           274:  I8THNAV1     EQU    4                   NAV1 .8
+     # 00000003           275:  I7THNAV1     EQU    3                   NAV1 .7
+     # 00000002           276:  I6THNAV1     EQU    2                   NAV1 .6
+     # 00000001           277:  I5THNAV1     EQU    1                   NAV1 .5
+     # 00000000           278:  I4THNAV1     EQU    0                   NAV1 .4
+     # 00000413           279:  INAV1F3      EQU    $00000413           NAV1 FREQ WORD 3
+     # 00000007           280:  I3THNAV1     EQU    7                   NAV1 .3
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page  6
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+     # 00000006           281:  I2THNAV1     EQU    6                   NAV1 .2
+     # 00000005           282:  I1THNAV1     EQU    5                   NAV1 .1
+     # 00000004           283:  I0THNAV1     EQU    4                   NAV1 .0
+     # 00000003           284:  INAV1ILS     EQU    3                   NAV1 ILS SELECTED
+     # 00000002           285:  INAV1ON      EQU    2                   NAV1 POWER ON
+     # 00000001           286:  INAV1ID      EQU    1                   NAV1 ID ON
+     # 00000401           287:  INAV1VOL     EQU    $00000401           NAV1 VOLUME
+     # 00000409           288:  ICOM1SQ      EQU    $00000409           COMM1 SQUELCH
+     # 00000405           289:  ICOM1VOL     EQU    $00000405           COMM1 VOLUME
+                          290:  *
+     # 0000042D           291:  INAV2F1      EQU    $0000042D           NAV2 FREQ WORD 1
+     # 00000007           292:  I117NAV2     EQU    7                   NAV2 117
+     # 00000006           293:  I116NAV2     EQU    6                   NAV2 116
+     # 00000005           294:  I115NAV2     EQU    5                   NAV2 115
+     # 00000004           295:  I114NAV2     EQU    4                   NAV2 114
+     # 00000003           296:  I113NAV2     EQU    3                   NAV2 113
+     # 00000002           297:  I112NAV2     EQU    2                   NAV2 112
+     # 00000001           298:  I111NAV2     EQU    1                   NAV2 111
+     # 00000000           299:  I110NAV2     EQU    0                   NAV2 110
+     # 00000431           300:  INAV2F2      EQU    $00000431           NAV2 FREQ WORD 2
+     # 00000007           301:  I109NAV2     EQU    7                   NAV2 109
+     # 00000006           302:  I108NAV2     EQU    6                   NAV2 108
+     # 00000005           303:  I9THNAV2     EQU    5                   NAV2 .9
+     # 00000004           304:  I8THNAV2     EQU    4                   NAV2 .8
+     # 00000003           305:  I7THNAV2     EQU    3                   NAV2 .7
+     # 00000002           306:  I6THNAV2     EQU    2                   NAV2 .6
+     # 00000001           307:  I5THNAV2     EQU    1                   NAV2 .5
+     # 00000000           308:  I4THNAV2     EQU    0                   NAV2 .4
+     # 00000433           309:  INAV2F3      EQU    $00000433           NAV2 FREQ WORD 3
+     # 00000007           310:  I3THNAV2     EQU    7                   NAV2 .3
+     # 00000006           311:  I2THNAV2     EQU    6                   NAV2 .2
+     # 00000005           312:  I1THNAV2     EQU    5                   NAV2 .1
+     # 00000004           313:  I0THNAV2     EQU    4                   NAV2 .0
+     # 00000003           314:  INAV2ILS     EQU    3                   NAV2 ILS SELECTED
+     # 00000002           315:  INAV2ON      EQU    2                   NAV2 POWER ON
+     # 00000001           316:  INAV2ID      EQU    1                   NAV2 ID ON
+     # 00000421           317:  INAV2VOL     EQU    $00000421           NAV2 VOLUME
+     # 00000429           318:  ICOM2SQ      EQU    $00000429           COMM2 SQUELCH
+     # 00000425           319:  ICOM2VOL     EQU    $00000425           COMM2 VOL
+                          320:  *
+     # 00000449           321:  OADF1TM      EQU    $00000449           ADF1 TUNING METER
+     # 00000441           322:  IADF1VOL     EQU    $00000441           ADF1 VOLUME
+     # 00000445           323:  IADF1FRQ     EQU    $00000445           ADF1 FREQ
+     # 0000044D           324:  IADF1DI      EQU    $0000044D           ADF1 CONTROL DISCRETE IN
+     # 00000007           325:  IADF1B1      EQU    7                   ADF BAND 1 190 TO 430
+     # 00000006           326:  IADF1B2      EQU    6                   ADF BAND 2 420 TO 850
+     # 00000005           327:  IADF1B3      EQU    5                   ADF BAND 3 840 TO 1750
+     # 00000004           328:  IADF1TST     EQU    4                   ADF1 TEST
+     # 00000003           329:  IADF1REC     EQU    3                   ADF1 RECEIVE MODE
+     # 00000002           330:  IADF1ADF     EQU    2                   ADF1 ADF MODE
+     # 00000001           331:  IADF1MKR     EQU    1                   ADF1 MARKER ON
+                          332:  *
+     # 000004B5           333:  ORMIHS       EQU    $000004B5           RMI SIN MAG HEADING
+     # 000004B1           334:  ORMIHC       EQU    $000004B1           RMI COS MAG HEADING
+                          335:  *
+     # 00000451           336:  ONAV1LR      EQU    $00000451           NAV1 COURSE DEVIATION
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page  7
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+     # 00000459           337:  ONAV1GS      EQU    $00000459           NAV1 GLIDE SLOPE DEV.
+     # 00000455           338:  ONAV1TF      EQU    $00000455           NAV1 TO/OFF/FROM
+     # 00000461           339:  ICRS1SC      EQU    $00000461           COURSE SEL 1 SIN/COS
+     # 00000465           340:  OCDI1DO      EQU    $00000465           CDI 1 DISCRETE OUT
+     # 00000000           341:  OCRS1SEL     EQU    0                   COURSE SEL 1 EXCITATION
+     # 00000001           342:  ONAV1GSF     EQU    1                   NAV1 G/S FLAG 00V
+     # 00000467           343:  ICRS1DI      EQU    $00000467           CDI 1 DISCRETE IN
+     # 00000007           344:  INAV1TST     EQU    7                   NAV 1 TEST
+                          345:  *
+     # 00000471           346:  ONAV2LR      EQU    $00000471           NAV2 COURSE DEVIATION
+     # 00000479           347:  ONAV2GS      EQU    $00000479           NAV2 GLIDE SLOPE DEV.
+     # 00000475           348:  ONAV2TF      EQU    $00000475           NAV2 TO/OFF/FROM
+     # 00000481           349:  ICRS2SC      EQU    $00000481           COURSE SEL 2 SIN/COS
+     # 00000485           350:  OCDI2DO      EQU    $00000485           CDI 2 DISCRETE OUT
+     # 00000000           351:  OCRS2SEL     EQU    0                   COURSE SEL 2 EXCITATION
+     # 00000001           352:  ONAV2GSF     EQU    1                   NAV2 G/S FLAG 00V
+     # 00000487           353:  ICRS2DI      EQU    $00000487           CDI 2 DISCRETE IN
+     # 00000007           354:  INAV2TST     EQU    7                   NAV 2 TEST
+                          355:  *
+     # 000004A9           356:  ORMI1S       EQU    $000004A9           RMI SIN #1 PTR
+     # 000004A5           357:  ORMI1C       EQU    $000004A5           RMI COS #1 PTR
+     # 000004A1           358:  ORMI2S       EQU    $000004A1           RMI SIN #2 PTR
+     # 00000499           359:  ORMI2C       EQU    $00000499           RMI COS #2 PTR
+                          360:  *
+     # 00000601           361:  IINSTAI1     EQU    $00000601           INSTRUCTOR #1 AI
+     # 00000605           362:  IINSTAI2     EQU    $00000605           INSTRUCTOR #2 AI
+     # 00000609           363:  IAI1MPX      EQU    $00000609           MULTIPLEXER #1
+     # 0000060B           364:  IAI2MPX      EQU    $0000060B           MULTIPLEXER #2
+     # 0000061B           365:  IINSTDI1     EQU    $0000061B           INSTRUCTOR #1 DI
+     # 00000007           366:  IBFIELD      EQU    7                   B FIELD SELECTED
+     # 00000003           367:  IENGFAIL     EQU    3                   ENGINE FAIL
+     # 00000002           368:  IPITON       EQU    2                   PITCH MOTION ON
+     # 00000001           369:  IROLLON      EQU    1                   ROLL MOTION ON
+     # 00000000           370:  IYAWON       EQU    0                   YAW MOTION ON
+     # 00000619           371:  IFAIL1       EQU    $00000619           INSTRUCTER FAIL #1
+     # 00000007           372:  IDGFAIL      EQU    7                   DG FAIL
+     # 00000006           373:  IATGFAIL     EQU    6                   ATTITUDE IND FAIL
+     # 00000005           374:  IIASFAIL     EQU    5                   AIRSPEED IND FAIL
+     # 00000004           375:  IALTFAIL     EQU    4                   ALTIMETER FAIL
+     # 00000003           376:  IRCFAIL      EQU    3                   RATE OF CLIMB IND FAIL
+     # 00000002           377:  ITNFAIL      EQU    2                   TURN NEEDLE FAIL
+     # 00000001           378:  IVL2FAIL     EQU    1                   VOR/LOC 2  FAIL
+     # 00000000           379:  IVL1FAIL     EQU    0                   VOR/LOC 1  FAIL
+     # 0000061D           380:  IRCDRDI      EQU    $0000061D           RECORDER DI
+     # 00000007           381:  ISLEWN       EQU    7                   SLEW NORTH
+     # 00000006           382:  ISLEWS       EQU    6                   SLEW SOUTH
+     # 00000005           383:  ISLEWE       EQU    5                   SLEW EAST
+     # 00000004           384:  ISLEWW       EQU    4                   SLEW WEST
+     # 00000003           385:  IAPPR2       EQU    3                   APPROACH 2 SELECTED
+     # 00000002           386:  IAPPR1       EQU    2                   APPROACH 1 SELECTED
+     # 00000001           387:  ICCMODE      EQU    1                   CROSS COUNTRY SELECTED
+     # 00000000           388:  IPOSFRZ      EQU    0                   POSITION FREEZE
+     # 00000611           389:  ORCDNSD      EQU    $00000611           (A/0)+10V=7.5 IN NORTH,-10V=7.5 IN SOUT
+     # 00000615           390:  ORCDEWD      EQU    $00000615           (A/0)+10V=7.5 IN EAST,-10V=7.5 IN WEST
+     # 0000061F           391:  IFAIL2       EQU    $0000061F           INSTRUCTER FAIL #2
+     # 00000007           392:  IGSFAIL      EQU    7                   GLIDESLOPE FAIL
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page  8
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+     # 00000006           393:  ILF1FAIL     EQU    6                   ADF FAIL
+                          394:  *
+     # 00000621           395:  OMOTPITR     EQU    $00000621           MOTION PITCH RATE     +10V=30 DEG/SEC U
+     # 00000625           396:  OMOTROLR     EQU    $00000625           MOTION ROLL RATE      +10V=60 DEG/SEC R
+     # 00000629           397:  OMOTTRNR     EQU    $00000629           MOTION TURN RATE      +10V=30 DEG/SEC R
+     # 00000639           398:  ICPHDGS      EQU    $00000639           SIN COCKPIT HEADING   +10V=SINE 90 DEG
+     # 0000063D           399:  ICPHDGC      EQU    $0000063D           COS COCKPIT HEADING   +10V=COS 0 DEG
+     # 00000631           400:  ICPPITS      EQU    $00000631           SIN COCKPIT PITCH     +10V=SIN 90 DEG
+     # 00000635           401:  ICPROLS      EQU    $00000635           SIN COCKPIT ROLL      +10V=SIN 90 DEG
+     # 0000062D           402:  IINSTMDI     EQU    $0000062D           INSTRUCTER CONTROL DI     CARD A81
+     # 00000007           403:  IALTFRZ      EQU    7                   ALTITUDE FREEZE
+     # 00000006           404:  IALTSUP      EQU    6                   ALTITUDE SLEW UP
+     # 00000005           405:  IALTSDN      EQU    5                   ALTITUDE SLEW DOWN
+     # 00000004           406:  IFLTFRZ      EQU    4                   FLIGHT FREEZE
+     # 00000003           407:  IENGFIR      EQU    3                   ENGINE FIRED BYPASS
+     # 00000002           408:  IMODE1       EQU    2                   MODE 1
+     # 00000001           409:  IMODE2       EQU    1                   MODE 2
+     # 00000000           410:  IMODE3       EQU    0                   MODE 3
+                          411:  *
+     # 00000651           412:  ONV1RNKY     EQU    $00000651           NAV1 RNG ATT/KEY
+     # 00000655           413:  ONV1WNL      EQU    $00000655           NAV1 WHITE NOISE LEVEL
+     # 00000659           414:  ODM1RNKY     EQU    $00000659           DME1 RNG ATT/KEY
+     # 0000065D           415:  ONV1VOL      EQU    $0000065D           NAV1 VOLUME LEVEL
+     # 0000064D           416:  ODMECTL      EQU    $0000064D           NAV  DME CONTROL
+     # 00000007           417:  ODM1SEP      EQU    7                   NAV1 DME SEPARATE
+     # 00000006           418:  ODM2SEP      EQU    6                   NAV2 DME SEPARATE
+     # 00000653           419:  ONV2RNKY     EQU    $00000653           NAV2 RNG ATT/KEY
+     # 00000657           420:  ONV2WNL      EQU    $00000657           NAV2 WHITE NOISE LEVEL
+     # 0000065B           421:  ODM2RNKY     EQU    $0000065B           DME2 RNG ATT/KEY
+     # 0000065F           422:  ONV2VOL      EQU    $0000065F           NAV2 VOLUME LEVEL
+     # 00000641           423:  OLF1RNKY     EQU    $00000641           ADF1 RNG ATT/KEY
+     # 00000645           424:  OLF1WNL      EQU    $00000645           ADF1 WHITE NOISE LEVEL
+     # 00000649           425:  OLF1VOL      EQU    $00000649           ADF1 VOLUME LEVEL
+     # 00000643           426:  OLF2RNKY     EQU    $00000643           ADF2 RNG ATT/KEY
+     # 00000647           427:  OLF2WNL      EQU    $00000647           ADF2 WHITE NOISE LEVEL
+     # 0000064B           428:  OLF2VOL      EQU    $0000064B           ADF2 VOLUME LEVEL
+                          429:  *
+     # 00000663           430:  OOMRAKY      EQU    $00000663           OM RANGE/KEY
+     # 00000665           431:  OMMRAKY      EQU    $00000665           MM RANGE/KEY
+     # 00000667           432:  OAMRAKY      EQU    $00000667           AM RANGE/KEY
+     # 00000669           433:  OMKRTST      EQU    $00000669           MARKER TEST
+     # 0000066B           434:  OMKRVOL      EQU    $0000066B           MKR VOLUME
+     # 00000661           435:  OMKRDO       EQU    $00000661           MKR DISCRETE OUT
+     # 00000007           436:  OOMFAIL      EQU    7                   OM FAIL
+     # 00000006           437:  OOMRAATT     EQU    6                   OM RANGE ATT.
+     # 00000005           438:  OMMFAIL      EQU    5                   MM FAIL
+     # 00000004           439:  OMMRAATT     EQU    4                   MM RANGE ATT.
+     # 00000003           440:  OAMFAIL      EQU    3                   AM FAIL
+     # 00000002           441:  OAMRAATT     EQU    2                   AM RANGE ATT.
+     # 00000001           442:  OMKRLTST     EQU    1                   MKR LAMP TEST
+                          443:  *
+     # 0000068B           444:  OATTEN1      EQU    $0000068B           ATTEN 1 EXHAUST NOISE
+     # 00000681           445:  OFUNCTA      EQU    $00000681           CARD 23 HIGH BYTE
+     # 00000683           446:  OFUNCT1      EQU    $00000683           FUNCT 1 RPM
+     # 00000685           447:  OFUNCT5      EQU    $00000685           FUNCT 5 SPARE
+     # 0000068D           448:  OATTEN5      EQU    $0000068D           ATTEN 5 SPARE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page  9
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+     # 00000687           449:  OFUNCT6      EQU    $00000687           FUNCT 6 STALL WARN
+     # 00000691           450:  OATTEN6      EQU    $00000691           ATTEN 6 STALL WARN
+     # 00000689           451:  OFUNCT8      EQU    $00000689           FUNCT 8 TIRE SCREECH
+     # 00000693           452:  OATTEN8      EQU    $00000693           ATTEN 8 TIRE SCREECH
+     # 00000695           453:  OATTEN9      EQU    $00000695           ATTEN 9 INST. VOL
+     # 00000697           454:  OATTEN10     EQU    $00000697           ATTEN 10 PROP HISS
+     # 00000699           455:  OATTEN11     EQU    $00000699           ATTEN 11 AERO HISS
+                          456:  *
+     # 000006E1           457:  OFUNCTB      EQU    $000006E1           CARD 24 HIGH BYTE
+     # 000006E3           458:  OFUNCT2      EQU    $000006E3           FUNCT 2 HISS
+     # 000006EB           459:  OATTEN2      EQU    $000006EB           ATTEN 2 HISS
+     # 000006E5           460:  OFUNCT3      EQU    $000006E5           FUNCT 3 RUMBLE
+     # 000006ED           461:  OATTEN3      EQU    $000006ED           ATTEN 3 RUMBLE
+     # 000006E7           462:  OFUNCT4      EQU    $000006E7           FUNCT 4 SPARE
+     # 000006F1           463:  OATTEN4      EQU    $000006F1           ATTEN 4 SPARE
+     # 000006E9           464:  OFUNCT7      EQU    $000006E9           FUNCT 7 AERO HISS
+     # 000006F3           465:  OATTEN7      EQU    $000006F3           ATTEN 7 AERO HISS
+                          466:  *
+     # 000006B1           467:  OCOM1SQ      EQU    $000006B1           COMM1 SQ CONTROL
+     # 000006B5           468:  OCOM1IVL     EQU    $000006B5           COMM1 INST. VOICE LEVEL
+     # 00000003           469:  OC1SXMIT     EQU    3                   COMM1 STUDENT XMIT
+     # 000006B9           470:  OCOM1VOL     EQU    $000006B9           COMM1 VOLUME LEVEL
+     # 000006B3           471:  OCOM2SQ      EQU    $000006B3           COMM2 SQ CONTROL
+     # 000006B7           472:  OCOM2IVL     EQU    $000006B7           COMM2 INST. VOICE LEVEL
+     # 00000002           473:  OC2SXMIT     EQU    2                   COMM2 STUDENT XMIT
+     # 000006BB           474:  OCOM2VOL     EQU    $000006BB           COMM2 VOLUME CONTROL
+     # 000006BD           475:  OSMIKEVL     EQU    $000006BD           STUDENT MIKE COMM LEVEL
+     # 000006CF           476:  IMICPTT      EQU    $000006CF           MIKE PTT
+     # 00000007           477:  ISMICPTT     EQU    7                   STUDENT MIKE PTT
+     # 00000006           478:  IIMICPTT     EQU    6                   INSTRUCTOR MIKE PTT
+     # 000006C1           479:  OSINPHVL     EQU    $000006C1           STUDENT INPH. LEVEL
+     # 000006C3           480:  OIINPHVL     EQU    $000006C3           INSTRUCTOR INPH. LEVEL
+     # 000006C5           481:  OSLISTVL     EQU    $000006C5           STUDENT VOLUME LEVEL
+     # 000006C9           482:  OASCONT1     EQU    $000006C9           AUDIO SELECT CONTROL 1
+     # 00000007           483:  OSSCOM1N     EQU    7                   STUDENT SEL COMM1 (NOT)
+     # 00000006           484:  OSSCOM2N     EQU    6                   STUDENT SEL COMM2 (NOT)
+     # 00000005           485:  OSSINPHN     EQU    5                   STUDENT SEL INPH.(NOT)
+     # 00000004           486:  OSSMKRN      EQU    4                   STUDENT SEL MARKER (NOT)
+     # 00000003           487:  OSSNAV1N     EQU    3                   STUDENT SEL NAV1   (NOT)
+     # 00000002           488:  OSSNAV2N     EQU    2                   STUDENT SEL NAV2   (NOT)
+     # 00000001           489:  OSSADF1N     EQU    1                   STUDENT SEL ADF1   (NOT)
+     # 00000000           490:  OSSADF2N     EQU    0                   STUDENT SEL ADF2   (NOT)
+     # 000006CB           491:  OASCONT2     EQU    $000006CB           AUDIO SELECT CONTROL 2
+     # 00000007           492:  OSSDME1N     EQU    7                   STUDENT SEL DME 1  (NOT)
+     # 00000006           493:  OSSDME2N     EQU    6                   STUDENT SEL DME 2  (NOT)
+     # 00000005           494:  OSSSPA1N     EQU    5                   STUDENT SEL SPARE  (NOT)
+     # 00000004           495:  OSSSPA2N     EQU    4                   STUDENT SEL SPARE  (NOT)
+     # 000006C7           496:  OILISTVL     EQU    $000006C7           INSTRUCTOR VOLUME LEVEL
+     # 000006CD           497:  OASCONT3     EQU    $000006CD           AUDIO SELECT CONTROL 3
+     # 00000007           498:  OISCOM1N     EQU    7                   INST. SEL COMM1   (NOT)
+     # 00000006           499:  OISCOM2N     EQU    6                   INST. SEL COMM2   (NOT)
+     # 00000005           500:  OISSTN       EQU    5                   INST. SEL SIDE TONE (NOT)
+     # 00000004           501:  OISMONTN     EQU    4                   INST. SEL MONITOR   (NOT)
+     # 00000003           502:  OISINPHN     EQU    3                   INST. SEL INPH.     (NOT)
+     # 00000002           503:  OISSPA1N     EQU    2                   INST. SEL SPARE     (NOT)
+     # 00000001           504:  OISSPA2N     EQU    1                   INST. SEL SPARE     (NOT)
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 10
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+     # 00000000           505:  OISSPA3N     EQU    0                   INST. SEL SPARE     (NOT)
+                          506.           INCLUDE   ADDP.SA
+>>>  ERROR  line[506] Include file not present   [6] D:NAVFREQ.SA
+            line[506] D:ADDP.SA   [6] D:NAVFREQ.SA
+                          507.  *
+C'000000                  508.           SECTION   12
+                          509.  **********************************************************************
+                          510.  *                                                                    *
+                          511.  *        NAV, ADF, DME, AND MARKER DECODE AND SEARCH ROUTINES        *
+                          512.  *                                                                    *
+                          513.  **********************************************************************
+     C'00000000           514.  NAVFREQ  EQU       *
+C'000000  2C7C 00FE6000   515.           MOVE.L    #$FE6000,A6                   LOAD I/O BASE ADDR
+C'000006  082E 0007 02D1  516.           BTST.B    #IMSTSW,IMPSDI1(A6)           DON'T DECODE OR TUN IF
+C'00000C  6700 052E       517.           BEQ       MSTOFF                        MASTER SWITCH OFF
+                          518.  *
+                          519.  * NAV1 DECODE
+                          520.  *
+C'000010  082E 0002 0413  521.           BTST.B    #INAV1ON,INAV1F3(A6)          SKIP DECODE AND SEARCH
+C'000016  660C            522.           BNE.S     NAV1DEC                       CONTINUE IF NAV1 SW ON
+                          523.  *
+C'000018  51F8 170E       524.           SF.B      NAV1TUN                       CLEAR NAV1TUN FLAG
+C'00001C  42B8 15B4       525.           CLR.L     NAV1FREQ                      CLEAR NAV1 FREQ
+C'000020  6000 0146       526.           BRA       SKIP                          SKIP
+                          527.  *
+C'000024  203C 06F94740   528.  NAV1DEC  MOVE.L    #117000000,D0
+C'00002A  082E 0007 040D  529.           BTST.B    #I117NAV1,INAV1F1(A6)         JUMP IF 117 BIT SET
+C'000030  6676            530.           BNE.S     DECODE2
+                          531.  *
+C'000032  203C 06EA0500   532.           MOVE.L    #116000000,D0
+C'000038  082E 0006 040D  533.           BTST.B    #I116NAV1,INAV1F1(A6)         JUMP IF 116 BIT SET
+C'00003E  6668            534.           BNE.S     DECODE2
+                          535.  *
+C'000040  203C 06DAC2C0   536.           MOVE.L    #115000000,D0
+C'000046  082E 0005 040D  537.           BTST.B    #I115NAV1,INAV1F1(A6)         JUMP IF 115 BIT SET
+C'00004C  665A            538.           BNE.S     DECODE2
+                          539.  *
+C'00004E  203C 06CB8080   540.           MOVE.L    #114000000,D0
+C'000054  082E 0004 040D  541.           BTST.B    #I114NAV1,INAV1F1(A6)         JUMP IF 114 BIT SET
+C'00005A  664C            542.           BNE.S     DECODE2
+                          543.  *
+C'00005C  203C 06BC3E40   544.           MOVE.L    #113000000,D0
+C'000062  082E 0003 040D  545.           BTST.B    #I113NAV1,INAV1F1(A6)         JUMP IF 113 BIT SET
+C'000068  663E            546.           BNE.S     DECODE2
+                          547.  *
+C'00006A  203C 06ACFC00   548.           MOVE.L    #112000000,D0
+C'000070  082E 0002 040D  549.           BTST.B    #I112NAV1,INAV1F1(A6)         JUMP IF 112 BIT SET
+C'000076  6630            550.           BNE.S     DECODE2
+                          551.  *
+C'000078  203C 069DB9C0   552.           MOVE.L    #111000000,D0
+C'00007E  082E 0001 040D  553.           BTST.B    #I111NAV1,INAV1F1(A6)         JUMP IF 111 BIT SET
+C'000084  6622            554.           BNE.S     DECODE2
+                          555.  *
+C'000086  203C 068E7780   556.           MOVE.L    #110000000,D0
+C'00008C  082E 0000 040D  557.           BTST.B    #I110NAV1,INAV1F1(A6)         JUMP IF 110 BIT SET
+C'000092  6614            558.           BNE.S     DECODE2
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 11
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+                          559.  *
+C'000094  203C 067F3540   560.           MOVE.L    #109000000,D0
+C'00009A  082E 0007 0411  561.           BTST.B    #I109NAV1,INAV1F2(A6)         JUMP IF 109 BIT SET
+C'0000A0  6606            562.           BNE.S     DECODE2
+                          563.  *
+C'0000A2  203C 066FF300   564.           MOVE.L    #108000000,D0
+     C'000000A8           565.  DECODE2  EQU       *
+C'0000A8  223C 000DBBA0   566.           MOVE.L    #900000,D1
+C'0000AE  082E 0005 0411  567.           BTST.B    #I9THNAV1,INAV1F2(A6)         JUMP IF .9 BIT SET
+C'0000B4  6672            568.           BNE.S     DECODE3
+                          569.  *
+C'0000B6  223C 000C3500   570.           MOVE.L    #800000,D1
+C'0000BC  082E 0004 0411  571.           BTST.B    #I8THNAV1,INAV1F2(A6)         JUMP IF .8 BIT SET
+C'0000C2  6664            572.           BNE.S     DECODE3
+                          573.  *
+C'0000C4  223C 000AAE60   574.           MOVE.L    #700000,D1
+C'0000CA  082E 0003 0411  575.           BTST.B    #I7THNAV1,INAV1F2(A6)         JUMP IF .7 BIT SET
+C'0000D0  6656            576.           BNE.S     DECODE3
+                          577.  *
+C'0000D2  223C 000927C0   578.           MOVE.L    #600000,D1
+C'0000D8  082E 0002 0411  579.           BTST.B    #I6THNAV1,INAV1F2(A6)         JUMP IF .6 BIT SET
+C'0000DE  6648            580.           BNE.S     DECODE3
+                          581.  *
+C'0000E0  223C 0007A120   582.           MOVE.L    #500000,D1
+C'0000E6  082E 0001 0411  583.           BTST.B    #I5THNAV1,INAV1F2(A6)         JUMP IF .5 BIT SET
+C'0000EC  663A            584.           BNE.S     DECODE3
+                          585.  *
+C'0000EE  223C 00061A80   586.           MOVE.L    #400000,D1
+C'0000F4  082E 0000 0411  587.           BTST.B    #I4THNAV1,INAV1F2(A6)         JUMP IF .4 BIT SET
+C'0000FA  662C            588.           BNE.S     DECODE3
+                          589.  *
+C'0000FC  223C 000493E0   590.           MOVE.L    #300000,D1
+C'000102  082E 0007 0413  591.           BTST.B    #I3THNAV1,INAV1F3(A6)         JUMP IF .3 BIT SET
+C'000108  661E            592.           BNE.S     DECODE3
+                          593.  *
+C'00010A  223C 00030D40   594.           MOVE.L    #200000,D1
+C'000110  082E 0006 0413  595.           BTST.B    #I2THNAV1,INAV1F3(A6)         JUMP IF .2 BIT SET
+C'000116  6610            596.           BNE.S     DECODE3
+                          597.  *
+C'000118  223C 000186A0   598.           MOVE.L    #100000,D1
+C'00011E  082E 0005 0413  599.           BTST.B    #I1THNAV1,INAV1F3(A6)         JUMP IF .1 BIT SET
+C'000124  6602            600.           BNE.S     DECODE3
+                          601.  *
+C'000126  7200            602.           MOVE.L    #000000,D1                    DEFAULT TO .0
+     C'00000128           603.  DECODE3  EQU       *
+C'000128  D081            604.           ADD.L     D1,D0                         CALULATE FREQ
+                          605.  ****************************************************************
+                          606.  *
+                          607.  *        DECODE FINISHED NOW SEARCH TABLE
+                          608.  *
+                          609.  ****************************************************************
+C'00012A  B0B8 15B4       610.           CMP.L     NAV1FREQ,D0         COMPARE NEW FREQ WITH OLD
+C'00012E  6738            611.           BEQ.S     SKIP                SKIP SEARCH IF SAME AS LAST
+                          612.  *
+C'000130  21C0 15B4       613.           MOVE.L    D0,NAV1FREQ         STORE NEW FREQ
+>>>  ERROR  line[614] Undefined symbol   [114] D:NAVFREQ.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 12
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+            line[614] NDDPTAB   [114] D:NAVFREQ.SA
+C'000134  207C 00000000   614.           MOVEA.L   #NDDPTAB,A0         LOAD TABLE STARTING ADDRESS
+>>>  ERROR  line[615] Undefined symbol   [115] D:NAVFREQ.SA
+            line[615] NVOREND   [115] D:NAVFREQ.SA
+C'00013A  227C 00000000   615.           MOVEA.L   #NVOREND,A1         LOAD TABLE ENDING ADDRESS
+C'000140  6100 0446       616.           BSR       TABSERCH            SEARCH TABLE
+C'000144  11C1 170E       617.           MOVE.B    D1,NAV1TUN          STORE VALIDITY FLAG
+C'000148  21C8 15BC       618.           MOVE.L    A0,NAV1STA          STORE STATION ADDR
+                          619.  *****************************************************************
+                          620.  *
+                          621.  *                  SEARCH DME TABLE
+                          622.  *
+                          623.  *****************************************************************
+C'00014C  2038 15B4       624.           MOVE.L    NAV1FREQ,D0         GET NAV1 FREQ
+>>>  ERROR  line[625] Undefined symbol   [125] D:NAVFREQ.SA
+            line[625] NDDPDME   [125] D:NAVFREQ.SA
+C'000150  207C 00000000   625.           MOVEA.L   #NDDPDME,A0         LOAD TABLE STARTING ADDRESS
+>>>  ERROR  line[626] Undefined symbol   [126] D:NAVFREQ.SA
+            line[626] NFTABEND   [126] D:NAVFREQ.SA
+C'000156  227C 00000000   626.           MOVEA.L   #NFTABEND,A1        LOAD TABLE ENDING ADDRESS
+C'00015C  6100 042A       627.           BSR       TABSERCH            SEARCH TABLE
+                          628.  *
+C'000160  11C1 171C       629.           MOVE.B    D1,NDME1TUN         STORE VALIDIY FLAG
+C'000164  21C8 1610       630.           MOVE.L    A0,NDME1STA         STORE STATION ADDRESS
+     C'00000168           631.  SKIP     EQU       *
+                          632.  *******************************************************
+                          633.  *
+                          634.  *        NAV2 FREQ DECODE AND RANGE SEARCH ROUTINE
+                          635.  *
+                          636.  *******************************************************
+C'000168  082E 0002 0433  637.           BTST.B    #INAV2ON,INAV2F3(A6)          SKIP DECODE AND SEARCH
+C'00016E  660C            638.           BNE.S     NAV2DEC                       CONTINUE IF NAV2 SW ON
+C'000170  51F8 170F       639.           SF.B      NAV2TUN
+C'000174  42B8 15B8       640.           CLR.L     NAV2FREQ
+C'000178  6000 0146       641.           BRA       SKIP2                         SKIP IF NAV2 SW NOT ON
+                          642.  *
+C'00017C  203C 06F94740   643.  NAV2DEC  MOVE.L    #117000000,D0
+C'000182  082E 0007 042D  644.           BTST.B    #I117NAV2,INAV2F1(A6)         JUMP IF 117 BIT SET
+C'000188  6676            645.           BNE.S     DECODE5
+                          646.  *
+C'00018A  203C 06EA0500   647.           MOVE.L    #116000000,D0
+C'000190  082E 0006 042D  648.           BTST.B    #I116NAV2,INAV2F1(A6)         JUMP IF 116 BIT SET
+C'000196  6668            649.           BNE.S     DECODE5
+                          650.  *
+C'000198  203C 06DAC2C0   651.           MOVE.L    #115000000,D0
+C'00019E  082E 0005 042D  652.           BTST.B    #I115NAV2,INAV2F1(A6)         JUMP IF 115 BIT SET
+C'0001A4  665A            653.           BNE.S     DECODE5
+                          654.  *
+C'0001A6  203C 06CB8080   655.           MOVE.L    #114000000,D0
+C'0001AC  082E 0004 042D  656.           BTST.B    #I114NAV2,INAV2F1(A6)         JUMP IF 114 BIT SET
+C'0001B2  664C            657.           BNE.S     DECODE5
+                          658.  *
+C'0001B4  203C 06BC3E40   659.           MOVE.L    #113000000,D0
+C'0001BA  082E 0003 042D  660.           BTST.B    #I113NAV2,INAV2F1(A6)         JUMP IF 113 BIT SET
+C'0001C0  663E            661.           BNE.S     DECODE5
+                          662.  *
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 13
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+C'0001C2  203C 06ACFC00   663.           MOVE.L    #112000000,D0
+C'0001C8  082E 0002 042D  664.           BTST.B    #I112NAV2,INAV2F1(A6)         JUMP IF 112 BIT SET
+C'0001CE  6630            665.           BNE.S     DECODE5
+                          666.  *
+C'0001D0  203C 069DB9C0   667.           MOVE.L    #111000000,D0
+C'0001D6  082E 0001 042D  668.           BTST.B    #I111NAV2,INAV2F1(A6)         JUMP IF 111 BIT SET
+C'0001DC  6622            669.           BNE.S     DECODE5
+                          670.  *
+C'0001DE  203C 068E7780   671.           MOVE.L    #110000000,D0
+C'0001E4  082E 0000 042D  672.           BTST.B    #I110NAV2,INAV2F1(A6)         JUMP IF 110 BIT SET
+C'0001EA  6614            673.           BNE.S     DECODE5
+                          674.  *
+C'0001EC  203C 067F3540   675.           MOVE.L    #109000000,D0
+C'0001F2  082E 0007 0431  676.           BTST.B    #I109NAV2,INAV2F2(A6)         JUMP IF 109 BIT SET
+C'0001F8  6606            677.           BNE.S     DECODE5
+                          678.  *
+C'0001FA  203C 066FF300   679.           MOVE.L    #108000000,D0
+     C'00000200           680.  DECODE5  EQU       *
+C'000200  223C 000DBBA0   681.           MOVE.L    #900000,D1
+C'000206  082E 0005 0431  682.           BTST.B    #I9THNAV2,INAV2F2(A6)         JUMP IF .9 BIT SET
+C'00020C  6672            683.           BNE.S     DECODE6
+                          684.  *
+C'00020E  223C 000C3500   685.           MOVE.L    #800000,D1
+C'000214  082E 0004 0431  686.           BTST.B    #I8THNAV2,INAV2F2(A6)         JUMP IF .8 BIT SET
+C'00021A  6664            687.           BNE.S     DECODE6
+                          688.  *
+C'00021C  223C 000AAE60   689.           MOVE.L    #700000,D1
+C'000222  082E 0003 0431  690.           BTST.B    #I7THNAV2,INAV2F2(A6)         JUMP IF .7 BIT SET
+C'000228  6656            691.           BNE.S     DECODE6
+                          692.  *
+C'00022A  223C 000927C0   693.           MOVE.L    #600000,D1
+C'000230  082E 0002 0431  694.           BTST.B    #I6THNAV2,INAV2F2(A6)         JUMP IF .6 BIT SET
+C'000236  6648            695.           BNE.S     DECODE6
+                          696.  *
+C'000238  223C 0007A120   697.           MOVE.L    #500000,D1
+C'00023E  082E 0001 0431  698.           BTST.B    #I5THNAV2,INAV2F2(A6)         JUMP IF .5 BIT SET
+C'000244  663A            699.           BNE.S     DECODE6
+                          700.  *
+C'000246  223C 00061A80   701.           MOVE.L    #400000,D1
+C'00024C  082E 0000 0431  702.           BTST.B    #I4THNAV2,INAV2F2(A6)         JUMP IF .4 BIT SET
+C'000252  662C            703.           BNE.S     DECODE6
+                          704.  *
+C'000254  223C 000493E0   705.           MOVE.L    #300000,D1
+C'00025A  082E 0007 0433  706.           BTST.B    #I3THNAV2,INAV2F3(A6)         JUMP IF .3 BIT SET
+C'000260  661E            707.           BNE.S     DECODE6
+                          708.  *
+C'000262  223C 00030D40   709.           MOVE.L    #200000,D1
+C'000268  082E 0006 0433  710.           BTST.B    #I2THNAV2,INAV2F3(A6)         JUMP IF .2 BIT SET
+C'00026E  6610            711.           BNE.S     DECODE6
+                          712.  *
+C'000270  223C 000186A0   713.           MOVE.L    #100000,D1
+C'000276  082E 0005 0433  714.           BTST.B    #I1THNAV2,INAV2F3(A6)         JUMP IF .1 BIT SET
+C'00027C  6602            715.           BNE.S     DECODE6
+                          716.  *
+C'00027E  7200            717.           MOVE.L    #000000,D1                    DEFAULT TO .0
+                          718.  *
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 14
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+     C'00000280           719.  DECODE6  EQU       *
+C'000280  D081            720.           ADD.L     D1,D0                         CALULATE FREQ
+                          721.  ****************************************************************
+                          722.  *
+                          723.  *        DECODE FINISHED NOW SEARCH TABLE
+                          724.  *
+                          725.  ****************************************************************
+C'000282  B0B8 15B8       726.           CMP.L     NAV2FREQ,D0         COMPARE NEW FREQ WITH OLD
+C'000286  6738            727.           BEQ.S     SKIP2               SKIP SEARCH IF SAME AS LAST
+                          728.  *
+C'000288  21C0 15B8       729.           MOVE.L    D0,NAV2FREQ         STORE NEW FREQ
+>>>  ERROR  line[730] Undefined symbol   [230] D:NAVFREQ.SA
+            line[730] NDDPTAB   [230] D:NAVFREQ.SA
+C'00028C  207C 00000000   730.           MOVEA.L   #NDDPTAB,A0         LOAD TABLE STARTING ADDRESS
+>>>  ERROR  line[731] Undefined symbol   [231] D:NAVFREQ.SA
+            line[731] NVOREND   [231] D:NAVFREQ.SA
+C'000292  227C 00000000   731.           MOVEA.L   #NVOREND,A1         LOAD TABLE ENDING ADDRESS
+C'000298  6100 02EE       732.           BSR       TABSERCH            SEARCH TABLE
+                          733.  *
+C'00029C  11C1 170F       734.           MOVE.B    D1,NAV2TUN          STORE VALIDITY FLAG
+C'0002A0  21C8 15C0       735.           MOVE.L    A0,NAV2STA          FOUND: STORE STATION ADDRESS
+                          736.  *****************************************************************
+                          737.  *
+                          738.  *                  SEARCH DME TABLE
+                          739.  *
+                          740.  *****************************************************************
+C'0002A4  2038 15B8       741.           MOVE.L    NAV2FREQ,D0         GET NAV2 FREQ
+>>>  ERROR  line[742] Undefined symbol   [242] D:NAVFREQ.SA
+            line[742] NDDPDME   [242] D:NAVFREQ.SA
+C'0002A8  207C 00000000   742.           MOVEA.L   #NDDPDME,A0         LOAD TABLE STARTING ADDR
+>>>  ERROR  line[743] Undefined symbol   [243] D:NAVFREQ.SA
+            line[743] NFTABEND   [243] D:NAVFREQ.SA
+C'0002AE  227C 00000000   743.           MOVEA.L   #NFTABEND,A1        LOAD TABLE ENDING ADDR
+C'0002B4  6100 02D2       744.           BSR       TABSERCH            SEARCH TABLE
+                          745.  *
+C'0002B8  11C1 171D       746.           MOVE.B    D1,NDME2TUN         STORE VALIDITY FLAG
+C'0002BC  21C8 1614       747.           MOVE.L    A0,NDME2STA         FOUND: STORE STATION ADDRESS
+     C'000002C0           748.  SKIP2    EQU       *
+                          749.  ***************************************************************
+                          750.  *
+                          751.  *                  ADF1 FREQENCY DECODE
+                          752.  *
+                          753.  ***************************************************************
+C'0002C0  082E 0006 061F  754.           BTST.B    #ILF1FAIL,IFAIL2(A6) CHECK FOR ADF MALFUNCTION
+C'0002C6  6600 01C2       755.           BNE       NOTTUNED            JUMP IF FAILED
+                          756.  *
+C'0002CA  082E 0003 044D  757.           BTST.B    #IADF1REC,IADF1DI(A6)
+C'0002D0  660A            758.           BNE.S     ADF1DCD             JUMP IF ADF RECEIVER MODE
+                          759.  *
+C'0002D2  082E 0002 044D  760.           BTST.B    #IADF1ADF,IADF1DI(A6)
+C'0002D8  6700 01B0       761.           BEQ       NOTTUNED            EXIT IF NOT ADF OR REC MODE
+     C'000002DC           762.  ADF1DCD  EQU       *
+C'0002DC  050E 0445       763.           MOVEP.W   IADF1FRQ(A6),D2     READ RAW FREQ
+C'0002E0  1D42 0445       764.           MOVE.B    D2,IADF1FRQ(A6)     START NEXT A/D CONVERSION
+C'0002E4  E34A            765.           LSL.W     #1,D2               SHIFT OUT MSB (ALWAYS 1)
+C'0002E6  EA4A            766.           LSR.W     #5,D2               SHIFT OUT 4 LSB'S (UNWANTED)  +00
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 15
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+                          767.  *
+C'0002E8  082E 0007 044D  768.           BTST.B    #IADF1B1,IADF1DI(A6) CHECK FOR BAND1
+C'0002EE  665E            769.           BNE.S     ADF1B1
+                          770.  *
+C'0002F0  082E 0006 044D  771.           BTST.B    #IADF1B2,IADF1DI(A6) CHECK FOR BAND2
+C'0002F6  6600 00A4       772.           BNE       ADF1B2
+                          773.  *
+                          774.  ****************************************
+                          775.  *                  BAND 3
+                          776.  ****************************************
+C'0002FA  0CB8 00002328   777.           CMP.L     #9000,N3KBAND       SEE IF BAND NUM CHANGED
+          1640
+C'000302  6608            778.           BNE.S     NEWFRQ3             JUMP IF BAND JUST CHANGED
+                          779.  *
+C'000304  B478 16A8       780.           CMP.W     NADF1RAW,D2         COMPARE LAST RAW FRQ WITH NEW
+C'000308  6700 0194       781.           BEQ       ADF1END             AND EXIT IF SAME
+                          782.  *
+C'00030C  31C2 16A8       783.  NEWFRQ3  MOVE.W    D2,NADF1RAW         STORE NEW RAW FREQ
+C'000310  21FC 00002328   784.           MOVE.L    #9000,N3KBAND       STORE NEW BAND NUMBER
+          1640
+C'000318  0C42 00C0       785.           CMPI.W    #192,D2             CHECK FOR GRAPH BREAKPOINT
+C'00031C  6D14            786.           BLT.S     ADF1B3A
+                          787.  *
+C'00031E  0C42 02C0       788.           CMPI.W    #704,D2             CHECK FOR GRAPH BREAKPOINT
+C'000322  6D1C            789.           BLT.S     ADF1B3B
+                          790.  *
+C'000324  203C 000AD188   791.           MOVE.L    #709000,D0          LOAD Y INTERCEPT              +00
+C'00032A  323C 4100       792.           MOVE.W    #16640,D1           LOAD SLOPE                    +05
+C'00032E  6000 00CA       793.           BRA       ADF1CON             CONTINUE WITH CALCULATION
+     C'00000332           794.  ADF1B3A  EQU       *
+C'000332  203C 000CD140   795.           MOVE.L    #840000,D0          LOAD Y INTERCEPT              +00
+C'000338  323C 1D40       796.           MOVE.W    #7488,D1            LOAD SLOPE                    +05
+C'00033C  6000 00BC       797.           BRA       ADF1CON             CONTINUE WITH CALCULATION
+     C'00000340           798.  ADF1B3B  EQU       *
+C'000340  203C 000C6BB0   799.           MOVE.L    #814000,D0          LOAD Y INTERCEPT              +00
+C'000346  323C 2E60       800.           MOVE.W    #11872,D1           LOAD SLOPE                    +05
+C'00034A  6000 00AE       801.           BRA       ADF1CON             CONTINUE WITH CALCULATION
+                          802.  ****************************************
+                          803.  *                  BAND 1
+                          804.  ****************************************
+     C'0000034E           805.  ADF1B1   EQU       *
+C'00034E  0CB8 00000BB8   806.           CMP.L     #3000,N3KBAND       SEE IF BAND CHANGED
+          1640
+C'000356  6608            807.           BNE.S     NEWFRQ1             JUMP IF BAND JUST CHANGED
+                          808.  *
+C'000358  B478 16A8       809.           CMP.W     NADF1RAW,D2         COMPARE NEW RAW FRQ WITH LAST
+C'00035C  6700 0140       810.           BEQ       ADF1END             AND EXIT IF SAME
+                          811.  *
+C'000360  31C2 16A8       812.  NEWFRQ1  MOVE.W    D2,NADF1RAW         STORE NEW RAW FREQ
+C'000364  21FC 00000BB8   813.           MOVE.L    #3000,N3KBAND       STORE NEW BAND NUMBER
+          1640
+                          814.  *
+C'00036C  0C42 00FA       815.           CMPI.W    #250,D2             GRAPH BREAKPOINT= 250 (NOT 192)
+                          816.  *
+C'000370  6D12            817.           BLT.S     ADF1B1A
+                          818.  *
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 16
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+C'000372  0C42 02C0       819.           CMPI.W    #704,D2             CHECK FOR GRAPH BREAKPOINT
+C'000376  6D18            820.           BLT.S     ADF1B1B
+                          821.  *
+C'000378  203C 00024608   822.           MOVE.L    #149000,D0          LOAD Y INTERCEPT              +00
+C'00037E  323C 116C       823.           MOVE.W    #4460,D1            LOAD SLOPE=4460 (NOT 4512)    +05
+C'000382  6076            824.           BRA.S     ADF1CON             CONTINUE WITH CALCULATION
+     C'00000384           825.  ADF1B1A  EQU       *
+C'000384  203C 0002E630   826.           MOVE.L    #190000,D0          LOAD Y INTERCEPT              +00
+                          827.  *
+C'00038A  323C 06A4       828.           MOVE.W    #1700,D1            LOAD SLOPE=1700 (NOT 1834)    +05
+                          829.  *
+C'00038E  606A            830.           BRA.S     ADF1CON             CONTINUE WITH CALCULATION
+     C'00000390           831.  ADF1B1B  EQU       *
+C'000390  203C 0002D690   832.           MOVE.L    #186000,D0          LOAD Y INTERCEPT              +00
+C'000396  323C 0A5A       833.           MOVE.W    #2650,D1            LOAD SLOPE=2650 (NOT 2560)    +05
+C'00039A  605E            834.           BRA.S     ADF1CON             CONTINUE WITH CALCULATION
+                          835.  ****************************************
+                          836.  *                  BAND 2
+                          837.  ****************************************
+     C'0000039C           838.  ADF1B2   EQU       *
+C'00039C  0CB8 00001770   839.           CMP.L     #6000,N3KBAND       CHECK FOR BAND 2
+          1640
+C'0003A4  6608            840.           BNE.S     NEWFRQ2             JUMP IF BAND JUST CHANGED
+                          841.  *
+C'0003A6  B478 16A8       842.           CMP.W     NADF1RAW,D2         COMPARE WITH LAST
+C'0003AA  6700 00F2       843.           BEQ       ADF1END             AND EXIT IF SAME
+                          844.  *
+C'0003AE  31C2 16A8       845.  NEWFRQ2  MOVE.W    D2,NADF1RAW         STORE NEW RAW FREQ
+C'0003B2  21FC 00001770   846.           MOVE.L    #6000,N3KBAND       STORE NEW BAND NUMBER
+          1640
+C'0003BA  0C42 00C0       847.           CMPI.W    #192,D2             CHECK FOR GRAPH BREAKPOINT
+C'0003BE  6D18            848.           BLT.S     ADF1B2A
+                          849.  *
+C'0003C0  0C42 02C0       850.           CMPI.W    #704,D2             CHECK FOR GRAPH BREAKPOINT
+C'0003C4  6D1E            851.           BLT.S     ADF1B2B
+                          852.  *
+C'0003C6  0C42 06C0       853.           CMPI.W    #1728,D2            CHECK FOR GRAPH BREAKPOINT
+C'0003CA  6D24            854.           BLT.S     ADF1B2C
+                          855.  *
+C'0003CC  203C 0007C448   856.           MOVE.L    #509000,D0          LOAD Y INTERCEPT              +00
+C'0003D2  323C 1500       857.           MOVE.W    #5376,D1            LOAD SLOPE                    +05
+C'0003D6  6022            858.           BRA.S     ADF1CON             CONTINUE WITH CALCULATION
+     C'000003D8           859.  ADF1B2A  EQU       *
+C'0003D8  203C 000668A0   860.           MOVE.L    #420000,D0          LOAD Y INTERCEPT              +00
+C'0003DE  323C 0FA0       861.           MOVE.W    #4000,D1            LOAD SLOPE                    +05
+C'0003E2  6016            862.           BRA.S     ADF1CON             CONTINUE WITH CALCULATION
+     C'000003E4           863.  ADF1B2B  EQU       *
+C'0003E4  203C 000639C0   864.           MOVE.L    #408000,D0          LOAD Y INTERCEPT              +00
+C'0003EA  323C 157C       865.           MOVE.W    #5500,D1            LOAD SLOPE=5500 (NOT 6048)    +05
+C'0003EE  600A            866.           BRA.S     ADF1CON             CONTINUE WITH CALCULATION
+     C'000003F0           867.  ADF1B2C  EQU       *
+C'0003F0  203C 00058DE0   868.           MOVE.L    #364000,D0          LOAD Y INTERCEPT              +00
+C'0003F6  323C 1F80       869.           MOVE.W    #8064,D1            LOAD SLOPE                    +05
+                          870.  *
+     C'000003FA           871.  ADF1CON  EQU       *                   CONTINUE WITH CALCULATION
+                          872.  *                                             Y = M*X + B
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 17
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+C'0003FA  C2C2            873.           MULU.W    D2,D1               SLOPE * X                     +05
+C'0003FC  EA81            874.           ASR.L     #05,D1              RESCALE                       +00
+C'0003FE  D280            875.           ADD.L     D0,D1               ADD INTERCEPT                 +00
+C'000400  21C1 1594       876.           MOVE.L    D1,NADF1FRQ         STORE FREQ                    +00
+                          877.  *********************************************************
+                          878.  *
+                          879.  *                  ADF1 SEARCH ROUTINE
+                          880.  *
+                          881.  *********************************************************
+C'000404  21FC 00000000   882.           MOVE.L    #00,NADF1STA        NADF1FRQ IS IN D1
+          1598
+>>>  ERROR  line[883] Undefined symbol   [383] D:NAVFREQ.SA
+            line[883] NVOREND   [383] D:NAVFREQ.SA
+C'00040C  207C 00000000   883.           MOVE.L    #NVOREND,A0         LOAD TABLE STARTING ADDRESS
+>>>  ERROR  line[884] Undefined symbol   [384] D:NAVFREQ.SA
+            line[884] NDDPDME   [384] D:NAVFREQ.SA
+C'000412  227C 00000000   884.           MOVE.L    #NDDPDME,A1
+C'000418  2438 1640       885.           MOVE.L    N3KBAND,D2          D2 IS 3000XBAND#
+C'00041C  21FC 00002710   886.           MOVE.L    #10000,NADF1ERR     INITIALIZE ERROR RANGE
+          15F0
+     C'00000424           887.  ADF1LOOP EQU       *
+C'000424  2028 0004       888.           MOVE.L    4(A0),D0            GET TABLE VALUE
+C'000428  9081            889.           SUB.L     D1,D0               SUBTRACT FROM ADF1FREQ
+C'00042A  6A02            890.           BPL.S     POSITIVE            BRANCH IF ALREADY POSITIVE
+                          891.  *
+C'00042C  4480            892.           NEG.L     D0                  ELSE MAKE POSITIVE
+     C'0000042E           893.  POSITIVE EQU       *
+C'00042E  B082            894.           CMP.L     D2,D0               COMPARE DIFF WITH BANDX3000
+C'000430  6E0E            895.           BGT.S     GT
+                          896.  *
+C'000432  B0B8 15F0       897.           CMP.L     NADF1ERR,D0         COMPARE DIFF WITH ERR
+C'000436  6E08            898.           BGT.S     GT
+                          899.  *
+C'000438  21C0 15F0       900.           MOVE.L    D0,NADF1ERR
+C'00043C  21C8 1598       901.           MOVE.L    A0,NADF1STA
+     C'00000440           902.  GT       EQU       *
+C'000440  D1FC 00000040   903.           ADDA.L    #64,A0              NEXT TABLE ADDRESS
+C'000446  B1C9            904.           CMP.L     A1,A0               CHECK FOR END OF TABLE
+C'000448  6DDA            905.           BLT.S     ADF1LOOP            LOOP UNTIL END
+                          906.  *
+C'00044A  51F8 170C       907.           SF.B      NADF1TUN            CLEAR ADF TUNED FLAG
+C'00044E  0CB8 00000000   908.           CMPI.L    #00,NADF1STA        SEE IF A STATION WAS FOUND
+          1598
+C'000456  6732            909.           BEQ.S     NOTTUNED            JUMP IF NO STATION FOUND
+                          910.  *
+C'000458  B4B8 15F0       911.           CMP.L     NADF1ERR,D2         SEE IF WITHIN 3000*BAND#
+C'00045C  6B2C            912.           BMI.S     NOTTUNED            BRANCH IF NOT WITHIN
+                          913.  *
+C'00045E  50F8 170C       914.           ST.B      NADF1TUN            SET ADF TUNED FLAG
+                          915.  *
+                          916.  *            IF NADF1ERR < 500 THEN NADF1ERR = 0
+                          917.  *            ELSE NADF1ERR = NADF1ERR - 500
+                          918.  *
+C'000462  04B8 000001F4   919.           SUB.L     #500,NADF1ERR       SUBTRACT 500 HZ
+          15F0
+C'00046A  6A08            920.           BPL.S     NOERR1              SEE IF TUNING ERROR > 0
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 18
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+                          921.  *
+C'00046C  21FC 00000000   922.           MOVE.L    #0,NADF1ERR         IF WITHIN 500 HZ THEN SET TO 0
+          15F0
+     C'00000474           923.  NOERR1   EQU       *
+                          924.  **********************************************************************
+                          925.  *                                                                    *
+                          926.  *                 ADF1 TUNING METER DRIVE                            *
+                          927.  *                 -----------------------                            *
+                          928.  *        OADF1TM = 32768 + 32767 * NADF1ERR / ( 3000 * BAND# )       *
+                          929.  *                                                                    *
+                          930.  *                  0 < NADF1ERR < 3000*BAND#                         *
+                          931.  *      ($8000) 32768 < OADF1TM  < 65535 ($FFFF)                       *
+                          932.  **********************************************************************
+C'000474  4A38 170B       933.           TST.B     NLF1LOS             SEE IF ADF1 IN RANGE AND LOS
+C'000478  6714            934.           BEQ.S     NOTTUN1             EXIT IF NOT
+                          935.  *
+C'00047A  2038 15F0       936.           MOVE.L    NADF1ERR,D0         GET TUNING ERROR              +00
+C'00047E  C0FC 7FFF       937.           MULU      #32767,D0           D0 = 32767 * NADF1ERR         +00
+C'000482  80C2            938.           DIVU      D2,D0               DIVIDE BY 3000 * BAND#        +00
+C'000484  0640 8000       939.           ADDI.W    #32768,D0           FINISH OADF1TM CALCULATION    +00
+C'000488  6010            940.           BRA.S     ADF1TM              OUTPUT ADF1TM
+                          941.  *
+C'00048A  51F8 170C       942.  NOTTUNED SF.B      NADF1TUN            CLEAR TUNED FLAG
+C'00048E  4278 16A8       943.  NOTTUN1  CLR.W     NADF1RAW            CLEAR RAW FREQ
+C'000492  42B8 1594       944.           CLR.L     NADF1FRQ            CLEAR ADF1 FREQ
+C'000496  303C FFFF       945.           MOVE.W    #$FFFF,D0           SET TUNING METER FOR MIN DEFLECTION
+C'00049A  018E 0449       946.  ADF1TM   MOVEP.W   D0,OADF1TM(A6)      OUTPUT
+     C'0000049E           947.  ADF1END  EQU       *
+                          948.  *********************************************************
+                          949.  *
+                          950.  *                  FIND CLOSEST AIRPORT
+                          951.  *
+                          952.  *********************************************************
+>>>  ERROR  line[953] Undefined symbol   [453] D:NAVFREQ.SA
+            line[953] NDDPPS0   [453] D:NAVFREQ.SA
+C'00049E  207C 00000000   953.           MOVE.L    #NDDPPS0,A0         PRESELECT ADDR OF LAT
+C'0004A4  21FC 7FFFFFFF   954.           MOVE.L    #$7FFFFFFF,NAPTRNG2 INIT SMALLEST RANGE SQUARED
+          161C
+>>>  ERROR  line[955] Undefined symbol   [455] D:NAVFREQ.SA
+            line[955] NJNFAC   [455] D:NAVFREQ.SA
+C'0004AC  363C 0000       955.           MOVE.W    #NJNFAC,D3          NUMBER OF AIRPORTS
+     C'000004B0           956.  APTLOOP  EQU       *
+C'0004B0  2650            957.           MOVE.L    (A0),A3             GET ADDRESS OF LAT
+C'0004B2  2013            958.           MOVE.L    (A3),D0             GET LAT
+C'0004B4  222B 0004       959.           MOVE.L    4(A3),D1            GET LON
+C'0004B8  6100 00AE       960.           BSR       FINDR2              CALCULATE RANGE SQUARED
+                          961.  *                                      RETURN (D0=RANGE2)
+C'0004BC  B0B8 161C       962.           CMP.L     NAPTRNG2,D0         SEE IF IT IS CLOSER THAN
+C'0004C0  6E06            963.           BGT.S     APTFAR              CURRENT CLOSEST
+                          964.  *
+C'0004C2  2248            965.           MOVE.L    A0,A1               STORE CLOSER PRESELECT ADDR
+C'0004C4  21C0 161C       966.           MOVE.L    D0,NAPTRNG2         STORE CLOSER RANGE SQUARED
+     C'000004C8           967.  APTFAR   EQU       *
+C'0004C8  5888            968.           ADD.L     #4,A0               INCREMENT PRESELECT
+C'0004CA  0443 0001       969.           SUBI.W    #1,D3               DECREMENT NJNFAC LOOP COUNTER
+C'0004CE  0C43 0000       970.           CMPI.W    #00,D3              CHECK FOR END OF LOOP
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 19
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+C'0004D2  66DC            971.           BNE.S     APTLOOP
+                          972.  *
+C'0004D4  21C9 1618       973.           MOVE.L    A1,NAPTPSA          STORE CLOSEST APT PRESELECT ADDR
+C'0004D8  2051            974.           MOVE.L    (A1),A0             GET LAT ADDR
+C'0004DA  91FC 0000001A   975.           SUB.L     #26,A0              CHANGE TO STATION ADDR
+C'0004E0  21C8 1608       976.           MOVE.L    A0,NSACF            STORE CLOSEST APT STA ADDR
+                          977.  ******************************************************
+                          978.  *
+                          979.  *                  SEE IF AIRPORT IS IN RANGE
+                          980.  *
+                          981.  ******************************************************
+C'0004E4  0CB8 002AAAAA   982.           CMPI.L    #2796202,NAPTRNG2   CHECK FOR OUT OF RANGE LIMIT  +24
+          161C
+C'0004EC  6F06            983.           BLE.S     INRANGE             AIRPORT WITHIN 10 MILES
+                          984.  *
+C'0004EE  51F8 171B       985.           SF.B      NMKRVL              CLEAR MARKER VALID FLAG
+C'0004F2  6046            986.           BRA.S     MKREND
+                          987.  ******************************************************
+                          988.  *
+                          989.  *                  FIND CLOSEST MARKER
+                          990.  *
+                          991.  ******************************************************
+     C'000004F4           992.  INRANGE  EQU       *
+C'0004F4  21FC 7FFFFFFF   993.           MOVE.L    #$7FFFFFFF,NMKRRNG2 INIT RANGE SQUARED
+          1620
+C'0004FC  2651            994.           MOVE.L    (A1),A3             GET LAT ADDR
+C'0004FE  97FC 0000001A   995.           SUBA.L    #26,A3              CHANGE TO STA ADDR
+C'000504  D3FC 00000004   996.           ADDA.L    #4,A1               INCREMENT PRESELECT ADDR
+C'00050A  2251            997.           MOVE.L    (A1),A1             GET LAT ADDR OF PRESELECT
+     C'0000050C           998.  MKRLOOP  EQU       *
+C'00050C  082B 0007 0003  999.           BTST.B    #7,3(A3)            TEST BIT 7 OF STA TYPE WORD
+C'000512  671C           1000.           BEQ.S     MKRFAR              TO SEE IF IT IS A MKR
+                         1001.  *
+C'000514  202B 001A      1002.           MOVE.L    26(A3),D0           GET LAT
+C'000518  222B 001E      1003.           MOVE.L    30(A3),D1           GET LON
+C'00051C  614A           1004.           BSR.S     FINDR2              CALCULATE RANGE SQUARED
+                         1005.  *                                      RETURN (D0=RANGE2)
+C'00051E  B0B8 1620      1006.           CMP.L     NMKRRNG2,D0    +24  CHECK TO SEE IF MKR IS
+C'000522  6E0C           1007.           BGT.S     MKRFAR              CLOSER THAN CURRENT CLOSEST
+                         1008.  *
+C'000524  50F8 171B      1009.           ST.B      NMKRVL              SET VALIDITY FLAG TRUE
+C'000528  21C0 1620      1010.           MOVE.L    D0,NMKRRNG2    +24  STORE NEW CLOSEST RANGE2
+C'00052C  21CB 160C      1011.           MOVE.L    A3,NMKRSA           STORE NEW CLOSEST STA ADDR
+C'000530  D7FC 00000040  1012.  MKRFAR   ADDA.L    #64,A3              NEXT STATION
+C'000536  B7C9           1013.           CMP.L     A1,A3               LOOP UNTIL NEXT AIRPORT
+C'000538  6DD2           1014.           BLT.S     MKRLOOP
+                         1015.  *
+C'00053A  602A           1016.  MKREND   BRA.S     NAVEND
+                         1017.  *                                      MASTER SWITCH OFF:
+C'00053C  51F8 170C      1018.  MSTOFF   SF.B      NADF1TUN            CLEAR ADF1 TUNING FLAG
+C'000540  51F8 171C      1019.           SF.B      NDME1TUN            CLEAR DME1 TUNING FLAG
+C'000544  51F8 171D      1020.           SF.B      NDME2TUN            CLEAR DME2 TUNING FLAG
+C'000548  51F8 170E      1021.           SF.B      NAV1TUN             CLEAR NAV1 TUNING FLAG
+C'00054C  51F8 170F      1022.           SF.B      NAV2TUN             CLEAR NAV2 TUNING FLAG
+C'000550  51F8 171B      1023.           SF.B      NMKRVL              CLEAR MKR  TUNING FLAG
+C'000554  7000           1024.           MOVE.L    #00,D0
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 20
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+C'000556  21C0 15B4      1025.           MOVE.L    D0,NAV1FREQ         CLEAR NAV1 FREQ
+C'00055A  21C0 15B8      1026.           MOVE.L    D0,NAV2FREQ         CLEAR NAV2 FREQ
+C'00055E  31C0 16A8      1027.           MOVE.W    D0,NADF1RAW         CLEAR ADF1 RAW FREQ
+C'000562  21C0 1594      1028.           MOVE.L    D0,NADF1FRQ         CLEAR ADF1 FREQ
+C'000566  4E40           1029.  NAVEND   TRAP      #0
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 21
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+                         1031.  *************************************************************
+                         1032.  *
+                         1033.  *                  CALCULATE RANGE SQUARED SUBROUTINE
+                         1034.  *
+                         1035.  * INPUTS:
+                         1036.  *        D0        STATION LAT
+                         1037.  *        D1        STATION LON
+                         1038.  * OUTPUTS:
+                         1039.  *        D0        RANGE SQUARED
+                         1040.  *
+                         1041.  *************************************************************
+     C'00000568          1042.  FINDR2   EQU       *
+C'000568  90B8 15C8      1043.           SUB.L     NGLAT,D0            +23     FIND DELTA LAT
+C'00056C  6A02           1044.           BPL.S     POS1
+                         1045.  *
+C'00056E  4480           1046.           NEG.L     D0                          FIND ABS(DELTA LAT)
+     C'00000570          1047.  POS1     EQU       *
+C'000570  E080           1048.           ASR.L     #8,D0               23-8=15 MAKE LONG WORD INTO
+C'000572  E680           1049.           ASR.L     #3,D0               15-3=12 WORD BEFORE MULTIPLY
+C'000574  C0C0           1050.           MULU.W    D0,D0               +24     FIND DELTA LAT SQUARED
+C'000576  92B8 15CC      1051.           SUB.L     NGLON,D1            +23     FIND DELTA LON
+C'00057A  6A02           1052.           BPL.S     POS2
+                         1053.  *
+C'00057C  4481           1054.           NEG.L     D1                          FIND ABS(DELTA LON)
+     C'0000057E          1055.  POS2     EQU       *
+C'00057E  E081           1056.           ASR.L     #8,D1               23-8=15 MAKE LONG WORD INTO
+C'000580  E681           1057.           ASR.L     #3,D1               15-3=12 WORD BEFORE MULTIPLY
+C'000582  C2C1           1058.           MULU.W    D1,D1               +24     FIND DELTA LON SQUARED
+C'000584  D081           1059.           ADD.L     D1,D0               +24     FIND RANGE SQUARED
+C'000586  4E75           1060.           RTS
+                         1061.  ***************************************************************
+                         1062.  *
+                         1063.  *                  TABLE SEARCH SUB ROUTINE
+                         1064.  *        INPUTS:
+                         1065.  *                  A0 -  TABLE STARTING ADDRESS
+                         1066.  *                  A1 -  TABLE ENDING ADDRESS
+                         1067.  *                  D0 -  FREQUENCY SEARCHING FOR
+                         1068.  *        OUTPUTS:
+                         1069.  *                  A0 -  STATION ADDRESS IF FOUND, 0 IF NOT FOUND
+                         1070.  *                  D1 -  VALIDITY FLAG, FF IF FOUND
+                         1071.  *
+                         1072.  ***************************************************************
+     C'00000588          1073.  TABSERCH EQU       *
+C'000588  50C1           1074.           ST.B      D1                  INITIALIZE VALIDITY FLAG
+     C'0000058A          1075.  LOOP     EQU       *
+C'00058A  B0A8 0004      1076.           CMP.L     4(A0),D0            CHECK FREQ AGAINST TABLE VALUE
+C'00058E  6712           1077.           BEQ.S     FOUND               BRANCH IF FOUND
+                         1078.  *
+C'000590  D1FC 00000040  1079.           ADDA.L    #64,A0              INCREMENT TABLE POINTER
+C'000596  B1C9           1080.           CMPA.L    A1,A0
+C'000598  6DF0           1081.           BLT.S     LOOP                LOOP UNTIL END OF TABLE
+                         1082.  *
+C'00059A  51C1           1083.           SF.B      D1                  NOT FOUND: CLEAR FLAG
+C'00059C  207C 00000000  1084.           MOVE.L    #00,A0                         CLEAR ADDRESS
+     C'000005A2          1085.  FOUND    EQU       *
+C'0005A2  4E75           1086.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 22
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+C'0005A4                 1087.           END
+   13 Errors
+  *
+C'00059A  51C1           1083.           SF.B      D1                  NOT FOUND: CLEAR FLAG
+C'00059C  207C 00000000  1084.           MOVE.L    #00,A0                         CLEAR ADDRESS
+     C'000005A2          1085.  FOUND    EQU       *
+C'0005A2  4E75           1086.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:56:25     ...Page 22
+D:NAVFREQ.LTX , D:NAVFREQ.PRN , D:NAVFREQ.SYM = D:NAVFREQ.SA
+   ...
+
+C'0005A4                 1087.           END
+   13 Error

@@ -1,0 +1,1110 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page  1
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                            1.           OPT       MEX,CEX,NOPCS
+                            2.  ******************************************************************************
+                            3.  *                                                                            *
+                            4.  *        MODULE:   EXEC ( REAL-TIME & BACK-GROUND EXECUTIVE )                *
+                            5.  *                                                                            *
+                            6.  *        VERSION   1.0   02/07/83      D.R. TRIPP                            *
+                            7.  *                                                                            *
+                            8.  *        VERSION:  2.0   11/30/83      D.R. TRIPP                            *
+                            9.  *                                                                            *
+                           10.  ******************************************************************************
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page  2
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                           12.  **********************************************************************
+                           13.  *                                                                    *
+                           14.  *        EXTERNAL LINKAGE INFORMATION                                *
+                           15.  *                                                                    *
+                           16.  **********************************************************************
+                           17.           XDEF      BGEXEC              BACK-GROUND EXEC
+                           18.           XDEF      BGTERM              BACK-GROUND TERMINATE
+                           19.           XDEF      BGRSUM              BACK-GROUND RESUME
+                           20.           XDEF      BGHOLD              BACK-GROUND HOLD
+                           21.           XDEF      BGWAIT              BACK-GROUND WAIT
+                           22.  *
+                           23.           XDEF      RTINIT              REAL-TIME INITIALIZER
+                           24.           XDEF      RTINT6              REAL-TIME INTERRUPT RECEIVER (TIMER)
+                           25.           XREF      IVINIT              INTERRUPT VECTOR INITIALIZER
+                           26.           XDEF      RTEXEC              REAL-TIME EXEC
+                           27.           XDEF      RTEND               LAST REAL-TIME MODULE
+                           28.           XDEF      RTRET               RETURN POINT OF REAL-TIME MODS
+                           29.           XDEF      RTMODCTL            REAL-TIME MODULE CONTROL
+                           30.           XDEF      RTMTC               REAL-TIME MODULE TIMER CONTROL
+                           31.           XREF      RTDEBUG             REAL-TIME DEBUG MODULE
+                           32.           XREF      RTLIST              START OF JUMP LIST
+                           33.           XREF      RTNAME              MODULE NAME LIST
+                           34.           XREF      RTNUMBER            NUMBER OF REAL-TIME MODULES
+                           35.  *
+                           36.           XDEF      LPOOL               LOCAL DATA POOL
+                           37.           XDEF      GPOOL               GLOBAL DATA POOL
+                           38.  *
+                           39.           XREF      LCPU                CPU UNIQUE DATA
+                           40.           XREF      TASKDATA            BACK-GROUND INITIAL DATA
+                           41.  *
+                           42.           XDEF      STCB                TCB ADDRESS ACTIVE TASK
+                           43.           XDEF      STCB1               TCB ADDRESS FIRST IN CHAIN
+                           44.           XDEF      STCBN               TCB ADDRESS LAST  IN CHAIN
+                           45.           XDEF      STCBNUM             NUMBER OF TCB'S IN CHAIN
+                           46.           XDEF      STCBID              ACTIVE TASK ID NUMBER
+                           47.  *
+                           48.           XDEF      HEAP                HEAP STORAGE AREA
+                           49.  *
+                           50.           XDEF      SSTACK              SYSTEM STACK
+                           51.           XDEF      USTACK              USER STACK
+                           52.  *
+                           53.           XDEF      EXCEPT1             ADDRESS ERROR EXCEPTION
+                           54.           XDEF      EXCEPT0             BUS ERROR EXCEPTION
+                           55.           XDEF      EXCEPT2             DIVIDE BY ZERO EXCEPTION
+                           56.           XDEF      EXCEPT3             PRIV. VIOLATION EXCEPTION
+                           57.  
+                           58.           XDEF      SMODTOUT            MODULE TIMEOUT COUNTERS
+                           59.           XDEF      SBMODRUN            MODULE ENABLE FLAGS
+                           60.           XDEF      TFRAME              TOTAL FRAME TIME (MICROSEC)
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page  3
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                           62.  **********************************************************************
+                           63.  *                                                                    *
+                           64.  *        RAM DATA FOR EXEC                                           *
+                           65.  *                                                                    *
+                           66.  **********************************************************************
+1'000000                   67.           SECTION.S 1                   SECTION ONE (LOW RAM)
+1'000000  <1>              68.  SLOAD    DS.B      1                   LOAD UP AND RUNNING FLAG
+1'000001  <1>              69.  SRTEXEC  DS.B      1                   REAL-TIME EXEC ACTIVE FLAG
+1'000002  <1>              70.  SBGEXEC  DS.B      1                   BACK-GROUND EXEC ACTIVE FLAG
+1'000003  <1>              71.  SFRAME   DS.B      1                   CURENT FRAME NUMBER 0-7
+1'000004  <1>              72.  SMODULE  DS.B      1                   CURENT MODULE NUMBER 0-N
+1'000005  <1>              73.  SBFIRST  DS.B      1                   FIRST FRAME FLAG FOR RTEXEC
+1'000006  <1>              74.  SBNOTIME DS.B      1                   NO TIME FLAG
+1'000007  <1>              75.  SBTIME   DS.B      1                   MODULE TIMER SYSTEM ENABLE FLAG
+1'000008  <18>             76.  SBMODRUN DS.B      24                  MODULE RUN ENABLE FLAGS
+1'000020  <20>             77.  SOUTBUFF DS.B      32                  OUTPUT BUFFER FOR EXEC MESSAGES
+                           78.  *
+1'000040  <2>              79.  SCURMASK DS.W      1                   CURRENT FRAME MASK (LOW BYTE NOT USED)
+                           80.  *
+1'000042  <2>              81.  STCBID   DS.W      1                   ACTIVE TCB ID NUMBER
+1'000044  <2>              82.  STCBNUM  DS.W      1                   NUMBER OF TCB'S IN CHAIN
+                           83.  *
+1'000046  <1>              84.  S400I    DS.B      1                   MVME 400 INSTALLED FLAG
+1'000047  <1>              85.  S410I    DS.B      1                   MVME 410 INSTALLED FLAG
+                           86.  *
+1'000048  <4>              87.  STEMP    DS.L      1                   TEMPOARY SAVE AREA
+                           88.  *
+1'00004C  <4>              89.  SCYCLE   DS.L      1                   CURENT CYCLE NUMBER
+                           90.  *
+1'000050  <4>              91.  SMODADR  DS.L      1                   POINTER TO JUMP LIST TABLE
+1'000054  <4>              92.  SRUNADR  DS.L      1                   POINTER TO RUN ENABLE FLAG TABLE
+                           93.  *
+1'000058  <4>              94.  STCB     DS.L      1                   TCB ADDRESS OF ACTIVE TASK
+1'00005C  <4>              95.  STCB1    DS.L      1                   TCB ADDRESS OF FIRST IN CHAIN
+1'000060  <4>              96.  STCBN    DS.L      1                   TCB ADDRESS OF LAST  IN CHAIN
+                           97.  *
+1'000064  <4>              98.  SADDEX   DS.L      1                   NORMAL ADDRESS EXCEPTION VECTOR
+1'000068  <4>              99.  SBUSEX   DS.L      1                   NORMAL BUS ERROR EXCEPTION VECTOR
+1'00006C  <4>             100.  SPVEX    DS.L      1                   NORMAL PRIV. VIOLATION EXCEPTION
+1'000070  <4>             101.  SDZEX    DS.L      1                   NORMAL DIVIDE BY ZERO EXCEPTION
+                          102.  *
+1'000074  <4>             103.  SPCATERR DS.L      1                   SAVE PC FOR TIME-OUT
+1'000078  <4>             104.  STIMEOUT DS.L      1                   TOTAL TIMEOUT COUNTER
+1'00007C  <60>            105.  SMODTOUT DS.L      24                  MODULE TIME OUT COUNTS
+                          106.  *
+1'0000DC  <4>             107.  STIMAD   DS.L      1                   TIMMER ADDRESS
+                          108.  **********************************************************************
+                          109.  *                                                                    *
+                          110.  *        HEAP ALLOCATION DATA AREA                                   *
+                          111.  *                                                                    *
+                          112.  **********************************************************************
+1'0000E0  <4>             113.  SSTACK   DS.L      1                   ADDRESS OF SYSTEM STACK (END)
+1'0000E4  <4>             114.  USTACK   DS.L      1                   ADDRESS OF USER STACK (END)
+1'0000E8  <4>             115.  LPOOL    DS.L      1                   ADDRESS OF LOCAL DATA POOL
+1'0000EC  <4>             116.  HEAP     DS.L      1                   ADDRESS OF HEAP DATA AREA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page  4
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          118.  **********************************************************************
+                          119.  *                                                                    *
+                          120.  *        DEBUG DATA-POOL SYMBOLS                                     *
+                          121.  *                                                                    *
+                          122.  **********************************************************************
+                          123.           INCLUDE   DSYM.SA
+     # 00000F00           124:  DSEG      EQU   $00000F00 L 001 L H   DEBUG DATA SEGMENT ADDRESS
+     # 00000F04           125:  DBUFF     EQU   $00000F04 B 080 L H   DEBUG INPUT BUFFER
+     # 00000F54           126:  DBUFFPTR  EQU   $00000F54 L 001 L H   DEBUG INPUT BUFFER POINTER
+     # 00000F58           127:  DBUFFCNT  EQU   $00000F58 B 001 L H   DEBUG INPUT BUFFER COUNT
+     # 00000F59           128:  DBUFFLNE  EQU   $00000F59 B 001 L H   DEBUG INPUT BUFFER LINE COMPLETE FLAG
+     # 00000F5A           129:  DBUFFCHG  EQU   $00000F5A B 001 L H   DEBUG INPUT BUFFER CHANGE FLAG
+     # 00000F5B           130:  D400I     EQU   $00000F5B B 001 L H   DEBUG MVME400 INSTALLED FLAG
+     # 00000F5C           131:  DLIST     EQU   $00000F5C L 128 L H   DEBUG DISPLAY LIST
+     # 0000115C           132:  DCOUNT    EQU   $0000115C W 001 L H   DEBUG DISPLAY LIST COUNT
+     # 0000115E           133:  DSPARE2   EQU   $0000115E W 001 L H   DEBUG SPARE WORD
+     # 00001160           134:  TFRAME    EQU   $00001160 L 001 L D   FRAME TIME ACTUAL
+     # 00001164           135:  TFRAMEA   EQU   $00001164 L 001 L D   FRAME TIME AVERAGE
+     # 00001168           136:  TFRAMEW   EQU   $00001168 L 001 L D   FRAME TIME WORST
+     # 0000116C           137:  TMODULE   EQU   $0000116C W 016 L D   MODULE TIMES ACTUAL
+     # 0000118C           138:  TMODULEA  EQU   $0000118C W 016 L D   MODULE TIMES AVERAGE
+     # 000011AC           139:  TMODULEW  EQU   $000011AC W 016 L D   MODULE TIMES WORST
+     # 000011CC           140:  DSPARE    EQU   $000011CC L 032 L H   DEBUG SPARE LONG WORDS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page  5
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          142.  **********************************************************************
+                          143.  *                                                                    *
+                          144.  *        TASK CONTEXT BLOCK (TCB) OFFSET EQUATES                     *
+                          145.  *                                                                    *
+                          146.  **********************************************************************
+                          147.           INCLUDE   TCBSYM.SA
+     # 00000000           148:           OFFSET    0
+     # 00000000 <8>       149:  TCBNAME  DS.B      08       TASK NAME
+     # 00000008 <4>       150:  TCBDS    DS.L      01       TASK DATA SEGMENT POINTER
+     # 0000000C <4>       151:  TCBCS    DS.L      01       TASK CODE SEGMENT POINTER
+     # 00000010 <4>       152:  TCBSS    DS.L      01       TASK STACK SEGMENT POINTER
+     # 00000014 <2>       153:  TCBID    DS.W      01       TASK ID NUMBER
+     # 00000016 <2>       154:  TCBDSL   DS.W      01       TASK DATA SEGMENT LENGTH
+     # 00000018 <2>       155:  TCBCSL   DS.W      01       TASK CODE SEGMENT LENGTH
+     # 0000001A <2>       156:  TCBSSL   DS.W      01       TASK STACK SEGMENT LENGTH
+     # 0000001C <4>       157:  TCBENTRY DS.L      01       TASK ENTRY POINT
+     # 00000020 <4>       158:  TCBEXEP  DS.L      01       TASK EXECPTION ENTRY POINT
+     # 00000024 <1>       159:  TCBHOLD  DS.B      01       TASK HOLD FLAG
+     # 00000025 <1>       160:  TCBRUN   DS.B      01       TASK RUN FLAG
+     # 00000026 <1>       161:  TCBERR   DS.B      01       TASK ERROR FLAG
+     # 00000027 <1>       162:  TCBWAIT  DS.B      01       TASK WAIT FLAG
+     # 00000028 <1>       163:  TCBEX    DS.B      01       TASK EXCEPTION ENTRY FLAG
+     # 00000029 <1>       164:           DS.B      01       SPARE
+     # 0000002A <2>       165:  TCBPRI   DS.W      01       TASK PRIORITY CODE
+     # 0000002C <2>       166:  TCBSR    DS.W      01       TASK STATUS REGISTER
+     # 0000002E <4>       167:  TCBPC    DS.L      01       TASK PROGRAM COUNTER
+     # 00000032 <3C>      168:  TCBREGS  DS.L      15       TASK REGISTER D0-D7/A0-A6
+     # 0000006E <4>       169:  TCBUSP   DS.L      01       TASK STACK POINTER (A7)
+     # 00000072 <2>       170:  TCBIR    DS.W      01       TASK INSTUCTION REGISTER
+     # 00000074 <2>       171:  TCBAI    DS.W      01       TASK ACCESS INFORMATION
+     # 00000076 <2>       172:  TCBVN    DS.W      01       TASK VECTOR NUMBER
+                          173:  *        DS.W      01       SPARE
+     # 00000078 <4>       174:  TCBAA    DS.L      01       TASK ERROR ACCESS ADDRESS
+     # 0000007C <4>       175:  TCBLINK  DS.L      01       LINK TO NEXT TCB
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page  6
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          177.  **********************************************************************
+                          178.  *                                                                    *
+                          179.  *        TASK DATA BLOCK (TDB) OFFSET EQUATES                        *
+                          180.  *                                                                    *
+                          181.  **********************************************************************
+                          182.           INCLUDE   TDBSYM.SA
+     # 00000000           183:           OFFSET    0
+     # 00000000 <8>       184:  TDBNAME  DS.B      08       TASK NAME
+     # 00000008 <4>       185:  TDBEP    DS.L      01       TASK ENTRY POINT
+     # 0000000C <4>       186:  TDBCS    DS.L      01       TASK CODE SEGMENT POINTER
+     # 00000010 <2>       187:  TDBCSL   DS.W      01       TASK CODE SEGMENT LENGTH
+     # 00000012 <2>       188:  TDBDSL   DS.W      01       TASK DATA SEGMENT LENGTH
+     # 00000014 <2>       189:  TDBSSL   DS.W      01       TASK STACK SEGMENT LENGTH
+     # 00000016 <2>       190:  TDBPRI   DS.W      01       TASK PRIORITY CODE
+     # 00000018 <1>       191:  TDBFLAG1 DS.B      01       TDB FLAG BITS
+     # 00000019 <1>       192:  TDBFLAG2 DS.B      01       TDB FLAG BITS
+     # 0000001A <1>       193:  TDBFLAG3 DS.B      01       TDB FLAG BITS
+     # 0000001B <1>       194:  TDBFLAG4 DS.B      01       TDB FLAG BITS
+     # 0000001C <4>       195:  TDBERROR DS.L      01       TASK ERROR ENTRY POINT
+     # 00000020 <4>       196:  TDBLINK  DS.L      01       LINK TO NEXT TDB
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page  7
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          198.  **********************************************************************
+                          199.  *                                                                    *
+                          200.  *        HEAP STORAGE AREA                                           *
+                          201.  *                                                                    *
+                          202.  **********************************************************************
+2'000000                  203.           SECTION.S 2
+2'000000  <3000>          204.  INITHEAP DS.B      1024*12             12K OF INITIAL HEAP
+     2'00003000           205.  HEAPEND  EQU       *                   HEAP END
+                          206.  **********************************************************************
+                          207.  *                                                                    *
+                          208.  *        GLOBAL DATA POOL                                            *
+                          209.  *                                                                    *
+                          210.  **********************************************************************
+3'000000                  211.           SECTION   3
+3'000000  <400>           212.  GPOOL    DS.L      256                 1K OF GLOBAL DATA POOL
+     3'00000400           213.  GPOOLEND EQU       *                   GLOBAL DATA POOL END
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page  8
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          215.  **********************************************************************
+                          216.  *                                                                    *
+                          217.  *        LOCAL CONSTANTS FOR REAL-TIME & BACK-GROUND EXEC'S          *
+                          218.  *                                                                    *
+                          219.  **********************************************************************
+C'000000                  220.           SECTION   12
+                          221.  *
+     # 000F0000           222.  MTIMER   EQU       $F0000              MODULE TIMER #1
+                          223.  *
+     # 00F03A72           224.  PNT8HX   EQU       $F03A72             PNT8HX ENTRY POINT
+     # 00F032B4           225.  HEX2DEC  EQU       $F032B4             HEX2DEC ENTRY POINT
+     # 00F03CC0           226.  OUT1CR   EQU       $F03CC0             OUT1CR ENTRY POINT
+                          227.  *
+     # 00FE8013           228.  CR2      EQU       $FE8013             CONTROL REG. 2
+     # 00FE8011           229.  CR13     EQU       $FE8011             CONTROL REG. 1/3
+     # 00FE8015           230.  BRH      EQU       $FE8015             BUFFER REG. HIGH BYTE
+     # 00FE801F           231.  BR3L     EQU       $FE801F             TIMER #3 LATCH LOW BYTE
+     # 00FE801D           232.  RT3C     EQU       $FE801D             TIMER #3 COUNTER REG.
+                          233.  *
+     # 00FE8001           234.  ACIAC    EQU       $FE8001             ACIA CONTROL & STATUS REGISTERS
+     # 00FE8003           235.  ACIAD    EQU       $FE8003             ACIA DATA REGISTERS
+                          236.  *
+     # 00FE8031           237.  MSR      EQU       $FE8031             MODULE STATUS REGISTER
+                          238.  *
+     # 00FE61C9           239.  NECA     EQU       $FE61C9             NEC SERIAL PORT A
+     # 00FE61CB           240.  NECB     EQU       $FE61CB             NEC SERIAL PORT B
+                          241.  *
+                          242.  **********************************************************************
+                          243.  *                                                                    *
+                          244.  *        RTINT6    REAL-TIME INTERRUPT RECEIVER                      *
+                          245.  *                                                                    *
+                          246.  **********************************************************************
+     C'00000000           247.  RTINT6   EQU       *
+C'000000  46FC 2700       248.           MOVE.W    #$2700,SR           MASK ALL INTERRUPTS
+C'000004  4A38'0000       249.           TST.B     SLOAD               TEST LOAD UP & RUNNING FLAG
+C'000008  676A            250.           BEQ.S     QUIT6               QUIT IF NO LOAD RUNNING
+C'00000A  4A38'0001       251.           TST.B     SRTEXEC             TEST RTEXEC FLAG
+C'00000E  672E            252.           BEQ.S     TESTBG              IF NOT GO AND TEST FOR B. G.
+C'000010  52B8'0078       253.           ADDQ.L    #1,STIMEOUT         ADD ONE FOR TIME OUT COUNT
+C'000014  207C'0000007C   254.           MOVE.L    #SMODTOUT,A0        LOAD ADDRESS
+C'00001A  4280            255.           CLR.L     D0                  CLEAR D0
+C'00001C  1038'0004       256.           MOVE.B    SMODULE,D0          LOAD MODULE NUMBER
+C'000020  E588            257.           LSL.L     #2,D0               MULTIPLY BY 4
+C'000022  D1C0            258.           ADD.L     D0,A0               CALCULATE OFFSET
+C'000024  5290            259.           ADDQ.L    #1,(A0)             ADD TO MODULE TIME OUT COUNT
+C'000026  4238'0001       260.           CLR.B     SRTEXEC             CLEAR RTEXEC FLAG
+C'00002A  202F 0002       261.           MOVE.L    2(A7),D0            LOAD RETURN PC
+C'00002E  21C0'0074       262.           MOVE.L    D0,SPCATERR         SAVE PC FOR INSPECTION
+C'000032  B0BC'000005EC   263.           CMP.L     #RTRET,D0           DID IT INTERRUPT AFTER A TRAP
+C'000038  6650            264.           BNE.S     QUIT6T              IF NOT CONTINUE AS NORMAL
+C'00003A  5C8F            265.           ADDQ.L    #6,A7               CLEAR TRAP PC & SR FROM STACK
+C'00003C  604C            266.           BRA.S     QUIT6T              GO AND CLEAR INTER. PC & SR FROM STK.
+C'00003E  4A38'0002       267.  TESTBG   TST.B     SBGEXEC             TEST BGEXEC FLAG
+C'000042  6730            268.           BEQ.S     QUIT6               BRANCH IF FALSE
+C'000044  21C8'0048       269.           MOVE.L    A0,STEMP            SAVE A0
+C'000048  2078'0058       270.           MOVE.L    STCB,A0             LOAD ADDRESS OF ACTIVE TCB
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page  9
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+C'00004C  48E8 7FFF 0032  271.           MOVEM.L   D0-D7/A0-A6,TCBREGS(A0)       SAVE REGISTERS IN TCB
+C'000052  2178'0048 0052  272.           MOVE.L    STEMP,TCBREGS+32(A0)          SAVE A0 INTO TCB
+C'000058  4E69            273.           MOVE.L    USP,A1              LOAD USP
+C'00005A  2149 006E       274.           MOVE.L    A1,TCBUSP(A0)       SAVE USP IN TCB
+C'00005E  3157 002C       275.           MOVE.W    (A7),TCBSR(A0)      SAVE SR IN TCB
+C'000062  216F 0002 002E  276.           MOVE.L    2(A7),TCBPC(A0)     SAVE PC IN TCB
+C'000068  51E8 0025       277.           SF.B      TCBRUN(A0)          SET RUN FLAG TO FALSE
+C'00006C  50E8 0024       278.           ST.B      TCBHOLD(A0)         SET HOLD FLAG TO TRUE
+C'000070  4238'0002       279.           CLR.B     SBGEXEC             SET BACK-GROUND FLAG OFF
+C'000074  5C8F            280.  QUIT6    ADDQ.L    #6,A7               CLEAR RETURN INFORMATION
+C'000076  4A39 00FE8013   281.  QUIT6A   TST.B     CR2                 CLEAR INTERUPT
+C'00007C  4A39 00FE801D   282.           TST.B     RT3C                CLEAR INTERUPT
+C'000082  46FC 2500       283.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
+C'000086  6000 0502       284.           BRA       RTEXEC              GOTO RTEXEC
+C'00008A  DFFC 0000000E   285.  QUIT6T   ADD.L     #14,A7              CLEAR DATA ON STACK & ADDRESSES
+C'000090  4238'0005       286.           CLR.B     SBFIRST             RESET TO FIRST FRAME
+C'000094  4238'0004       287.           CLR.B     SMODULE             RESET TO FIRST MODULE
+C'000098  60DC            288.           BRA.S     QUIT6A              DO THE REST
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 10
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          290.  **********************************************************************
+                          291.  *                                                                    *
+                          292.  *        RTINIT    REAL-TIME INITIALIZER                             *
+                          293.  *                                                                    *
+                          294.  **********************************************************************
+     C'0000009A           295.  RTINIT   EQU       *
+C'00009A  46FC 2700       296.           MOVE.W    #$2700,SR           LOAD SR
+                          297.  
+                          298.  *
+C'00009E  227C'00000000   299.           MOVE.L    #LCPU,A1            LOAD EXEC BLOCK
+C'0000A4  2069 0010       300.           MOVE.L    16(A1),A0           LOAD START OF MEMORY
+C'0000A8  4298            301.  CLRMEM   CLR.L     (A0)+               CLEAR MEMORY
+C'0000AA  B1E9 0014       302.           CMP.L     20(A1),A0           TEST FOR END
+C'0000AE  66F8            303.           BNE.S     CLRMEM              CLEAR SOME MORE
+                          304.  *
+C'0000B0  207C 000F0000   305.           MOVE.L    #MTIMER,A0          LOAD ADDRESS OF TIMER
+C'0000B6  7000            306.           MOVEQ.L   #0,D0               CLEAR A2
+C'0000B8  1029 0008       307.           MOVE.B    8(A1),D0            LOAD CPU NUMBER
+C'0000BC  5300            308.           SUB.B     #1,D0               ADJUST CPU NUMBER
+C'0000BE  E188            309.           LSL.L     #8,D0               SHIFT 8
+C'0000C0  E988            310.           LSL.L     #4,D0               SHIFT 4
+C'0000C2  D1C0            311.           ADD.L     D0,A0               ADD OFFSET TO TIMER ADDRESS
+C'0000C4  21C8'00DC       312.           MOVE.L    A0,STIMAD           STORE TIMER ADDRESS
+                          313.  *
+C'0000C8  43F8'0000       314.           LEA       INITHEAP,A1         LOAD START OF INITIAL HEAP
+                          315.  *
+C'0000CC  41F9'0000031C   316.           LEA       MSG1,A0             LOAD ADDRESS OF MESSAGE 1
+C'0000D2  2009            317.           MOVE.L    A1,D0               LOAD SSTACK ADDRESS
+C'0000D4  4EB9'000003AA   318.           JSR       DISPADR             DISPLAY MESSAGE
+                          319.  *
+C'0000DA  D3FC 00000400   320.           ADD.L     #1024,A1            ADD 1K FOR SSTACK
+C'0000E0  21C9'00E0       321.           MOVE.L    A1,SSTACK           SAVE END ADDRESS+1 FOR SSTACK
+                          322.  *
+C'0000E4  41F9'00000324   323.           LEA       MSG2,A0             LOAD ADDRESS OF MESSAGE 2
+C'0000EA  2009            324.           MOVE.L    A1,D0               LOAD USTACK ADDRESS
+C'0000EC  4EB9'000003AA   325.           JSR       DISPADR             DISPLAY MESSAGE
+                          326.  *
+C'0000F2  D3FC 00000200   327.           ADD.L     #512,A1             ADD 512B FOR USTACK
+C'0000F8  21C9'00E4       328.           MOVE.L    A1,USTACK           SAVE END ADDRESS+1 FOR USTACK
+                          329.  *
+C'0000FC  41F9'0000032C   330.           LEA       MSG3,A0             LOAD ADDRESS OF MESSAGE 3
+C'000102  2009            331.           MOVE.L    A1,D0               LOAD LPOOL ADDRESS
+C'000104  4EB9'000003AA   332.           JSR       DISPADR             DISPLAY MESSAGE
+                          333.  *
+C'00010A  21C9'00E8       334.           MOVE.L    A1,LPOOL            SAVE START ADDRESS OF LPOOL
+C'00010E  D3FC 00001800   335.           ADD.L     #1024*6,A1          ADD 6K FOR LPOOL
+                          336.  *
+C'000114  21C9'00EC       337.           MOVE.L    A1,HEAP             SAVE START ADDRESS WITH REMANDER
+                          338.  *
+C'000118  2E78'00E0       339.           MOVE.L    SSTACK,A7           LOAD ADDRESS OF SYSTEM STACK
+C'00011C  2C78'00E4       340.           MOVE.L    USTACK,A6           LOAD ADDRESS OF USER STACK
+C'000120  4E66            341.           MOVE.L    A6,USP              LOAD USER STACK
+                          342.  *
+C'000122  21FC'00000000   343.           MOVE.L    #RTINT6,$78         LOAD AUTO VECTOR #6
+          0078
+                          344.  *
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 11
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+C'00012A  0839 0004       345.           BTST.B    #4,MSR              TEST SSB0
+          00FE8031
+C'000132  56F8'0046       346.           SNE.B     S400I               SET IF SSB0 = 1 (MVME400)
+C'000136  56F8 0F5B       347.           SNE.B     D400I               SET IF SSB0 = 1 (MVME400)
+C'00013A  0839 0005       348.           BTST.B    #5,MSR              TEST SSB1
+          00FE8031
+C'000142  56F8'0047       349.           SNE.B     S410I               SET IF SSB1 = 1 (MVME410)
+                          350.  *
+C'000146  4EB9'00000000   351.           JSR       IVINIT              INITIALIZE INTERRUPT VECTORS
+                          352.  *
+C'00014C  21FC'000005EC   353.           MOVE.L    #RTRET,$80          LOAD TRAP #0 VECTOR
+          0080
+C'000154  21FC'0000076C   354.           MOVE.L    #BGHOLD,$84         LOAD TRAP #1 VECTOR
+          0084
+C'00015C  21FC'0000079E   355.           MOVE.L    #BGWAIT,$88         LOAD TRAP #2 VECTOR
+          0088
+C'000164  21FC'000007D0   356.           MOVE.L    #BGTERM,$8C         LOAD TRAP #3 VECTOR
+          008C
+C'00016C  21FC'000007F6   357.           MOVE.L    #BGRSUM,$90         LOAD TRAP #4 VECTOR
+          0090
+C'000174  21FC'0000009A   358.           MOVE.L    #RTINIT,$94         LOAD TRAP #5 VECTOR
+          0094
+C'00017C  21FC'00000564   359.           MOVE.L    #RTMODCTL,$98       LOAD TRAP #6 VECTOR
+          0098
+C'000184  21FC'0000057E   360.           MOVE.L    #RTMTC,$9C          LOAD TRAP #7 VECTOR
+          009C
+                          361.  *
+C'00018C  21F8 0008'0068  362.           MOVE.L    $08,SBUSEX          SAVE BUS ERROR EXCEPTION
+C'000192  21FC'000003EC   363.           MOVE.L    #EXCEPT0,$08        LOAD BUS ERROR EXCEPTION VECTOR
+          0008
+                          364.  *
+C'00019A  21F8 000C'0064  365.           MOVE.L    $0C,SADDEX          SAVE ADDRESS EXCEPTION
+C'0001A0  21FC'00000450   366.           MOVE.L    #EXCEPT1,$0C        LOAD ADDRESS EXCEPTION VECTOR
+          000C
+                          367.  *
+C'0001A8  21F8 0014'0070  368.           MOVE.L    $14,SDZEX           SAVE DIVIDE BY ZERO EXCEPTION
+C'0001AE  21FC'000004B4   369.           MOVE.L    #EXCEPT2,$14        LOAD ADDRESS EXCEPTION VECTOR
+          0014
+                          370.  *
+C'0001B6  21F8 0020'006C  371.           MOVE.L    $20,SPVEX           SAVE PRIV. VIOLATION EXCEPTION
+C'0001BC  21FC'0000050C   372.           MOVE.L    #EXCEPT3,$20        LOAD ADDRESS EXCEPTION VECTOR
+          0020
+                          373.  *
+C'0001C4  13FC 0001       374.           MOVE.B    #1,CR2              ENABLE A WRITE TO TIMER #1
+          00FE8013
+C'0001CC  13FC 0001       375.           MOVE.B    #1,CR13             HOLD TIMERS
+          00FE8011
+C'0001D4  4239 00FE8013   376.           CLR.B     CR2                 ENABLE A WRITE TO TIMER #3
+C'0001DA  13FC 0040       377.           MOVE.B    #$40,CR13           EXT. CLOCK & INTERRUPT
+          00FE8011
+C'0001E2  13FC 001E       378.           MOVE.B    #$1E,BRH            LOAD MSB
+          00FE8015
+C'0001EA  13FC 0000       379.           MOVE.B    #$00,BR3L           LOAD LSB INTO TIMER #3 LATCHES
+          00FE801F
+C'0001F2  13FC 0001       380.           MOVE.B    #$01,CR2            ENABLE A WRITE TO TIMER #1
+          00FE8013
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 12
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          381.  *
+C'0001FA  2C7C'00000000   382.           MOVE.L    #TASKDATA,A6        LOAD ADDRESS OF FIRST TDB
+                          383.  *
+C'000200  226E 0008       384.           MOVE.L    TDBEP(A6),A1        LOAD ENTRY POINT
+C'000204  246E 000C       385.           MOVE.L    TDBCS(A6),A2        LOAD CODE SEGMENT POINTER
+C'000208  322E 0010       386.           MOVE.W    TDBCSL(A6),D1       LOAD CODE SEGMENT LENGTH
+C'00020C  342E 0012       387.           MOVE.W    TDBDSL(A6),D2       LOAD DATA SEGMENT LENGTH
+C'000210  362E 0014       388.           MOVE.W    TDBSSL(A6),D3       LOAD STACK SEGMENT LENGTH
+C'000214  382E 0016       389.           MOVE.W    TDBPRI(A6),D4       LOAD TASK PRIORITY CODE
+C'000218  2A2E 001C       390.           MOVE.L    TDBERROR(A6),D5     LOAD TASK ERROR ENTRY POINT
+C'00021C  204E            391.           MOVE.L    A6,A0               COPY POINTER
+C'00021E  4EB9'0000033C   392.           JSR       BUILDTCB            BUILD A TCB
+C'000224  4A00            393.           TST.B     D0                  TEST RETURN CODE
+C'000226  6600 00B8       394.           BNE       TCBAERR             BRANCH IF TCB ALLOCATION ERROR
+C'00022A  2008            395.           MOVE.L    A0,D0               LOAD ADDRESS TO DISPLAY
+C'00022C  4EB9'000003AA   396.           JSR       DISPADR             DISPLAY TCB ADDRESS
+                          397.  *
+C'000232  082E 0000 0018  398.           BTST      #0,TDBFLAG1(A6)     TEST SET RUN FLAG OPTION BIT
+C'000238  6704            399.           BEQ.S     FTCB1               BRANCH IF NOT SET
+C'00023A  50E8 0025       400.           ST.B      TCBRUN(A0)          SET RUN FLAG
+C'00023E  082E 0001 0018  401.  FTCB1    BTST      #1,TDBFLAG1(A6)     TEST EXECPTION ENTRY OPTION BIT
+C'000244  6704            402.           BEQ.S     FTCB2               BRANCH IF NOT SET
+C'000246  50E8 0028       403.           ST.B      TCBEX(A0)           SET EXECPTION ENTRY FLAG
+C'00024A  21C8'005C       404.  FTCB2    MOVE.L    A0,STCB1            SET FIRST TCB
+                          405.  *
+C'00024E  2C6E 0020       406.  TDBLOOP  MOVE.L    TDBLINK(A6),A6      LOAD LINK TO NEXT TDB
+C'000252  BDFC 00000000   407.           CMP.L     #0,A6               TEST FOR NULL POINTER
+C'000258  6750            408.           BEQ.S     ENDTDB              BRANCH IF NULL POINTER FOUND
+                          409.  *
+C'00025A  226E 0008       410.           MOVE.L    TDBEP(A6),A1        LOAD ENTRY POINT
+C'00025E  246E 000C       411.           MOVE.L    TDBCS(A6),A2        LOAD CODE SEGMENT POINTER
+C'000262  322E 0010       412.           MOVE.W    TDBCSL(A6),D1       LOAD CODE SEGMENT LENGTH
+C'000266  342E 0012       413.           MOVE.W    TDBDSL(A6),D2       LOAD DATA SEGMENT LENGTH
+C'00026A  362E 0014       414.           MOVE.W    TDBSSL(A6),D3       LOAD STACK SEGMENT LENGTH
+C'00026E  382E 0016       415.           MOVE.W    TDBPRI(A6),D4       LOAD TASK PRIORITY CODE
+C'000272  2A2E 001C       416.           MOVE.L    TDBERROR(A6),D5     LOAD TASK ERROR ENTRY POINT
+C'000276  2A48            417.           MOVE.L    A0,A5               SAVE LAST TCB POINTER
+C'000278  204E            418.           MOVE.L    A6,A0               COPY POINTER
+C'00027A  4EB9'0000033C   419.           JSR       BUILDTCB            BUILD A TCB
+C'000280  4A00            420.           TST.B     D0                  TEST RETURN CODE
+C'000282  665C            421.           BNE.S     TCBAERR             BRANCH IF TCB ALLOCATION ERROR
+C'000284  2008            422.           MOVE.L    A0,D0               LOAD ADDRESS TO DISPLAY
+C'000286  4EB9'000003AA   423.           JSR       DISPADR             DISPLAY TCB ADDRESS
+                          424.  *
+C'00028C  082E 0000 0018  425.           BTST      #0,TDBFLAG1(A6)     TEST SET RUN FLAG OPTION BIT
+C'000292  6704            426.           BEQ.S     NTCB1               BRANCH IF NOT SET
+C'000294  50E8 0025       427.           ST.B      TCBRUN(A0)          SET RUN FLAG
+C'000298  082E 0001 0018  428.  NTCB1    BTST      #1,TDBFLAG1(A6)     TEST EXCPTION ENTRY OPTION BIT
+C'00029E  6704            429.           BEQ.S     NTCB2               BRANCH IF NOT SET
+C'0002A0  50E8 0028       430.           ST.B      TCBEX(A0)           SET EXCPTION ENTRY FLAG
+                          431.  *
+C'0002A4  2B48 007C       432.  NTCB2    MOVE.L    A0,TCBLINK(A5)      LINK LAST TCB TO THIS TCB
+C'0002A8  60A4            433.           BRA.S     TDBLOOP             LOOP UNTIL ALL TASK ARE CREATED
+                          434.  *
+C'0002AA  21C8'0060       435.  ENDTDB   MOVE.L    A0,STCBN            SET LAST TCB
+C'0002AE  2178'005C 007C  436.           MOVE.L    STCB1,TCBLINK(A0)   LINK LAST TCB TO FIRST TCB
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 13
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          437.  *
+C'0002B4  21F8'0060'0058  438.           MOVE.L    STCBN,STCB          SET LAST TASK TO ACTIVE TASK
+                          439.  *
+C'0002BA  41F9'00000334   440.           LEA       MSG5,A0             LOAD ADDRESS OF MESSAGE 5
+C'0002C0  2038'00EC       441.           MOVE.L    HEAP,D0             LOAD HEAP ADDRESS
+C'0002C4  4EB9'000003AA   442.           JSR       DISPADR             DISPLAY MESSAGE
+                          443.  *
+C'0002CA  50F8'0000       444.           ST.B      SLOAD               SET LOAD UP AND RUNNING FLAG
+C'0002CE  46FC 2500       445.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
+                          446.  *
+C'0002D2  31FC 8000'0040  447.           MOVE.W    #$8000,SCURMASK     LOAD FRAME MASK (FIRST FRAME)
+                          448.  *
+C'0002D8  4239 00FE8011   449.           CLR.B     CR13                RELEASE TIMERS
+                          450.  *
+C'0002DE  60FE            451.  RTX      BRA.S     RTX                 LOOP UNTIL INTERRUPT
+                          452.  *
+     C'000002E0           453.  TCBAERR  EQU       *                   TCB ALLOCATION ERROR
+C'0002E0  4BF8'0020       454.           LEA       SOUTBUFF,A5         LOAD ADDRESS OF OUTPUT BUFFER
+C'0002E4  2C4D            455.           MOVE.L    A5,A6               COPY BUFFER POINTER
+C'0002E6  2CFC 5441534B   456.           MOVE.L    #'TASK',(A6)+       LOAD MESSAGE
+C'0002EC  2CFC 20414C4C   457.           MOVE.L    #' ALL',(A6)+       LOAD MESSAGE
+C'0002F2  2CFC 4F434154   458.           MOVE.L    #'OCAT',(A6)+       LOAD MESSAGE
+C'0002F8  2CFC 494F4E20   459.           MOVE.L    #'ION ',(A6)+       LOAD MESSAGE
+C'0002FE  2CFC 4552524F   460.           MOVE.L    #'ERRO',(A6)+       LOAD MESSAGE
+C'000304  2CFC 52202820   461.           MOVE.L    #'R ( ',(A6)+       LOAD MESSAGE
+C'00030A  2CD0            462.           MOVE.L    (A0),(A6)+          LOAD TASK NAME
+C'00030C  2CE8 0004       463.           MOVE.L    4(A0),(A6)+         LOAD TASK NAME
+C'000310  3CFC 2029       464.           MOVE.W    #' )',(A6)+         LOAD MESSAGE
+C'000314  4EB9 00F03CC0   465.           JSR       OUT1CR              OUTPUT LINE WITH CR/LF
+C'00031A  60FE            466.  TCBX     BRA.S     TCBX                LOOP FOREVER
+                          467.  *
+C'00031C  <0>             468.           DS.L      0                   LONG WORD BOUNDARY
+C'00031C  53 53 54 41 43  469.  MSG1     DC.B      'SSTACK  '
+          4B 20 20
+C'000324  55 53 54 41 43  470.  MSG2     DC.B      'USTACK  '
+          4B 20 20
+C'00032C  4C 50 4F 4F 4C  471.  MSG3     DC.B      'LPOOL   '
+          20 20 20
+C'000334  48 45 41 50 20  472.  MSG5     DC.B      'HEAP    '
+          20 20 20
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 14
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          474.  **********************************************************************
+                          475.  *                                                                    *
+                          476.  *        BUILDTCB  BUILD TCB SUBROUTINE                              *
+                          477.  *                                                                    *
+                          478.  *                  INPUT:    A0 = POINTER TO 8 CHARACTER TASK NAME   *
+                          479.  *                            A1 = ENTRY POINT                        *
+                          480.  *                            A2 = CODE SEGMENT ADDRESS               *
+                          481.  *                            D1 = CODE SEGMENT SIZE                  *
+                          482.  *                            D2 = DATA SEGMENT SIZE                  *
+                          483.  *                            D3 = STACK SEGMENT SIZE                 *
+                          484.  *                            D4 = PRIORITY CODE                      *
+                          485.  *                            D5 = ERROR ENTRY POINT                  *
+                          486.  *                                                                    *
+                          487.  *                  OUTPUT:   A0 = TCB ADDRESS                        *
+                          488.  *                            D0 = RETURN CODE (0=OK,1=ERROR)         *
+                          489.  *                                                                    *
+                          490.  **********************************************************************
+     # 00000080           491.  TCBSIZE  EQU       $80                 128 BYTES FOR EACH TCB
+     C'0000033C           492.  BUILDTCB EQU       *
+C'00033C  203C 00000080   493.           MOVE.L    #TCBSIZE,D0         LOAD TCB SIZE
+C'000342  4EB9'000003D0   494.           JSR       GETMEM              ALLOCATE MEMORY FOR A TCB
+C'000348  4A00            495.           TST.B     D0                  TEST RETURN CODE
+C'00034A  665A            496.           BNE.S     ERRTCB              BRANCH IF TRUE
+C'00034C  5278'0044       497.           ADD.W     #1,STCBNUM          INCREMENT TCB NUMBER
+C'000350  3778'0044 0014  498.           MOVE.W    STCBNUM,TCBID(A3)   STORE TASK ID IN TCB
+C'000356  3741 0018       499.           MOVE.W    D1,TCBCSL(A3)       STORE CODE SEGMENT SIZE IN TCB
+C'00035A  274A 000C       500.           MOVE.L    A2,TCBCS(A3)        STORE CODE SEGMENT ADDRESS IN TCB
+C'00035E  2749 001C       501.           MOVE.L    A1,TCBENTRY(A3)     STORE ENTRY POINT IN TCB
+C'000362  3744 002A       502.           MOVE.W    D4,TCBPRI(A3)       STORE PRIORITY CODE IN TCB
+C'000366  2745 0020       503.           MOVE.L    D5,TCBEXEP(A3)      STORE EXCEPTION ENTRY POINT IN TCB
+C'00036A  7207            504.           MOVEQ.L   #7,D1               LOAD LOOP COUNTER
+C'00036C  7800            505.           MOVEQ.L   #0,D4               LOAD INDEX
+C'00036E  1798 4000       506.  NMLOOP   MOVE.B    (A0)+,TCBNAME(A3,D4.W)        STORE NAME IN TCB
+C'000372  5284            507.           ADDQ.L    #1,D4               INCREMENT INDEX
+C'000374  51C9 FFF8       508.           DBRA      D1,NMLOOP           LOOP 8 TIMES
+C'000378  204B            509.           MOVE.L    A3,A0               COPY TCB ADDRESS
+C'00037A  3002            510.           MOVE.W    D2,D0               LOAD DATA SEGMENT SIZE
+C'00037C  4EB9'000003D0   511.           JSR       GETMEM              ALLOCATE DATA SEGMENT
+C'000382  4A00            512.           TST.B     D0                  TEST RETURN CODE
+C'000384  6620            513.           BNE.S     ERRTCB              BRANCH IF TRUE
+C'000386  3143 0016       514.           MOVE.W    D3,TCBDSL(A0)       STORE DATA SEGMENT SIZE IN TCB
+C'00038A  214B 0008       515.           MOVE.L    A3,TCBDS(A0)        STORE DATA SEGMENT ADDRESS IN TCB
+C'00038E  3003            516.           MOVE.W    D3,D0               LOAD STACK SEGMENT SIZE
+C'000390  4EB9'000003D0   517.           JSR       GETMEM              ALLOCATE STACK SEGMENT
+C'000396  4A00            518.           TST.B     D0                  TEST RETURN CODE
+C'000398  660C            519.           BNE.S     ERRTCB              BRANCH IF TRUE
+C'00039A  3143 001A       520.           MOVE.W    D3,TCBSSL(A0)       STORE STACK SEGMENT SIZE IN TCB
+C'00039E  214C 0010       521.           MOVE.L    A4,TCBSS(A0)        STORE STACK SEGMENT ADDRESS IN TCB
+C'0003A2  7000            522.           MOVEQ.L   #0,D0               CLEAR RETURN CODE
+C'0003A4  4E75            523.           RTS
+C'0003A6  7001            524.  ERRTCB   MOVEQ.L   #1,D0               SET RETURN CODE (ERROR)
+C'0003A8  4E75            525.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 15
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          527.  **********************************************************************
+                          528.  *                                                                    *
+                          529.  *        DISPADR   DISPLAY TEXT AND ADDRESS ON CONSOLE               *
+                          530.  *                                                                    *
+                          531.  *                  INPUT:  A0=ADDRESS OF TEXT (8 CHRAACTERS)         *
+                          532.  *                          D0=DATA TO BE DISPLAYED (HEX LONG)        *
+                          533.  *                                                                    *
+                          534.  **********************************************************************
+     C'000003AA           535.  DISPADR  EQU       *
+C'0003AA  48E7 0006       536.           MOVEM.L   A5/A6,-(A7)         SAVE A5/A6
+C'0003AE  4BF8'0020       537.           LEA       SOUTBUFF,A5         LOAD ADDRESS OF OUTPUT BUFFER
+C'0003B2  2C4D            538.           MOVE.L    A5,A6               COPY BUFFER POINTER
+C'0003B4  2CD0            539.           MOVE.L    (A0),(A6)+          LOAD TASK NAME PART 1
+C'0003B6  2CE8 0004       540.           MOVE.L    4(A0),(A6)+         LOAD TASK NAME PART 2
+C'0003BA  1CFC 0020       541.           MOVE.B    #' ',(A6)+          LOAD A SPACE
+C'0003BE  4EB9 00F03A72   542.           JSR       PNT8HX              CONVERT TO HEX
+C'0003C4  4EB9 00F03CC0   543.           JSR       OUT1CR              OUTPUT LINE WITH CR/LF
+C'0003CA  4CDF 6000       544.           MOVEM.L   (A7)+,A5/A6         RESTORE A5/A6
+C'0003CE  4E75            545.           RTS                           RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 16
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          547.  **********************************************************************
+                          548.  *                                                                    *
+                          549.  *        GETMEM    HEAP MEMORY ALLOCATION SUBROUTINE                 *
+                          550.  *                                                                    *
+                          551.  *                  INPUT:  D0=NUMBER OF BYTES TO ALLOCATE            *
+                          552.  *                                                                    *
+                          553.  *                  OUTPUT: A3=START ADDRESS, A4=END ADDRESS+1        *
+                          554.  *                          D0=RETURN CODE (0=OK,1=ERROR)             *
+                          555.  *                                                                    *
+                          556.  **********************************************************************
+     C'000003D0           557.  GETMEM   EQU       *
+C'0003D0  2678'00EC       558.           MOVE.L    HEAP,A3             LOAD ADDRESS OF HEAP
+C'0003D4  284B            559.           MOVE.L    A3,A4               COPY ADDRESS
+C'0003D6  D9C0            560.           ADD.L     D0,A4               ADD NUMBER OF BYTES
+C'0003D8  B9FC'00003000   561.           CMP.L     #HEAPEND,A4         TEST FOR END OF HEAP
+C'0003DE  6C08            562.           BGE.S     GETERR1             BRANCH IF BEYOND END OF HEAP
+C'0003E0  21CC'00EC       563.           MOVE.L    A4,HEAP             STORE NEW HEAP ADDRESS
+C'0003E4  51C0            564.           SF.B      D0                  SET RETURN CODE FALSE
+C'0003E6  4E75            565.           RTS                           RETURN
+C'0003E8  50C0            566.  GETERR1  ST.B      D0                  SET RETURN CODE TRUE
+C'0003EA  4E75            567.           RTS                           RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 17
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          569.  **********************************************************************
+                          570.  *                                                                    *
+                          571.  *        EXCEPT0   BUS ERROR EXCEPTION                               *
+                          572.  *                                                                    *
+                          573.  **********************************************************************
+     C'000003EC           574.  EXCEPT0  EQU       *
+C'0003EC  46FC 2700       575.           MOVE.W    #$2700,SR           MASK ALL INTERRUPTS
+C'0003F0  4A38'0001       576.           TST.B     SRTEXEC             TEST RTEXEC FLAG
+C'0003F4  6706            577.           BEQ.S     TSTBG0              IF NOT GO AND TEST FOR B. G.
+C'0003F6  2F38'0068       578.           MOVE.L    SBUSEX,-(A7)        PUSH REAL VECTOR ADDRESS
+C'0003FA  4E75            579.           RTS                           GOTO ADDRESS ON STACK
+                          580.  *
+C'0003FC  4A38'0002       581.  TSTBG0   TST.B     SBGEXEC             TEST BGEXEC FLAG
+C'000400  6606            582.           BNE.S     BGAEXP0             BRANCH IF TRUE
+C'000402  2F38'0068       583.           MOVE.L    SBUSEX,-(A7)        PUSH REAL VECTOR ADDRESS
+C'000406  4E75            584.           RTS
+                          585.  *
+C'000408  21C8'0048       586.  BGAEXP0  MOVE.L    A0,STEMP            SAVE A0
+C'00040C  2078'0058       587.           MOVE.L    STCB,A0             LOAD ADDRESS OF ACTIVE TCB
+C'000410  48E8 7FFF 0032  588.           MOVEM.L   D0-D7/A0-A6,TCBREGS(A0)       SAVE REGISTERS IN TCB
+C'000416  2178'0048 0052  589.           MOVE.L    STEMP,TCBREGS+32(A0)          SAVE A0 IN TCB
+C'00041C  4E69            590.           MOVE.L    USP,A1              LOAD USP
+C'00041E  2149 006E       591.           MOVE.L    A1,TCBUSP(A0)       SAVE USP IN TCB
+C'000422  315F 0074       592.           MOVE.W    (A7)+,TCBAI(A0)     SAVE ACCESS INFORMATION
+C'000426  215F 0078       593.           MOVE.L    (A7)+,TCBAA(A0)     SAVE ACCESS ADDRESS
+C'00042A  315F 0072       594.           MOVE.W    (A7)+,TCBIR(A0)     SAVE INSTRUCTION REGISTER
+C'00042E  315F 002C       595.           MOVE.W    (A7)+,TCBSR(A0)     SAVE SR IN TCB
+C'000432  215F 002E       596.           MOVE.L    (A7)+,TCBPC(A0)     SAVE PC IN TCB
+C'000436  317C 0008 0076  597.           MOVE.W    #$0008,TCBVN(A0)    SAVE BUS ERROR VECTOR NUMBER
+C'00043C  51E8 0025       598.           SF.B      TCBRUN(A0)          SET RUN FLAG TO FALSE
+C'000440  51E8 0024       599.           SF.B      TCBHOLD(A0)         SET HOLD FLAG TO FALSE
+C'000444  50E8 0026       600.           ST.B      TCBERR(A0)          SET ERROR FLAG TO TRUE
+C'000448  46FC 2500       601.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
+C'00044C  6000 027C       602.           BRA       BGEXEC              GOTO RTEXEC
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 18
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          604.  **********************************************************************
+                          605.  *                                                                    *
+                          606.  *        EXCEPT1   ADDRESS ERROR EXCEPTION                           *
+                          607.  *                                                                    *
+                          608.  **********************************************************************
+     C'00000450           609.  EXCEPT1  EQU       *
+C'000450  46FC 2700       610.           MOVE.W    #$2700,SR           MASK ALL INTERRUPTS
+C'000454  4A38'0001       611.           TST.B     SRTEXEC             TEST RTEXEC FLAG
+C'000458  6706            612.           BEQ.S     TSTBG1              IF NOT GO AND TEST FOR B. G.
+C'00045A  2F38'0064       613.           MOVE.L    SADDEX,-(A7)        PUSH REAL VECTOR ADDRESS
+C'00045E  4E75            614.           RTS                           GOTO ADDRESS ON STACK
+                          615.  *
+C'000460  4A38'0002       616.  TSTBG1   TST.B     SBGEXEC             TEST BGEXEC FLAG
+C'000464  6606            617.           BNE.S     BGAEXP1             BRANCH IF TRUE
+C'000466  2F38'0064       618.           MOVE.L    SADDEX,-(A7)        PUSH REAL VECTOR ADDRESS
+C'00046A  4E75            619.           RTS
+                          620.  *
+C'00046C  21C8'0048       621.  BGAEXP1  MOVE.L    A0,STEMP            SAVE A0
+C'000470  2078'0058       622.           MOVE.L    STCB,A0             LOAD ADDRESS OF ACTIVE TCB
+C'000474  48E8 7FFF 0032  623.           MOVEM.L   D0-D7/A0-A6,TCBREGS(A0)       SAVE REGISTERS IN TCB
+C'00047A  2178'0048 0052  624.           MOVE.L    STEMP,TCBREGS+32(A0)          SAVE A0 IN TCB
+C'000480  4E69            625.           MOVE.L    USP,A1              LOAD USP
+C'000482  2149 006E       626.           MOVE.L    A1,TCBUSP(A0)       SAVE USP IN TCB
+C'000486  315F 0074       627.           MOVE.W    (A7)+,TCBAI(A0)     SAVE ACCESS INFORMATION
+C'00048A  215F 0078       628.           MOVE.L    (A7)+,TCBAA(A0)     SAVE ACCESS ADDRESS
+C'00048E  315F 0072       629.           MOVE.W    (A7)+,TCBIR(A0)     SAVE INSTRUCTION REGISTER
+C'000492  315F 002C       630.           MOVE.W    (A7)+,TCBSR(A0)     SAVE SR IN TCB
+C'000496  215F 002E       631.           MOVE.L    (A7)+,TCBPC(A0)     SAVE PC IN TCB
+C'00049A  317C 000C 0076  632.           MOVE.W    #$000C,TCBVN(A0)    SAVE ADDRESS ERROR VECTOR NUMBER
+C'0004A0  51E8 0025       633.           SF.B      TCBRUN(A0)          SET RUN FLAG TO FALSE
+C'0004A4  51E8 0024       634.           SF.B      TCBHOLD(A0)         SET HOLD FLAG TO FALSE
+C'0004A8  50E8 0026       635.           ST.B      TCBERR(A0)          SET ERROR FLAG TO TRUE
+C'0004AC  46FC 2500       636.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
+C'0004B0  6000 0218       637.           BRA       BGEXEC              GOTO RTEXEC
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 19
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          639.  **********************************************************************
+                          640.  *                                                                    *
+                          641.  *        EXCEPT2   DIVIDE BY ZERO EXCEPTION                          *
+                          642.  *                                                                    *
+                          643.  **********************************************************************
+     C'000004B4           644.  EXCEPT2  EQU       *
+C'0004B4  46FC 2700       645.           MOVE.W    #$2700,SR           MASK ALL INTERRUPTS
+C'0004B8  4A38'0001       646.           TST.B     SRTEXEC             TEST RTEXEC FLAG
+C'0004BC  6706            647.           BEQ.S     TSTBG2              IF NOT GO AND TEST FOR B. G.
+C'0004BE  2F38'0070       648.           MOVE.L    SDZEX,-(A7)         PUSH REAL VECTOR ADDRESS
+C'0004C2  4E75            649.           RTS                           GOTO ADDRESS ON STACK
+                          650.  *
+C'0004C4  4A38'0002       651.  TSTBG2   TST.B     SBGEXEC             TEST BGEXEC FLAG
+C'0004C8  6606            652.           BNE.S     BGAEXP2             BRANCH IF TRUE
+C'0004CA  2F38'0070       653.           MOVE.L    SDZEX,-(A7)         PUSH REAL VECTOR ADDRESS
+C'0004CE  4E75            654.           RTS
+                          655.  *
+C'0004D0  21C8'0048       656.  BGAEXP2  MOVE.L    A0,STEMP            SAVE A0
+C'0004D4  2078'0058       657.           MOVE.L    STCB,A0             LOAD ADDRESS OF ACTIVE TCB
+C'0004D8  48E8 7FFF 0032  658.           MOVEM.L   D0-D7/A0-A6,TCBREGS(A0)       SAVE REGISTERS IN TCB
+C'0004DE  2178'0048 0052  659.           MOVE.L    STEMP,TCBREGS+32(A0)          SAVE A0 IN TCB
+C'0004E4  4E69            660.           MOVE.L    USP,A1              LOAD USP
+C'0004E6  2149 006E       661.           MOVE.L    A1,TCBUSP(A0)       SAVE USP IN TCB
+C'0004EA  315F 002C       662.           MOVE.W    (A7)+,TCBSR(A0)     SAVE SR IN TCB
+C'0004EE  215F 002E       663.           MOVE.L    (A7)+,TCBPC(A0)     SAVE PC IN TCB
+C'0004F2  317C 0014 0076  664.           MOVE.W    #$0014,TCBVN(A0)    SAVE DIVIDE BY ZERO VECTOR NUMBER
+C'0004F8  51E8 0025       665.           SF.B      TCBRUN(A0)          SET RUN FLAG TO FALSE
+C'0004FC  51E8 0024       666.           SF.B      TCBHOLD(A0)         SET HOLD FLAG TO FALSE
+C'000500  50E8 0026       667.           ST.B      TCBERR(A0)          SET ERROR FLAG TO TRUE
+C'000504  46FC 2500       668.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
+C'000508  6000 01C0       669.           BRA       BGEXEC              GOTO RTEXEC
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 20
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          671.  **********************************************************************
+                          672.  *                                                                    *
+                          673.  *        EXCEPT3   PRIV. VIOLATION EXCEPTION                         *
+                          674.  *                                                                    *
+                          675.  **********************************************************************
+     C'0000050C           676.  EXCEPT3  EQU       *
+C'00050C  46FC 2700       677.           MOVE.W    #$2700,SR           MASK ALL INTERRUPTS
+C'000510  4A38'0001       678.           TST.B     SRTEXEC             TEST RTEXEC FLAG
+C'000514  6706            679.           BEQ.S     TSTBG3              IF NOT GO AND TEST FOR B. G.
+C'000516  2F38'006C       680.           MOVE.L    SPVEX,-(A7)         PUSH REAL VECTOR ADDRESS
+C'00051A  4E75            681.           RTS                           GOTO ADDRESS ON STACK
+                          682.  *
+C'00051C  4A38'0002       683.  TSTBG3   TST.B     SBGEXEC             TEST BGEXEC FLAG
+C'000520  6606            684.           BNE.S     BGAEXP3             BRANCH IF TRUE
+C'000522  2F38'006C       685.           MOVE.L    SPVEX,-(A7)         PUSH REAL VECTOR ADDRESS
+C'000526  4E75            686.           RTS
+                          687.  *
+C'000528  21C8'0048       688.  BGAEXP3  MOVE.L    A0,STEMP            SAVE A0
+C'00052C  2078'0058       689.           MOVE.L    STCB,A0             LOAD ADDRESS OF ACTIVE TCB
+C'000530  48E8 7FFF 0032  690.           MOVEM.L   D0-D7/A0-A6,TCBREGS(A0)       SAVE REGISTERS IN TCB
+C'000536  2178'0048 0052  691.           MOVE.L    STEMP,TCBREGS+32(A0)          SAVE A0 IN TCB
+C'00053C  4E69            692.           MOVE.L    USP,A1              LOAD USP
+C'00053E  2149 006E       693.           MOVE.L    A1,TCBUSP(A0)       SAVE USP IN TCB
+C'000542  315F 002C       694.           MOVE.W    (A7)+,TCBSR(A0)     SAVE SR IN TCB
+C'000546  215F 002E       695.           MOVE.L    (A7)+,TCBPC(A0)     SAVE PC IN TCB
+C'00054A  317C 0020 0076  696.           MOVE.W    #$0020,TCBVN(A0)    SAVE PRIV. VIOLATION VECTOR NUMBER
+C'000550  51E8 0025       697.           SF.B      TCBRUN(A0)          SET RUN FLAG TO FALSE
+C'000554  51E8 0024       698.           SF.B      TCBHOLD(A0)         SET HOLD FLAG TO FALSE
+C'000558  50E8 0026       699.           ST.B      TCBERR(A0)          SET ERROR FLAG TO TRUE
+C'00055C  46FC 2500       700.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
+C'000560  6000 0168       701.           BRA       BGEXEC              GOTO RTEXEC
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 21
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          703.  **********************************************************************
+                          704.  *                                                                    *
+                          705.  *        RTMODCTL  REAL-TIME MODULE CONTROL (TRAP #6)                *
+                          706.  *                                                                    *
+                          707.  *                  INPUT:    D1 = MODULE NUMBER (0-RTNUMBER)         *
+                          708.  *                            D2 = FLAG (00=ENABLE,FF=DISABLE)        *
+                          709.  *                                                                    *
+                          710.  **********************************************************************
+     C'00000564           711.  RTMODCTL EQU       *
+C'000564  46FC 2700       712.           MOVE.W    #$2700,SR           MASK INTERRUPTS
+C'000568  2F08            713.           MOVE.L    A0,-(A7)            SAVE A0
+C'00056A  B2B9'00000000   714.           CMP.L     RTNUMBER,D1         COMPARE TO MODULE NUMBER
+C'000570  6E08            715.           BGT.S     RTMODERR            IF TOO LARGE BRANCH
+C'000572  41F8'0008       716.           LEA       SBMODRUN,A0         LOAD MODULE ENABLE LIST
+C'000576  D1C1            717.           ADD.L     D1,A0               ADD OFFSET
+C'000578  1082            718.           MOVE.B    D2,(A0)             SET FLAG (TRUE OR FALSE)
+C'00057A  205F            719.  RTMODERR MOVE.L    (A7)+,A0            RESTORE A0
+C'00057C  4E73            720.           RTE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 22
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          722.  **********************************************************************
+                          723.  *                                                                    *
+                          724.  *        RTMTC     REAL-TIME MODULE TIMER CONTROL                    *
+                          725.  *                                                                    *
+                          726.  *                  INPUT:    D0 = BYTE 00=CLEAR,FF=SET               *
+                          727.  *                                                                    *
+                          728.  **********************************************************************
+     C'0000057E           729.  RTMTC    EQU       *
+C'00057E  46FC 2700       730.           MOVE.W    #$2700,SR           MASK INTERRUPTS
+C'000582  4A00            731.           TST.B     D0                  TEST INPUT
+C'000584  56F8'0007       732.           SNE.B     SBTIME              SET TIMER CONTROL FLAG
+C'000588  4E73            733.           RTE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 23
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          735.  **********************************************************************
+                          736.  *                                                                    *
+                          737.  *        RTEXEC    REAL-TIME EXECUTIVE (PRIV ENTRY)                  *
+                          738.  *                  RUN BY 20HZ (50 MS) INTERRUPT                     *
+                          739.  *                                                                    *
+                          740.  **********************************************************************
+     C'0000058A           741.  RTEXEC   EQU       *                   MODULE STARTS HERE
+C'00058A  50F8'0001       742.           ST.B      SRTEXEC             ENABLE RTEXEC FLAG
+C'00058E  4A38'0005       743.           TST.B     SBFIRST             TEST FIRST FRAME FLAG
+C'000592  661C            744.           BNE.S     NOTFIRST            SKIP INIT PART
+C'000594  50F8'0005       745.           ST.B      SBFIRST             SET FIRST FRAME FLAG
+C'000598  21FC'00000000   746.           MOVE.L    #RTLIST,SMODADR     LOAD START OF JUMP LIST
+         '0050
+C'0005A0  21FC'00000008   747.           MOVE.L    #SBMODRUN,SRUNADR   LOAD START OF ENABLE FLAG TABLE
+         '0054
+C'0005A8  2278'0050       748.           MOVE.L    SMODADR,A1          LOAD INTO A1
+C'0005AC  2478'0054       749.           MOVE.L    SRUNADR,A2          LOAD INTO A2
+     C'000005B0           750.  NOTFIRST EQU       *
+C'0005B0  1019            751.           MOVE.B    (A1)+,D0            LOAD FRAME MASK
+C'0005B2  1219            752.           MOVE.B    (A1)+,D1            LOAD PRIV FLAG
+C'0005B4  1411            753.           MOVE.B    (A1),D2             LOAD MODULE FORTRAN FLAG
+C'0005B6  5489            754.           ADDQ.L    #2,A1               POINT TO MODULE ADDRESS
+C'0005B8  161A            755.           MOVE.B    (A2)+,D3            LOAD RUN FLAG
+C'0005BA  48E7 0060       756.           MOVEM.L   A1/A2,-(A7)         SAVE POINTERS
+C'0005BE  4A03            757.           TST.B     D3                  TEST RUN FLAG
+C'0005C0  6624            758.           BNE.S     RTTRAP              RTT IF SET SKIP IT
+C'0005C2  1838'0040       759.           MOVE.B    SCURMASK,D4         LOAD CURRENT MASK
+C'0005C6  C800            760.           AND.B     D0,D4               RUN THIS MODULE THIS FRAME ?
+C'0005C8  4A04            761.           TST.B     D4                  TEST FOR ANY BITS SET
+C'0005CA  671A            762.           BEQ.S     RTTRAP              NOT THIS TIME
+C'0005CC  4A01            763.           TST.B     D1                  TEST FOR PRIV ENTRY
+C'0005CE  6604            764.           BNE.S     SKIPAND             SKIP AND IF TRUE
+C'0005D0  027C DFFF       765.           AND.W     #$DFFF,SR           TURN OFF PRIV BIT
+     C'000005D4           766.  SKIPAND  EQU       *
+C'0005D4  2251            767.           MOVE.L    (A1),A1             LOAD INDIRECT ADDRESS (ENTRY)
+C'0005D6  4A38'0007       768.           TST.B     SBTIME              TEST TIMER ENABLED
+C'0005DA  6708            769.           BEQ.S     SKIPT               SKIP IF FALSE
+C'0005DC  2078'00DC       770.           MOVE.L    STIMAD,A0           LOAD ADDRESS OF TIMER
+C'0005E0  30BC 0000       771.           MOVE.W    #0,(A0)             CLEAR TIMER
+     C'000005E4           772.  SKIPT    EQU       *
+C'0005E4  4ED1            773.           JMP       (A1)                RUN REAL TIME MODULE
+C'0005E6  50F8'0006       774.  RTTRAP   ST.B      SBNOTIME            SET NO TIME FLAG
+C'0005EA  4E40            775.  TRAP0    TRAP      #0                  DO NOT RUN THIS TIME
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 24
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          777.  **********************************************************************
+                          778.  *                                                                    *
+                          779.  *        RTRET     (TRAP #0) RETURN FOR REAL-TIME MODULES            *
+                          780.  *                                                                    *
+                          781.  **********************************************************************
+     C'000005EC           782.  RTRET    EQU       *
+C'0005EC  46FC 2700       783.           MOVE.W    #$2700,SR           MASK ALL INTERUPTS
+C'0005F0  5C8F            784.           ADDQ.L    #6,A7               GET RID OF SR & PC FROM TRAP #0
+C'0005F2  4A38'0007       785.           TST.B     SBTIME              TEST TIMER ENABLED
+C'0005F6  6754            786.           BEQ.S     SKIPTIME            SKIP CALCULATIONS IF FALSE
+C'0005F8  4A38'0006       787.           TST.B     SBNOTIME            TEST NO TIME FLAG
+C'0005FC  664E            788.           BNE.S     SKIPTIME            SKIP CALCULATIONS IF TRUE
+C'0005FE  4280            789.           CLR.L     D0                  CLEAR D0
+C'000600  2078'00DC       790.           MOVE.L    STIMAD,A0           LOAD ADDRESS OF TIMER
+C'000604  3010            791.           MOVE.W    (A0),D0             GET TIME IN MICRO-SEC
+C'000606  D1B8 1160       792.           ADD.L     D0,TFRAME           ADD TO FRAME TIME
+C'00060A  227C 0000116C   793.           MOVE.L    #TMODULE,A1         LOAD ADDRESS
+C'000610  4281            794.           CLR.L     D1                  CLEAR D1
+C'000612  1238'0004       795.           MOVE.B    SMODULE,D1          LOAD MODULE NUMBER
+C'000616  E389            796.           LSL.L     #1,D1               MULTIPLY BY 2
+C'000618  D3C1            797.           ADD.L     D1,A1               CALCULATE OFFSET
+C'00061A  3280            798.           MOVE.W    D0,(A1)             STORE MODULE TIME
+C'00061C  227C 0000118C   799.           MOVE.L    #TMODULEA,A1        LOAD ADDRESS
+C'000622  4281            800.           CLR.L     D1                  CLEAR D1
+C'000624  1238'0004       801.           MOVE.B    SMODULE,D1          LOAD MODULE NUMBER
+C'000628  E389            802.           LSL.L     #1,D1               MULTIPLY BY 2
+C'00062A  D3C1            803.           ADD.L     D1,A1               CALCULATE OFFSET
+C'00062C  3211            804.           MOVE.W    (A1),D1             LOAD LAST VALUE
+C'00062E  D240            805.           ADD.W     D0,D1               ADD TIMES
+C'000630  E249            806.           LSR.W     #1,D1               DIVIDE BY 2
+C'000632  3281            807.           MOVE.W    D1,(A1)             STORE NEW AVERAGE
+C'000634  227C 000011AC   808.           MOVE.L    #TMODULEW,A1        LOAD ADDRESS
+C'00063A  4281            809.           CLR.L     D1                  CLEAR D1
+C'00063C  1238'0004       810.           MOVE.B    SMODULE,D1          LOAD MODULE NUMBER
+C'000640  E389            811.           LSL.L     #1,D1               MULTIPLY BY 2
+C'000642  D3C1            812.           ADD.L     D1,A1               CACULATE OFFSET
+C'000644  3211            813.           MOVE.W    (A1),D1             LOAD LAST VALUE
+C'000646  B041            814.           CMP.W     D1,D0               COMPARE NEW WITH OLD VALUE
+C'000648  6F02            815.           BLE.S     SKIPTIME            IF LESS OR EQUAL QUIT
+C'00064A  3280            816.           MOVE.W    D0,(A1)             SAVE THE NEW GREATER VALUE
+C'00064C  51F8'0006       817.  SKIPTIME SF.B      SBNOTIME            CLEAR NO TIME FLAG
+C'000650  4CDF 0600       818.           MOVEM.L   (A7)+,A1/A2         RESTORE POINTERS
+C'000654  5889            819.           ADDQ.L    #4,A1               INCREMENT JUMP LIST POINTER
+C'000656  5238'0004       820.           ADDQ.B    #1,SMODULE          INCREMENT MODULE NUMBER
+C'00065A  46FC 2400       821.           MOVE.W    #$2400,SR           ALLOW PTM INTERRUPT
+C'00065E  6000 FF50       822.           BRA       NOTFIRST            GO DO NEXT MODULE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 25
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          824.  **********************************************************************
+                          825.  *                                                                    *
+                          826.  *        RTEND     LAST MODULE OF EVER FRAME (PRIV ENTRY) 20HZ       *
+                          827.  *                  RUN AS LAST MODULE IN LOAD                        *
+                          828.  *                                                                    *
+                          829.  **********************************************************************
+     C'00000662           830.  RTEND    EQU       *                   LAST MODULE OF EACH FRAME
+C'000662  46FC 2700       831.           MOVE.W    #$2700,SR           MASK ALL INTERRUPTS
+C'000666  504F            832.           ADD       #8,A7               CORRECT STACK (A1-A2)
+C'000668  2038 1164       833.           MOVE.L    TFRAMEA,D0          LOAD AVVERAGE FRAME TIME
+C'00066C  D0B8 1160       834.           ADD.L     TFRAME,D0           LOAD LAST FRAME TIME
+C'000670  E288            835.           LSR.L     #1,D0               DIVIDE BY 2
+C'000672  21C0 1164       836.           MOVE.L    D0,TFRAMEA          SAVE NEW AVERAGE FOR TOTAL FRAME TIME
+C'000676  2238 1168       837.           MOVE.L    TFRAMEW,D1          LOAD WORST CASE TIME
+C'00067A  2038 1160       838.           MOVE.L    TFRAME,D0           LOAD ACTUAL
+C'00067E  B081            839.           CMP.L     D1,D0               COMPARE TIMES
+C'000680  6F04            840.           BLE.S     SKIPTW              BRANCH IF LESS OR EQUAL TO WORST CASE
+C'000682  21C0 1168       841.           MOVE.L    D0,TFRAMEW          STORE NEW WORST CASE
+C'000686  42B8 1160       842.  SKIPTW   CLR.L     TFRAME              CLEAR TOTAL FRAME TIME
+C'00068A  1038'0003       843.           MOVE.B    SFRAME,D0           LOAD FRAME NUMBER
+C'00068E  5200            844.           ADDQ.B    #1,D0               INCREMENT FRAME
+C'000690  0C00 0008       845.           CMPI.B    #8,D0               NEXT CYCLE ?
+C'000694  6716            846.           BEQ.S     NEWCYCLE            IF 8 THEN GOTO NEWCYCLE
+C'000696  11C0'0003       847.           MOVE.B    D0,SFRAME           SAVE FRAME NUMBER BACK
+C'00069A  E2F8'0040       848.           LSR.W     SCURMASK            MOVE BIT ONE TO THE RIGHT
+C'00069E  4238'0004       849.           CLR.B     SMODULE             SET MODULE NUMBER TO ZERO
+C'0006A2  4238'0001       850.           CLR.B     SRTEXEC             CLEAR RTEXEC FLAG
+C'0006A6  4238'0005       851.           CLR.B     SBFIRST             CLEAR FIRST FRAME FLAG
+C'0006AA  601E            852.           BRA.S     BGEXEC              GO TO BACK-GROUND EXEC
+     C'000006AC           853.  NEWCYCLE EQU       *
+C'0006AC  4238'0003       854.           CLR.B     SFRAME              SET FRAME NUMBER TO ZERO
+C'0006B0  52B8'004C       855.           ADDQ.L    #1,SCYCLE           INCREMENT CYCLE
+C'0006B4  31FC 8000'0040  856.           MOVE.W    #$8000,SCURMASK     SET FRAME MASK TO FIRST FRAME
+C'0006BA  4238'0005       857.           CLR.B     SBFIRST             CLEAR FIRST FRAME FLAG
+C'0006BE  4238'0004       858.           CLR.B     SMODULE             SET MODULE NUMBER TO ZERO
+C'0006C2  4238'0001       859.           CLR.B     SRTEXEC             CLEAR RTEXEC FLAG
+C'0006C6  6002            860.           BRA.S     BGEXEC              GO TO BACK-GROUND EXEC
+C'0006C8  4E71            861.           NOP                           MAKE A GAP
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 26
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          863.  **********************************************************************
+                          864.  *                                                                    *
+                          865.  *        BGEXEC    BACK-GROUND EXECUTIVE MODULE                      *
+                          866.  *                  RUN AT END OF EACH FRAME                          *
+                          867.  *                                                                    *
+                          868.  **********************************************************************
+     C'000006CA           869.  BGEXEC   EQU       *                   BACK-GROUND EXEC
+C'0006CA  4278'0042       870.           CLR.W     STCBID              CLEAR ACTIVE TASK ID
+C'0006CE  2278'0058       871.           MOVE.L    STCB,A1             LOAD ADDRESS OF ACTIVE TCB
+C'0006D2  2269 007C       872.           MOVE.L    TCBLINK(A1),A1      POINT TO NEXT TASK
+C'0006D6  4A29 0026       873.  BGNXT    TST.B     TCBERR(A1)          TEST ERROR FLAG
+C'0006DA  665C            874.           BNE.S     ERRTSK              BRANCH IF TRUE
+C'0006DC  4A29 0025       875.           TST.B     TCBRUN(A1)          TEST RUN FLAG
+C'0006E0  6610            876.           BNE.S     RUNTSK              BRANCH IF TRUE
+C'0006E2  4A29 0024       877.           TST.B     TCBHOLD(A1)         TEST HOLD FLAG
+C'0006E6  662C            878.           BNE.S     HLDTSK              BRANCH IF TRUE
+C'0006E8  2269 007C       879.  NXTSK    MOVE.L    TCBLINK(A1),A1      NEXT TASK LINK
+C'0006EC  21C9'0058       880.           MOVE.L    A1,STCB             SAVE LINK
+C'0006F0  60E4            881.           BRA.S     BGNXT               TRY NEXT ONE
+C'0006F2  2469 0010       882.  RUNTSK   MOVE.L    TCBSS(A1),A2        LOAD STACK SEGMENT ADDRESS
+C'0006F6  4E62            883.           MOVE.L    A2,USP              LOAD USP
+C'0006F8  31E9 0014'0042  884.           MOVE.W    TCBID(A1),STCBID    LOAD TASK ID
+C'0006FE  21C9'0058       885.           MOVE.L    A1,STCB             SAVE ADDRESS OF ACTIVE TCB
+C'000702  2069 0008       886.           MOVE.L    TCBDS(A1),A0        LOAD START OF DATA SEGMENT
+C'000706  2F29 001C       887.           MOVE.L    TCBENTRY(A1),-(A7)  LOAD ENTRY PC ON STACK
+C'00070A  3F3C 0000       888.           MOVE.W    #$0000,-(A7)        LOAD INITIAL SR ON STACK
+C'00070E  50F8'0002       889.           ST.B      SBGEXEC             SET BACK-GROUND FLAG
+C'000712  4E73            890.           RTE                           JUMP TO BACK-GROUND MODULE
+C'000714  2469 006E       891.  HLDTSK   MOVE.L    TCBUSP(A1),A2       LOAD STACK POINTER
+C'000718  4E62            892.           MOVE.L    A2,USP              LOAD USP
+C'00071A  31E9 0014'0042  893.           MOVE.W    TCBID(A1),STCBID    LOAD TASK ID
+C'000720  21C9'0058       894.           MOVE.L    A1,STCB             SAVE ADDRESS OF ACTIVE TCB
+C'000724  2F29 002E       895.           MOVE.L    TCBPC(A1),-(A7)     LOAD PC ON STACK
+C'000728  3F29 002C       896.           MOVE.W    TCBSR(A1),-(A7)     LOAD SR ON STACK
+C'00072C  4CE9 7FFF 0032  897.           MOVEM.L   TCBREGS(A1),D0-D7/A0-A6       RESTORE REGISTERS
+C'000732  50F8'0002       898.           ST.B      SBGEXEC             SET BACK-GROUND FLAG
+C'000736  4E73            899.           RTE                           JUMP TO BACK-GROUND MODULE
+C'000738  4A29 0028       900.  ERRTSK   TST.B     TCBEX(A1)           TEST EXCEPTION ENTRY FLAG
+C'00073C  67AA            901.           BEQ.S     NXTSK               BRANCH IF FALSE
+C'00073E  51E9 0026       902.           SF.B      TCBERR(A1)          CLEAR ERROR FLAG
+C'000742  50E9 0025       903.           ST.B      TCBRUN(A1)          SET RUN FLAG
+C'000746  2469 0010       904.           MOVE.L    TCBSS(A1),A2        LOAD STACK SEGMENT ADDRESS
+C'00074A  4E62            905.           MOVE.L    A2,USP              LOAD USP
+C'00074C  31E9 0014'0042  906.           MOVE.W    TCBID(A1),STCBID    LOAD TASK ID
+C'000752  21C9'0058       907.           MOVE.L    A1,STCB             SAVE ADDRESS OF ACTIVE TCB
+C'000756  2069 0008       908.           MOVE.L    TCBDS(A1),A0        LOAD START OF DATA SEGMENT
+C'00075A  3029 0076       909.           MOVE.W    TCBVN(A1),D0        LOAD ERROR VECTOR NUMBER
+C'00075E  2F29 0020       910.           MOVE.L    TCBEXEP(A1),-(A7)   LOAD EXCEPTION ENTRY ON STACK
+C'000762  3F3C 0000       911.           MOVE.W    #$0000,-(A7)        LOAD INITIAL SR ON STACK
+C'000766  50F8'0002       912.           ST.B      SBGEXEC             SET BACK-GROUND FLAG
+C'00076A  4E73            913.           RTE                           JUMP TO BACK-GROUND MODULE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 27
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          915.  **********************************************************************
+                          916.  *                                                                    *
+                          917.  *        BGHOLD    BACK-GROUND HOLD (TRAP #1)                        *
+                          918.  *                                                                    *
+                          919.  **********************************************************************
+     C'0000076C           920.  BGHOLD   EQU       *
+C'00076C  46FC 2700       921.           MOVE      #$2700,SR           MASK ALL INTERUPTS
+C'000770  21C8'0048       922.           MOVE.L    A0,STEMP            SAVE A0
+C'000774  2078'0058       923.           MOVE.L    STCB,A0             LOAD ADDRESS OF ACTIVE TCB
+C'000778  48E8 7FFF 0032  924.           MOVEM.L   D0-D7/A0-A6,TCBREGS(A0)       SAVE REGISTERS IN TCB
+C'00077E  2178'0048 0052  925.           MOVE.L    STEMP,TCBREGS+32(A0)          SAVE A0 IN TCB
+C'000784  4E69            926.           MOVE.L    USP,A1              LOAD USP
+C'000786  2149 006E       927.           MOVE.L    A1,TCBUSP(A0)       SAVE USP IN TCB
+C'00078A  315F 002C       928.           MOVE.W    (A7)+,TCBSR(A0)     SAVE SR IN TCB
+C'00078E  215F 002E       929.           MOVE.L    (A7)+,TCBPC(A0)     SAVE PC IN TCB
+C'000792  51E8 0025       930.           SF.B      TCBRUN(A0)          SET RUN FLAG TO FALSE
+C'000796  50E8 0024       931.           ST.B      TCBHOLD(A0)         SET HOLD FLAG TO TRUE
+C'00079A  6000 FF2E       932.           BRA       BGEXEC              GO BACK TO BGEXEC
+                          933.  **********************************************************************
+                          934.  *                                                                    *
+                          935.  *        BGWAIT    BACK-GROUND WAIT (TRAP #2)                        *
+                          936.  *                                                                    *
+                          937.  **********************************************************************
+     C'0000079E           938.  BGWAIT   EQU       *
+C'00079E  46FC 2700       939.           MOVE      #$2700,SR           MASK ALL INTERUPTS
+C'0007A2  21C8'0048       940.           MOVE.L    A0,STEMP            SAVE A0
+C'0007A6  2078'0058       941.           MOVE.L    STCB,A0             LOAD ADDRESS OF ACTIVE TCB
+C'0007AA  48E8 7FFF 0032  942.           MOVEM.L   D0-D7/A0-A6,TCBREGS(A0)       SAVE REGISTERS IN TCB
+C'0007B0  2178'0048 0052  943.           MOVE.L    STEMP,TCBREGS+32(A0)          SAVE A0 IN TCB
+C'0007B6  4E69            944.           MOVE.L    USP,A1              LOAD USP
+C'0007B8  2149 006E       945.           MOVE.L    A1,TCBUSP(A0)       SAVE USP IN TCB
+C'0007BC  315F 002C       946.           MOVE.W    (A7)+,TCBSR(A0)     SAVE SR IN TCB
+C'0007C0  215F 002E       947.           MOVE.L    (A7)+,TCBPC(A0)     SAVE PC IN TCB
+C'0007C4  51E8 0025       948.           SF.B      TCBRUN(A0)          SET RUN FLAG TO FALSE
+C'0007C8  50E8 0027       949.           ST.B      TCBWAIT(A0)         SET WAIT FLAG TO TRUE
+C'0007CC  6000 FEFC       950.           BRA       BGEXEC              GO BACK TO BGEXEC
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 28
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+                          952.  **********************************************************************
+                          953.  *                                                                    *
+                          954.  *        BGTERM    BACK-GROUND TERMINATE (TRAP #3)                   *
+                          955.  *                                                                    *
+                          956.  **********************************************************************
+     C'000007D0           957.  BGTERM   EQU       *
+C'0007D0  46FC 2700       958.           MOVE      #$2700,SR           MASK ALL INTERUPTS
+C'0007D4  2278'0058       959.           MOVE.L    STCB,A1             LOAD ADDRESS OF ACTIVE TCB
+C'0007D8  337C 0000 002C  960.           MOVE.W    #$0000,TCBSR(A1)    SAVE SR IN TCB
+C'0007DE  2369 001C 002E  961.           MOVE.L    TCBENTRY(A1),TCBPC(A1)        SAVE ENTRY AT PC
+C'0007E4  2369 0010 006E  962.           MOVE.L    TCBSS(A1),TCBUSP(A1)          SAVE STACK SEGMENT AT USP
+C'0007EA  51E9 0025       963.           SF.B      TCBRUN(A1)          SET RUN FLAG TO FALSE
+C'0007EE  51E9 0024       964.           SF.B      TCBHOLD(A1)         SET HOLD FLAG TO FALSE
+C'0007F2  6000 FED6       965.           BRA       BGEXEC              GO BACK TO BGEXEC
+                          966.  **********************************************************************
+                          967.  *                                                                    *
+                          968.  *        BGRSUM    BACK-GROUND RESUME (TASK NUMBER IN D0)            *
+                          969.  *                  TRAP #4                                           *
+                          970.  *                                                                    *
+                          971.  **********************************************************************
+     C'000007F6           972.  BGRSUM   EQU       *
+C'0007F6  46FC 2700       973.           MOVE      #$2700,SR           MASK ALL INTERRUPTS
+C'0007FA  B07C 0001       974.           CMP       #1,D0               COMPARE TO LOWEST VALUE
+C'0007FE  6D20            975.           BLT.S     EXRSUM              EXIT IF LESS THEN ZERO
+C'000800  B078'0044       976.           CMP       STCBNUM,D0          COMPARE TO HIGHEST VALID TASK
+C'000804  6E1A            977.           BGT.S     EXRSUM              EXIT IF GREATER THAN TASKNUM
+C'000806  5380            978.           SUBQ.L    #1,D0               ADJUST FOR OFFSET
+C'000808  21C8'0048       979.           MOVE.L    A0,STEMP            SAVE A0
+C'00080C  2078'005C       980.           MOVE.L    STCB1,A0            LOAD ADDRESS OF FIRST TCB IN CHAIN
+C'000810  2068 007C       981.  RSUMLP   MOVE.L    TCBLINK(A0),A0      GET NEXT LINK
+C'000814  51C8 FFFA       982.           DBRA      D0,RSUMLP           LOOP UNTIL A0-> RIGHT TCB
+C'000818  51E8 0024       983.           SF.B      TCBHOLD(A0)         CLEAR HOLD FLAG
+C'00081C  2078'0048       984.           MOVE.L    STEMP,A0            RESTORE A0
+C'000820  4E73            985.  EXRSUM   RTE                           RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 20, 2025  9:08:24     ...Page 29
+D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+   ...
+
+C'000822                  987.           END
+    0 Errors
+ DBRA      D0,RSUMLP           LOOP UNTIL A0-> RIGHT TCB
+C'000818  51E8 0024       983.           SF.B      TCBHOLD(A0)         CLEAR HOLD FLAG
+C'00081C  2078'0048       984

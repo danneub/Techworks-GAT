@@ -1,0 +1,29 @@
+**********************************************************************
+*								     *
+*	 CPU LOCAL CONSTANTS					     *
+*								     *
+**********************************************************************
+	 XDEF	   LCPU
+	 XREF	   RTINIT
+	 SECTION   12
+LCPU	 EQU	   *
+	 DC.B	   'EXEC    '          NAME (0)
+	 DC.B	   1,0,0,0	       CPU #1,SPARE FLAGS (8),(9),(10),(11)
+	 DC.L	   RTINIT	       ENTRY POINT (12)
+	 DC.L	   $0800	       RAM MEMORY START (16)
+	 DC.L	   $4000	       RAM MEMORY END (20)
+	 DC.L	   0,0		       SPARE (24),(28)
+~~ ...M68K D2.0C  3/12/85   ...Run on May 20, 2025  9:20:14
+	 END
+S					     *
+*								     *
+**********************************************************************
+	 XDEF	   LCPU
+	 XREF	   RTINIT
+	 SECTION   12
+LCPU	 EQU	   *
+	 DC.B	   'EXEC    '          NAME (0)
+	 DC.B	   1,0,0,0	       CPU #1,SPARE FLAGS (8),(9),(10),(11)
+	 DC.L	   RTINIT	       ENTRY POINT (12)
+	 DC.L	   $0800	       RAM MEMORY START (16)
+	 DC.L	   $4000	       RAM MEMORY END (20)

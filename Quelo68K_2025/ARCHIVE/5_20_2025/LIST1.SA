@@ -1,0 +1,60 @@
+	 OPT	   MEX,CEX,NOPCS
+**********************************************************************
+*								     *
+*	 MODENTRY  MACRO TO DEFINE AN ENTRY IN REAL-TIME MODULE LIST *
+*								     *
+**********************************************************************
+MODENTRY MACRO
+	 DC.B	   $\2,$\3,$\4,$\5
+	 DC.L	   \1
+	 ENDM
+	 PAGE
+**********************************************************************
+*								     *
+*	 REAL-TIME MODULE JUMP LIST				     *
+*								     *
+*	 #1 LONG WORD	     ADDRESS OF MODULE			     *
+*	 #2 BYTE	     FRAME MASK 			     *
+*	 #3 BYTE	     PRIV FLAG (FF=PRIV,00=USER)	     *
+*	 #4 BYTE	     TYPE (00=ASSEMBLER)		     *
+*	 #5 BYTE	     SPARE				     *
+*								     *
+**********************************************************************
+	 SECTION   12
+	 XDEF	   RTLIST
+	 XREF	   ENGINE
+	 XREF	   LIFT
+	 XREF	   SPEED
+	 XREF	   CLIMB
+	 XREF	   PITCH
+	 XREF	   ROLL
+	 XREF	   TURN
+	 XREF	   MOTION
+	 XREF	   NAVFREQ
+	 XREF	   NAV1
+	 XREF	   RMNKFG
+	 XREF	   COMM
+	 XREF	   GATVIS
+	 XREF	   VISIO
+	 XREF	   RTDEBUG
+	 XREF	   RTEND
+*
+RTLIST	 EQU	   *
+	 MODENTRY ENGINE,11,00,00,00
+	 MODENTRY LIFT,FF,00,00,00
+	 MODENTRY SPEED,FF,00,00,00
+	 MODENTRY CLIMB,FF,00,00,00
+	 MODENTRY PITCH,FF,00,00,00
+	 MODENTRY ROLL,FF,00,00,00
+	 MODENTRY TURN,FF,00,00,00
+	 MODENTRY MOTION,FF,00,00,00
+	 MODENTRY NAVFREQ,FF,00,00,00
+	 MODENTRY NAV1,FF,00,00,00
+	 MODENTRY RMNKFG,55,00,00,00
+	 MODENTRY COMM,FF,00,00,00
+	 MODENTRY GATVIS,FF,00,00,00
+	 MODENTRY VISIO,FF,FF,00,00
+	 MODENTRY RTDEBUG,FF,FF,00,00
+	 MODENTRY RTEND,FF,FF,00,00
+	 END
+

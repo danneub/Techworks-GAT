@@ -1,0 +1,540 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  1
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                            1.           OPT       MEX,CEX,NOPCS
+C'000000                    2.           SECTION   12
+                            3.  **********************************************************************
+                            4.  *                                                                    *
+                            5.  *        MSC1      SIN/COS   INPUT:  -180,+180                       *
+                            6.  *                                                                    *
+                            7.  *                  D0=INPUT ANGLE IN DEG. AT 2-6 (+-180)             *
+                            8.  *                  D0,D1= OUTPUT VALUE AT 2-15                       *
+                            9.  *                                                                    *
+                           10.  **********************************************************************
+                           11.           XDEF      MSC1
+     C'00000000            12.  MSC1     EQU       *
+C'000000  2F00             13.           MOVE.L    D0,-(A7)            SAVE INPUT
+C'000002  4EB9'00000080    14.           JSR       MCOS1               CALL COS
+C'000008  2200             15.           MOVE.L    D0,D1               COPY ANSWER OF COS
+C'00000A  201F             16.           MOVE.L    (A7)+,D0            RESTORE INPUT
+C'00000C  2F01             17.           MOVE.L    D1,-(A7)            SAVE ANSWER OF COS
+C'00000E  4EB9'00000018    18.           JSR       MSIN1               CALL SIN
+C'000014  221F             19.           MOVE.L    (A7)+,D1            RESTORE ANSWER OF COS
+C'000016  4E75             20.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  2
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                           22.  **********************************************************************
+                           23.  *                                                                    *
+                           24.  *        MSIN1     SIN       INPUT:  -180,+180                       *
+                           25.  *                                                                    *
+                           26.  *                  D0=INPUT ANGLE IN DEG. AT 2-6 (+-180)             *
+                           27.  *                  D0=OUTPUT VALUE AT 2-15                           *
+                           28.  *                                                                    *
+                           29.  **********************************************************************
+                           30.           XDEF      MSIN1
+     C'00000018            31.  MSIN1    EQU       *
+C'000018  2F01             32.           MOVE.L    D1,-(A7)            SAVE D1
+C'00001A  48C0             33.           EXT.L     D0                  EXTEND TO LONG
+C'00001C  4A40             34.           TST.W     D0                  TEST INPUT
+C'00001E  6A06             35.           BPL.S     INPOS               BRANCH IF INPUT POSITIVE
+                           36.  *
+C'000020  D0BC 00005A00    37.           ADD.L     #23040,D0           ADD 360 TO INPUT
+                           38.  *
+     C'00000026            39.  INPOS    EQU       *
+C'000026  7200             40.           MOVEQ.L   #0,D1               SET QUAD TO 0
+                           41.  *
+     C'00000028            42.  SINLP    EQU       *
+C'000028  B0BC 00001680    43.           CMP.L     #5760,D0            COMPARE TO 90 DEGREES
+C'00002E  6F0A             44.           BLE.S     SINX1               BRANCH IF LESS OR EQUAL
+                           45.  *
+C'000030  5281             46.           ADDQ.L    #1,D1               INCREMENT QUAD
+C'000032  90BC 00001680    47.           SUB.L     #5760,D0            SUBTRACT 90 DEGRESS
+C'000038  60EE             48.           BRA.S     SINLP
+                           49.  *
+C'00003A  C23C 0003        50.  SINX1    AND.B     #$03,D1             AND QUAD
+C'00003E  B23C 0002        51.           CMP.B     #2,D1               COMPARE TO 2
+C'000042  6C1A             52.           BGE.S     SINX2               BRANCH IF GREATER OR EQUAL
+                           53.  *
+C'000044  4A01             54.           TST.B     D1                  TEST QUAD
+C'000046  6608             55.           BNE.S     SINX3               BRANCH IF NOT ZERO
+                           56.  *
+C'000048  4EB9'0000008A    57.           JSR       LFISIN              CALL LFI SIN
+C'00004E  602C             58.           BRA.S     ENDSIN1             BRANCH TO END
+                           59.  *
+     C'00000050            60.  SINX3    EQU       *
+C'000050  D07C E980        61.           ADD.W     #-5760,D0           ADD -90 DEGREES
+C'000054  4440             62.           NEG.W     D0                  NEGATE
+C'000056  4EB9'0000008A    63.           JSR       LFISIN              CALL LFI SIN
+C'00005C  601E             64.           BRA.S     ENDSIN1             BRANCH TO END
+                           65.  *
+     C'0000005E            66.  SINX2    EQU       *
+C'00005E  B23C 0002        67.           CMP.B     #2,D1               COMPARE QUAD TO 2
+C'000062  660A             68.           BNE.S     SINX4               BRANCH IF NOT EQUAL
+                           69.  *
+C'000064  4EB9'0000008A    70.           JSR       LFISIN              CALL LFI SIN
+C'00006A  4440             71.           NEG.W     D0                  NEGATE ANSWER
+C'00006C  600E             72.           BRA.S     ENDSIN1             BRANCH TO END
+                           73.  *
+     C'0000006E            74.  SINX4    EQU       *
+C'00006E  D07C E980        75.           ADD.W     #-5760,D0           ADD -90 DEGREES
+C'000072  4440             76.           NEG.W     D0                  NEGATE
+C'000074  4EB9'0000008A    77.           JSR       LFISIN              CALL LFI SIN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  3
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+C'00007A  4440             78.           NEG.W     D0                  NEGATE ANSWER
+                           79.  *
+     C'0000007C            80.  ENDSIN1  EQU       *
+C'00007C  221F             81.           MOVE.L    (A7)+,D1            RESTORE D1
+C'00007E  4E75             82.           RTS                           RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  4
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                           84.  **********************************************************************
+                           85.  *                                                                    *
+                           86.  *        MCOS1     COS       INPUT:  -180,+180                       *
+                           87.  *                                                                    *
+                           88.  *                  D0=INPUT ANGLE IN DEG. AT 2-6 (+-180)             *
+                           89.  *                  D0=OUTPUT VALUE AT 2-15                           *
+                           90.  *                                                                    *
+                           91.  **********************************************************************
+                           92.           XDEF      MCOS1
+     C'00000080            93.  MCOS1    EQU       *
+C'000080  D07C 1680        94.           ADD.W     #5760,D0            ADD 90 DEGREES
+C'000084  4EBA FF92        95.           JSR       MSIN1               CALL SIN
+C'000088  4E75             96.           RTS                           RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  5
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                           98.  **********************************************************************
+                           99.  *                                                                    *
+                          100.  *        LFISIN    SIN       INPUT:  0,+90                           *
+                          101.  *                                                                    *
+                          102.  *                  D0=INPUT ANGLE IN DEG. AT 2-6 (0-360)             *
+                          103.  *                  D0=OUTPUT VALUE AT 2-15                           *
+                          104.  *                                                                    *
+                          105.  **********************************************************************
+     C'0000008A           106.  LFISIN   EQU       *
+C'00008A  207C'000000BA   107.           MOVE.L    #SINDATA,A0         LOAD ADDESS OF DATA TABLE
+C'000090  2200            108.           MOVE.L    D0,D1               SAVE INPUT ANGLE
+C'000092  C0BC 0000FFC0   109.           AND.L     #$0000FFC0,D0       MASK OFF FRACTIONAL BIT
+C'000098  EA88            110.           LSR.L     #5,D0               INTEGER PART OF ANGLE * 2
+C'00009A  D1C0            111.           ADD.L     D0,A0               CALCULATE ADDRESS IN TABLE
+C'00009C  3428 0002       112.           MOVE.W    2(A0),D2            GET BREAK POINT + 1 DATA VALUE
+C'0000A0  C2BC 0000003F   113.           AND.L     #$0000003F,D1       MASK OFF INTEGER PART
+C'0000A6  C5C1            114.           MULS      D1,D2               FRACTION*TABLE+1
+C'0000A8  303C 0040       115.           MOVE.W    #$0040,D0           LOAD 1 AT 2-6
+C'0000AC  9041            116.           SUB.W     D1,D0               COMPLEMENT FRACTION
+C'0000AE  3200            117.           MOVE.W    D0,D1               SWAP DATA
+C'0000B0  3010            118.           MOVE.W    (A0),D0             GET TABLE VALUE
+C'0000B2  C1C1            119.           MULS      D1,D0               COMPLEMENTED FRACTION*TABLE
+C'0000B4  D082            120.           ADD.L     D2,D0               ADD VALUES
+C'0000B6  EC80            121.           ASR.L     #6,D0               RETURN TO 2-15
+C'0000B8  4E75            122.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  6
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                          124.  **********************************************************************
+                          125.  *                                                                    *
+                          126.  *        SINDATA                                                     *
+                          127.  *                                                                    *
+                          128.  **********************************************************************
+     C'000000BA           129.  SINDATA  EQU       *
+C'0000BA  0000            130.           DC.W             0            SIN(  0) AT 2 X 15
+C'0000BC  023C            131.           DC.W           572            SIN(  1) AT 2 X 15
+C'0000BE  0478            132.           DC.W          1144            SIN(  2) AT 2 X 15
+C'0000C0  06B3            133.           DC.W          1715            SIN(  3) AT 2 X 15
+C'0000C2  08EE            134.           DC.W          2286            SIN(  4) AT 2 X 15
+C'0000C4  0B28            135.           DC.W          2856            SIN(  5) AT 2 X 15
+C'0000C6  0D61            136.           DC.W          3425            SIN(  6) AT 2 X 15
+C'0000C8  0F99            137.           DC.W          3993            SIN(  7) AT 2 X 15
+C'0000CA  11D0            138.           DC.W          4560            SIN(  8) AT 2 X 15
+C'0000CC  1406            139.           DC.W          5126            SIN(  9) AT 2 X 15
+C'0000CE  163A            140.           DC.W          5690            SIN( 10) AT 2 X 15
+C'0000D0  186C            141.           DC.W          6252            SIN( 11) AT 2 X 15
+C'0000D2  1A9C            142.           DC.W          6812            SIN( 12) AT 2 X 15
+C'0000D4  1CCB            143.           DC.W          7371            SIN( 13) AT 2 X 15
+C'0000D6  1EF7            144.           DC.W          7927            SIN( 14) AT 2 X 15
+C'0000D8  2120            145.           DC.W          8480            SIN( 15) AT 2 X 15
+C'0000DA  2347            146.           DC.W          9031            SIN( 16) AT 2 X 15
+C'0000DC  256C            147.           DC.W          9580            SIN( 17) AT 2 X 15
+C'0000DE  278D            148.           DC.W         10125            SIN( 18) AT 2 X 15
+C'0000E0  29AB            149.           DC.W         10667            SIN( 19) AT 2 X 15
+C'0000E2  2BC7            150.           DC.W         11207            SIN( 20) AT 2 X 15
+C'0000E4  2DDE            151.           DC.W         11742            SIN( 21) AT 2 X 15
+C'0000E6  2FF2            152.           DC.W         12274            SIN( 22) AT 2 X 15
+C'0000E8  3203            153.           DC.W         12803            SIN( 23) AT 2 X 15
+C'0000EA  340F            154.           DC.W         13327            SIN( 24) AT 2 X 15
+C'0000EC  3617            155.           DC.W         13847            SIN( 25) AT 2 X 15
+C'0000EE  381C            156.           DC.W         14364            SIN( 26) AT 2 X 15
+C'0000F0  3A1B            157.           DC.W         14875            SIN( 27) AT 2 X 15
+C'0000F2  3C17            158.           DC.W         15383            SIN( 28) AT 2 X 15
+C'0000F4  3E0D            159.           DC.W         15885            SIN( 29) AT 2 X 15
+C'0000F6  3FFF            160.           DC.W         16383            SIN( 30) AT 2 X 15
+C'0000F8  41EC            161.           DC.W         16876            SIN( 31) AT 2 X 15
+C'0000FA  43D3            162.           DC.W         17363            SIN( 32) AT 2 X 15
+C'0000FC  45B6            163.           DC.W         17846            SIN( 33) AT 2 X 15
+C'0000FE  4792            164.           DC.W         18322            SIN( 34) AT 2 X 15
+C'000100  496A            165.           DC.W         18794            SIN( 35) AT 2 X 15
+C'000102  4B3B            166.           DC.W         19259            SIN( 36) AT 2 X 15
+C'000104  4D07            167.           DC.W         19719            SIN( 37) AT 2 X 15
+C'000106  4ECD            168.           DC.W         20173            SIN( 38) AT 2 X 15
+C'000108  508C            169.           DC.W         20620            SIN( 39) AT 2 X 15
+C'00010A  5246            170.           DC.W         21062            SIN( 40) AT 2 X 15
+C'00010C  53F8            171.           DC.W         21496            SIN( 41) AT 2 X 15
+C'00010E  55A5            172.           DC.W         21925            SIN( 42) AT 2 X 15
+C'000110  574A            173.           DC.W         22346            SIN( 43) AT 2 X 15
+C'000112  58E9            174.           DC.W         22761            SIN( 44) AT 2 X 15
+C'000114  5A81            175.           DC.W         23169            SIN( 45) AT 2 X 15
+C'000116  5C12            176.           DC.W         23570            SIN( 46) AT 2 X 15
+C'000118  5D9C            177.           DC.W         23964            SIN( 47) AT 2 X 15
+C'00011A  5F1E            178.           DC.W         24350            SIN( 48) AT 2 X 15
+C'00011C  6099            179.           DC.W         24729            SIN( 49) AT 2 X 15
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  7
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+C'00011E  620C            180.           DC.W         25100            SIN( 50) AT 2 X 15
+C'000120  6378            181.           DC.W         25464            SIN( 51) AT 2 X 15
+C'000122  64DC            182.           DC.W         25820            SIN( 52) AT 2 X 15
+C'000124  6638            183.           DC.W         26168            SIN( 53) AT 2 X 15
+C'000126  678D            184.           DC.W         26509            SIN( 54) AT 2 X 15
+C'000128  68D9            185.           DC.W         26841            SIN( 55) AT 2 X 15
+C'00012A  6A1D            186.           DC.W         27165            SIN( 56) AT 2 X 15
+C'00012C  6B58            187.           DC.W         27480            SIN( 57) AT 2 X 15
+C'00012E  6C8C            188.           DC.W         27788            SIN( 58) AT 2 X 15
+C'000130  6DB6            189.           DC.W         28086            SIN( 59) AT 2 X 15
+C'000132  6ED9            190.           DC.W         28377            SIN( 60) AT 2 X 15
+C'000134  6FF2            191.           DC.W         28658            SIN( 61) AT 2 X 15
+C'000136  7103            192.           DC.W         28931            SIN( 62) AT 2 X 15
+C'000138  720B            193.           DC.W         29195            SIN( 63) AT 2 X 15
+C'00013A  730B            194.           DC.W         29451            SIN( 64) AT 2 X 15
+C'00013C  7401            195.           DC.W         29697            SIN( 65) AT 2 X 15
+C'00013E  74EE            196.           DC.W         29934            SIN( 66) AT 2 X 15
+C'000140  75D2            197.           DC.W         30162            SIN( 67) AT 2 X 15
+C'000142  76AD            198.           DC.W         30381            SIN( 68) AT 2 X 15
+C'000144  777F            199.           DC.W         30591            SIN( 69) AT 2 X 15
+C'000146  7847            200.           DC.W         30791            SIN( 70) AT 2 X 15
+C'000148  7906            201.           DC.W         30982            SIN( 71) AT 2 X 15
+C'00014A  79BB            202.           DC.W         31163            SIN( 72) AT 2 X 15
+C'00014C  7A67            203.           DC.W         31335            SIN( 73) AT 2 X 15
+C'00014E  7B0A            204.           DC.W         31498            SIN( 74) AT 2 X 15
+C'000150  7BA3            205.           DC.W         31651            SIN( 75) AT 2 X 15
+C'000152  7C32            206.           DC.W         31794            SIN( 76) AT 2 X 15
+C'000154  7CB7            207.           DC.W         31927            SIN( 77) AT 2 X 15
+C'000156  7D33            208.           DC.W         32051            SIN( 78) AT 2 X 15
+C'000158  7DA5            209.           DC.W         32165            SIN( 79) AT 2 X 15
+C'00015A  7E0E            210.           DC.W         32270            SIN( 80) AT 2 X 15
+C'00015C  7E6C            211.           DC.W         32364            SIN( 81) AT 2 X 15
+C'00015E  7EC1            212.           DC.W         32449            SIN( 82) AT 2 X 15
+C'000160  7F0B            213.           DC.W         32523            SIN( 83) AT 2 X 15
+C'000162  7F4C            214.           DC.W         32588            SIN( 84) AT 2 X 15
+C'000164  7F83            215.           DC.W         32643            SIN( 85) AT 2 X 15
+C'000166  7FB0            216.           DC.W         32688            SIN( 86) AT 2 X 15
+C'000168  7FD3            217.           DC.W         32723            SIN( 87) AT 2 X 15
+C'00016A  7FEC            218.           DC.W         32748            SIN( 88) AT 2 X 15
+C'00016C  7FFB            219.           DC.W         32763            SIN( 89) AT 2 X 15
+C'00016E  7FFF            220.           DC.W         32767            SIN( 90) AT 2 X 15
+C'000170  7FFB            221.           DC.W         32763            SIN( 91) AT 2 X 15
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  8
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                          223.  **********************************************************************
+                          224.  *                                                                    *
+                          225.  *        MULSL     32 * 32 MULTIPLY                                  *
+                          226.  *                                                                    *
+                          227.  *        INPUT:    D0.L = OPERAND 1                                  *
+                          228.  *                  D1.L = OPERAND 2                                  *
+                          229.  *                                                                    *
+                          230.  *        OUTPUT:   D0.L = LOWER 32 BITS OF RESULT                    *
+                          231.  *                  D1.L = UPPER 32 BITS OF RESULT                    *
+                          232.  *                                                                    *
+                          233.  **********************************************************************
+                          234.           XDEF      MULSL
+     C'00000172           235.  MULSL    EQU       *
+C'000172  48E7 1F00       236.           MOVEM.L   D3-D7,-(SP)         SAVE D3-D7
+C'000176  2600            237.           MOVE.L    D0,D3               A B
+C'000178  2800            238.           MOVE.L    D0,D4               A B
+C'00017A  2A01            239.           MOVE.L    D1,D5               C D
+C'00017C  2C00            240.           MOVE.L    D0,D6               A B
+C'00017E  7E00            241.           MOVE.L    #0,D7               CLEAR
+C'000180  4844            242.           SWAP      D4                  B A
+C'000182  4845            243.           SWAP      D5                  D C
+C'000184  C0C1            244.           MULU      D1,D0               D * B -> D1 E F
+C'000186  C2C4            245.           MULU      D4,D1               A * D -> D2 G H
+C'000188  C6C5            246.           MULU      D5,D3               C * B -> D3 I J
+C'00018A  C8C5            247.           MULU      D5,D4               A * C -> D4 K L
+C'00018C  4840            248.           SWAP      D0                  F E
+C'00018E  D041            249.           ADD.W     D1,D0               H + E -> D1
+C'000190  D987            250.           ADDX.L    D7,D4
+C'000192  D043            251.           ADD.W     D3,D0
+C'000194  D987            252.           ADDX.L    D7,D4
+C'000196  4840            253.           SWAP      D0
+C'000198  4241            254.           CLR.W     D1
+C'00019A  4243            255.           CLR.W     D3
+C'00019C  4841            256.           SWAP      D1
+C'00019E  4843            257.           SWAP      D3
+C'0001A0  D283            258.           ADD.L     D3,D1
+C'0001A2  D284            259.           ADD.L     D4,D1
+C'0001A4  4845            260.           SWAP      D5
+C'0001A6  4A86            261.           TST.L     D6
+C'0001A8  6A02            262.           BPL.S     CHK2
+C'0001AA  9285            263.           SUB.L     D5,D1
+C'0001AC  4A85            264.  CHK2     TST.L     D5
+C'0001AE  6A02            265.           BPL.S     DONE
+C'0001B0  9286            266.           SUB.L     D6,D1
+C'0001B2  4CDF 00F8       267.  DONE     MOVEM.L   (SP)+,D3-D7         RESTORE D3-D7
+C'0001B6  4E75            268.           RTS                           RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  9
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                          270.  **********************************************************************
+                          271.  *                                                                    *
+                          272.  *        DSMUL     32 * 16 MULTIPLY                                  *
+                          273.  *                                                                    *
+                          274.  *        INPUT:    D0.L = OPERAND 1                                  *
+                          275.  *                  D1.W = OPERAND 2                                  *
+                          276.  *                                                                    *
+                          277.  *        OUTPUT:   D0.L = RESULT                                     *
+                          278.  *                                                                    *
+                          279.  **********************************************************************
+                          280.           XDEF      DSMUL
+     C'000001B8           281.  DSMUL    EQU       *
+C'0001B8  E189            282.           LSL.L     #8,D1               EXTEND TO LONG
+C'0001BA  E189            283.           LSL.L     #8,D1               EXTEND TO LONG
+C'0001BC  61B4            284.           BSR       MULSL               MULTIPLY LONG
+C'0001BE  2001            285.           MOVE.L    D1,D0               STORE UPPER 32 BITS
+C'0001C0  4E75            286.           RTS                           RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 10
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                          288.  **********************************************************************
+                          289.  *                                                                    *
+                          290.  *        32 BIT SQUARE ROOT FUNCTION                                 *
+                          291.  *                                                                    *
+                          292.  *        INPUT:    D0.L - N                      SCALE +S            *
+                          293.  *        OUTPUT:   D0.W - SQUARE ROOT OF N       SCALE +S/2          *
+                          294.  *                                                                    *
+                          295.  **********************************************************************
+                          296.           XDEF      SQRT
+     C'000001C2           297.  SQRT     EQU       *
+C'0001C2  48E7 7000       298.           MOVEM.L   D1-D3,-(SP)                   SAVE REGISTERS
+C'0001C6  343C 000F       299.           MOVE.W    #16-1,D2                      LOAD COUNTER
+C'0001CA  7201            300.           MOVEQ.L   #1,D1                         FIRST QUESS
+C'0001CC  7600            301.           MOVEQ.L   #0,D3                         INITIALIZE TO ZERO
+C'0001CE  E380            302.  ARG      ASL.L     #1,D0                         BEGIN
+C'0001D0  E393            303.           ROXL.L    #1,D3                         MOVE NEXT TWO MOST
+C'0001D2  E380            304.           ASL.L     #1,D0                         SIGNIFICANT BITS TO
+C'0001D4  E393            305.           ROXL.L    #1,D3                         ACCUMULATOR
+C'0001D6  B681            306.           CMP.L     D1,D3                         TEST QUESS WITH ACC.
+C'0001D8  6B08            307.           BMI.S     MI                            BRANCH IF QUESS > ACC.
+                          308.  *
+C'0001DA  9681            309.           SUB.L     D1,D3                         QUESS < ACC.
+C'0001DC  E381            310.           ASL.L     #1,D1                         ADJUST QUESS
+C'0001DE  5681            311.           ADDQ.L    #3,D1                         QUESS = (QUESS*2)+3
+C'0001E0  6004            312.           BRA.S     EX                            BRANCH TO LOOP CONTROL
+C'0001E2  E381            313.  MI       ASL.L     #1,D1                         QUESS > ACC.
+C'0001E4  5381            314.           SUBQ.L    #1,D1                         QUESS = (QUESS*2)-1
+C'0001E6  51CA FFE6       315.  EX       DBRA      D2,ARG                        LOOP CONTROL
+C'0001EA  E481            316.           ASR.L     #2,D1                         ADJUST ANSWER
+C'0001EC  2001            317.           MOVE.L    D1,D0                         STORE ANSWER
+C'0001EE  4CDF 000E       318.           MOVEM.L   (SP)+,D1-D3                   RESTORE REGISTERS
+C'0001F2  4E75            319.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 11
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                          321.  **********************************************************************
+                          322.  *                                                                    *
+                          323.  *        64 BIT SQUARE ROOT FUNCTION                                 *
+                          324.  *                                                                    *
+                          325.  *        INPUT:    D0.L - LOWER 32 BITS          SCALE +S            *
+                          326.  *                  D1.L - UPPER 32 BITS                              *
+                          327.  *        OUTPUT:   D0.L - SQUARE ROOT OF N       SCALE +S/2          *
+                          328.  *                                                                    *
+                          329.  **********************************************************************
+                          330.           XDEF      SQRTL
+     C'000001F4           331.  SQRTL    EQU       *
+C'0001F4  2F02            332.           MOVE.L    D2,-(SP)                      SAVE D2
+C'0001F6  61CA            333.           BSR       SQRT                          SQUARE ROOT OF LOWER 32
+C'0001F8  3400            334.           MOVE.W    D0,D2                         SAVE SQRT(LOWER 32)
+C'0001FA  2001            335.           MOVE.L    D1,D0                         MOVE UPPER 32
+C'0001FC  61C4            336.           BSR       SQRT                          SQUARE ROOT OF UPPER 32
+C'0001FE  4840            337.           SWAP      D0                            SHIFT OVER 16 BITS
+C'000200  3002            338.           MOVE.W    D2,D0                         LOAD LOWER PART
+C'000202  241F            339.           MOVE.L    (SP)+,D2                      RESTORE D2
+C'000204  4E75            340.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 12
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                          342.  **********************************************************************
+                          343.  *                                                                    *
+                          344.  *        32 BIT DIVIDE                 DIVIDEND / DIVISOR            *
+                          345.  *                                                                    *
+                          346.  *        INPUT:    D0.L - DIVISOR      DENOMINATOR                   *
+                          347.  *                  D1.L - DIVIDEND     NUMERATOR                     *
+                          348.  *                                                                    *
+                          349.  *        OUTPUT:   D0.W - REMANDER                                   *
+                          350.  *                  D1.L - QUOTIENT                                   *
+                          351.  *                                                                    *
+                          352.  **********************************************************************
+                          353.           XDEF      DIVSL
+     C'00000206           354.  DIVSL    EQU       *
+C'000206  4A80            355.           TST.L     D0                            CHECK DENOMINATOR < 0
+C'000208  6A08            356.           BPL.S     DIV00                         BRANCH IF GREATER
+C'00020A  4480            357.           NEG.L     D0                            MAKE DENOMINATOR POSITIVE
+C'00020C  6104            358.           BSR.S     DIV00                         DIVIDE AS A POSITIVE
+C'00020E  4481            359.           NEG.L     D1                            NEGATE QUOTIENT
+C'000210  4E75            360.           RTS
+                          361.  *
+                          362.           XDEF      DIV00
+     C'00000212           363.  DIV00    EQU       *
+C'000212  4A81            364.           TST.L     D1                            CHECK NUMERATOR < 0
+C'000214  6A0A            365.           BPL.S     DIVUL                         BRANCH IF BOTH ARE POSITIVE
+C'000216  4481            366.           NEG.L     D1                            MAKE NUMERATOR POSITIVE
+C'000218  6106            367.           BSR.S     DIVUL                         PERFORM DIVISION
+C'00021A  4440            368.           NEG.W     D0                            NEGATE REMAINDER
+C'00021C  4481            369.           NEG.L     D1                            NEGATE QUOTIENT
+C'00021E  4E75            370.           RTS
+                          371.  *
+                          372.           XDEF      DIVUL
+     C'00000220           373.  DIVUL    EQU       *
+C'000220  48E7 3000       374.           MOVEM.L   D2-D3,-(SP)                   SAVE REGISTERS
+C'000224  4283            375.           CLR.L     D3                            CLEAR TEMP
+C'000226  82C0            376.           DIVU      D0,D1                         YZ DIVIDED BY X
+C'000228  680E            377.           BVC.S     FORMAT                        BRANCH IF OVERFLOW CLEAR
+C'00022A  2401            378.           MOVE.L    D1,D2                         SAVE DIVIDEND
+C'00022C  4241            379.           CLR.W     D1                            D1 CHANGES FROM YZ TO Y0
+C'00022E  4841            380.           SWAP      D1                            D1 CHANGES FROM Y0 TO 0Y
+C'000230  82C0            381.           DIVU      D0,D1                         Y DIVIDED BY X = R1Q1 IN D1
+C'000232  3601            382.           MOVE.W    D1,D3                         SAVE Q1
+C'000234  3202            383.           MOVE.W    D2,D1                         D1 CHANGES FROM R1Q1 TO R1Z
+C'000236  82C0            384.           DIVU      D0,D1                         R1Z DIVIDED BY X = R0Q0 IN D1
+C'000238  2001            385.  FORMAT   MOVE.L    D1,D0                         D0 BECOMES RQ OR R0Q0
+C'00023A  4841            386.           SWAP      D1                            D1 BECOMES QR OR Q0R0
+C'00023C  3203            387.           MOVE.W    D3,D1                         D1 BECOMES Q1 OR Q0Q1
+C'00023E  4240            388.           CLR.W     D0                            D0 BECOMES R0 OR R000
+C'000240  4840            389.           SWAP      D0                            D0 BECOMES OR OR 00R0
+C'000242  4CDF 000C       390.           MOVEM.L   (SP)+,D2-D3                   RESTORE REGISTERS
+C'000246  4E75            391.           RTS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 13
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                          393.  **********************************************************************
+                          394.  *                                                                    *
+                          395.  *        CVTS2F    CONVERT A SCALED NUMBER (LONG) TO IEEE FLOAT (32) *
+                          396.  *                                                                    *
+                          397.  *                  INPUT:    D0=B-SCALED NUMBER (LONG)               *
+                          398.  *                            D1=SCALE (8-31)                         *
+                          399.  *                                                                    *
+                          400.  *                  OUTPUT:   D0=IEEE SINGLE PRECISION FLOATING POINT *
+                          401.  *                               NUMBER                               *
+                          402.  *                                                                    *
+                          403.  *                  NOTE:     D6 IS DESTROYED                         *
+                          404.  *                                                                    *
+                          405.  **********************************************************************
+                          406.           XDEF      CVTS2F
+     C'00000248           407.  CVTS2F   EQU       *
+C'000248  4A80            408.           TST.L     D0                  TEST FOR ZERO
+C'00024A  6738            409.           BEQ.S     L4                  BRANCH IF ZERO
+C'00024C  2F00            410.           MOVE.L    D0,-(A7)            SAVE FOR SIGN
+C'00024E  6A02            411.           BPL.S     L0                  BRANCH IF POSITIVE
+C'000250  4480            412.           NEG.L     D0                  MAKE IT POSITIVE
+C'000252  E380            413.  L0       ASL.L     #1,D0               SHIFT OUT SIGN BIT
+C'000254  4A80            414.           TST.L     D0                  TEST FOR ZERO
+C'000256  6602            415.           BNE.S     L1                  BRANCH IF NOT ZERO
+C'000258  4680            416.           NOT.L     D0                  TURN ON ALL BITS
+C'00025A  7C00            417.  L1       MOVE.L    #0,D6               CLEAR D6
+C'00025C  1C3C 009D       418.           MOVE.B    #$9D,D6             LOAD EXPONENT
+C'000260  9C01            419.           SUB.B     D1,D6               ADJUST TO SCALE
+C'000262  0800 001F       420.  L2       BTST.L    #31,D0              TEST BIT 31
+C'000266  6606            421.           BNE.S     L3                  BRANCH IF BIT 31 IS A ONE
+C'000268  E380            422.           ASL.L     #1,D0               SHIFT OUT ZERO BIT
+C'00026A  5306            423.           SUBQ.B    #1,D6               CORRECT EXPONENT
+C'00026C  60F4            424.           BRA.S     L2                  LOOP UNTIL BIT 31 IS A ONE
+C'00026E  E380            425.  L3       ASL.L     #1,D0               SHIFT OUT IMPLIED ONE
+C'000270  E288            426.           LSR.L     #1,D0               POSITION FRACTION
+C'000272  E088            427.           LSR.L     #8,D0               POSITION FRACTION
+C'000274  E186            428.           ASL.L     #8,D6               POSITION EXPONENT
+C'000276  E186            429.           ASL.L     #8,D6               POSITION EXPONENT
+C'000278  EF86            430.           ASL.L     #7,D6               POSITION EXPONENT
+C'00027A  8086            431.           OR.L      D6,D0               OR EXPONENT & FRACTION INTO ONE
+C'00027C  241F            432.           MOVE.L    (A7)+,D2            LOAD SIGN
+C'00027E  6A04            433.           BPL.S     L4                  BRANCH IF POSITIVE
+C'000280  08C0 001F       434.           BSET.L    #31,D0              SET SIGN BIT
+C'000284  4E75            435.  L4       RTS                           RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 14
+D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+   ...
+
+                          437.  **********************************************************************
+                          438.  *                                                                    *
+                          439.  *        CVTF2S    CONVERT A IEEE FLOATING POINT TO LONG B-SCALED    *
+                          440.  *                  INTEGER                                           *
+                          441.  *                                                                    *
+                          442.  *                  INPUT:    D0=IEEE SINGLE PRECISION FLOATING POINT *
+                          443.  *                               NUMBER                               *
+                          444.  *                            D1=SCALE (8-31)                         *
+                          445.  *                                                                    *
+                          446.  *                  OUTPUT:   D0=B-SCALED NUMBER                      *
+                          447.  *                                                                    *
+                          448.  *                  NOTE:     D6 IS DESTROYED                         *
+                          449.  *                            D7 IS DESTROYED                         *
+                          450.  *                                                                    *
+                          451.  **********************************************************************
+                          452.           XDEF      CVTF2S
+     C'00000286           453.  CVTF2S   EQU       *
+C'000286  4A80            454.           TST.L     D0                  TEST INPUT FOR ZERO
+C'000288  6740            455.           BEQ.S     L10                 BRANCH IF ZERO
+C'00028A  0800 001F       456.           BTST.L    #31,D0              TEST SIGN BIT
+C'00028E  6704            457.           BEQ.S     L5                  BRANCH IF POSITIVE
+C'000290  50E7            458.           ST.B      -(A7)               SET SIGN FLAG
+C'000292  6002            459.           BRA.S     L6                  CONTINUE
+C'000294  51E7            460.  L5       SF.B      -(A7)               CLEAR SIGN FLAG
+C'000296  E388            461.  L6       LSL.L     #1,D0               SHIFT OUT SIGN FLAG
+C'000298  2C00            462.           MOVE.L    D0,D6               COPY EXPONENT & FRACTION
+C'00029A  E08E            463.           LSR.L     #8,D6               POSITION EXPONENT
+C'00029C  E08E            464.           LSR.L     #8,D6               POSITION EXPONENT
+C'00029E  E08E            465.           LSR.L     #8,D6               POSITION EXPONENT
+C'0002A0  E188            466.           LSL.L     #8,D0               POSITION FRACTION
+C'0002A2  E288            467.           LSR.L     #1,D0               MAKE ROOM FOR IMPLIED BIT
+C'0002A4  08C0 001F       468.           BSET.L    #31,D0              SET IMPLIED 1 BIT
+C'0002A8  DC01            469.           ADD.B     D1,D6               ADD SCALE TO EXPONENT
+C'0002AA  7E00            470.           MOVEQ.L   #0,D7               CLEAR SHIFT COUNTER
+C'0002AC  BC3C 009D       471.  L7       CMP.B     #$9D,D6             COMPARE TO MAX EXPONENT
+C'0002B0  6708            472.           BEQ.S     L8                  BRANCH WHEN EQUAL
+C'0002B2  5206            473.           ADD.B     #1,D6               INCREMENT EXPONENT
+C'0002B4  E288            474.           LSR.L     #1,D0               SHIFT FRACTION
+C'0002B6  5287            475.           ADDQ.L    #1,D7               INCREMENT SHIFT COUNTER
+C'0002B8  60F2            476.           BRA.S     L7                  LOOP UNTIL EXPONENT = $9D
+C'0002BA  E288            477.  L8       LSR.L     #1,D0               MAKE ROOM FOR SIGN BIT
+C'0002BC  1C1F            478.  L9       MOVE.B    (A7)+,D6            LOAD SIGN FLAG
+C'0002BE  670A            479.           BEQ.S     L10                 BRANCH IF FALSE
+C'0002C0  BEBC 00000008   480.           CMP.L     #8,D7               TEST SHIFT COUNTER
+C'0002C6  6D04            481.           BLT.S     L11                 BRANCH IF LESS THAN 8 SHIFTS
+C'0002C8  4480            482.           NEG.L     D0                  NEGATE SCALED NUMBER
+C'0002CA  4E75            483.  L10      RTS                           RETURN
+C'0002CC  4487            484.  L11      NEG.L     D7                  NEGATE SHIFT COUNTER
+C'0002CE  5087            485.           ADDQ.L    #8,D7               ADD 8 TO -SHIFT COUNTER
+C'0002D0  EEA8            486.           LSR.L     D7,D0               SHIFT DATA BY 8+ -SHIFT COUNTER
+C'0002D2  4480            487.           NEG.L     D0                  NEGATE NUMBER
+C'0002D4  EFA8            488.           LSL.L     D7,D0               SHFIT DATA BY 8+ -SHIFT COUNTER
+C'0002D6  4E75            489.  L12      RTS                           RETURN
+C'0002D8                  490.           END
+    0 Errors
+       485.           ADDQ.L    #8,D7               ADD 8 TO -SHIFT COUNTER
+C'0002D0  EEA8            486.           LSR.L     D7,D0               SHIFT DATA BY 8+ -SHIFT COUNTER
+C'0002D2  4480            487.           NEG.L     D0                  NEGATE NUMBER
+C'0002D4  EFA8            488.           LSL.L     D7,D0               SHFIT DATA BY 8+

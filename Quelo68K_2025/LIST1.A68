@@ -1,0 +1,113 @@
+	 OPT	   MEX,CEX,NOPCS
+**********************************************************************
+*								     *
+*	 MODENTRY  MACRO TO DEFINE AN ENTRY IN REAL-TIME MODULE LIST *
+*								     *
+**********************************************************************
+~mMODENTRY MACRO
+~m	 DC.B	   $\2,$\3,$\4,$\5
+~m	 DC.L	   \1
+~m	 ENDM
+	 PAGE
+**********************************************************************
+*								     *
+*	 REAL-TIME MODULE JUMP LIST				     *
+*								     *
+*	 #1 LONG WORD	     ADDRESS OF MODULE			     *
+*	 #2 BYTE	     FRAME MASK 			     *
+*	 #3 BYTE	     PRIV FLAG (FF=PRIV,00=USER)	     *
+*	 #4 BYTE	     TYPE (00=ASSEMBLER)		     *
+*	 #5 BYTE	     SPARE				     *
+*								     *
+**********************************************************************
+	 SECTION   12
+	 XDEF	   RTLIST
+	 XREF	   ENGINE
+	 XREF	   LIFT
+	 XREF	   SPEED
+	 XREF	   CLIMB
+	 XREF	   PITCH
+	 XREF	   ROLL
+	 XREF	   TURN
+	 XREF	   MOTION
+	 XREF	   NAVFREQ
+	 XREF	   NAV1
+	 XREF	   RMNKFG
+	 XREF	   COMM
+	 XREF	   GATVIS
+	 XREF	   VISIO
+	 XREF	   RTDEBUG
+	 XREF	   RTEND
+*
+RTLIST	 EQU	   *
+~c	 MODENTRY ENGINE,11,00,00,00
+	 DC.B	   $11,$00,$00,$00
+	 DC.L	   ENGINE
+~e
+~c	 MODENTRY LIFT,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   LIFT
+~e
+~c	 MODENTRY SPEED,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   SPEED
+~e
+~c	 MODENTRY CLIMB,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   CLIMB
+~e
+~c	 MODENTRY PITCH,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   PITCH
+~e
+~c	 MODENTRY ROLL,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   ROLL
+~e
+~c	 MODENTRY TURN,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   TURN
+~e
+~c	 MODENTRY MOTION,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   MOTION
+~e
+~c	 MODENTRY NAVFREQ,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   NAVFREQ
+~e
+~c	 MODENTRY NAV1,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   NAV1
+~e
+~c	 MODENTRY RMNKFG,55,00,00,00
+	 DC.B	   $55,$00,$00,$00
+	 DC.L	   RMNKFG
+~e
+~c	 MODENTRY COMM,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   COMM
+~e
+~c	 MODENTRY GATVIS,FF,00,00,00
+	 DC.B	   $FF,$00,$00,$00
+	 DC.L	   GATVIS
+~e
+~c	 MODENTRY VISIO,FF,FF,00,00
+	 DC.B	   $FF,$FF,$00,$00
+	 DC.L	   VISIO
+~e
+~c	 MODENTRY RTDEBUG,FF,FF,00,00
+	 DC.B	   $FF,$FF,$00,$00
+	 DC.L	   RTDEBUG
+~e
+~c	 MODENTRY RTEND,FF,FF,00,00
+	 DC.B	   $FF,$FF,$00,$00
+	 DC.L	   RTEND
+~e
+~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:37
+	 END
+$55,$00,$00,$00
+	 DC.L	   RMNKFG
+~e
+~c	 MODENTRY COMM,FF,00,00,00
+	 D

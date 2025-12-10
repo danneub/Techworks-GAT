@@ -1,0 +1,429 @@
+	 OPT	   MEX,CEX,NOPCS
+	 XDEF	   TURN
+*
+	 INCLUDE   FSYM.SA
+	 INCLUDE   ESYM.SA
+	 INCLUDE   MSYM.SA
+	 INCLUDE   IO.SA
+*
+	 SECTION 12
+FTURNC01 DC.W	   518		   173 X .001462 X 2(+11)
+FTURNC02 DC.W	   183		   173 X .0165 X 2(+6)
+FTURNC03 DC.W	   98		   173 X .00025/1845 AT 2-22
+FTURNC04 DC.W	   419		   173 X .0000739 X 2(+15)
+FTURNC05 DC.W	   432		   173 X .15615 X 2(+4)
+FTURNC06 DC.W	   5137 	   173 X .058 X 2(+9)
+FTURNC07 DC.L	   1638400	   200 X  2(13)
+FTURNC08 DC.L	   -1638400	  -200 X 2(13)
+FTURNC09 DC.L	   125829100	   30 X 2-22  OR 60X2-21   (LESS 20)
+FTURNC10 DC.L	   -125829100	  -30 X 2-22  OR -60X2-21  (LESS 20)
+FTURNC11 DC.L	   1006632900	   30 AT 2-25  OR 60 AT 2-24
+FTURNC12 DC.L	   -1006632900	   -30 AT 2-25	OR -60 AT 2-24
+FTURNC13 DC.L	   1509949400	   360 AT 2-22
+FTURNC14 DC.W	   5079 	.155 AT 2-15	 WAS(157*.155 AT 2-10)24919
+FTURNC15 DC.L	   30720	   30 X 2(+10)
+FTURNC16 DC.L	   -30720	  -30 X 2(+10)
+FTURNC17 DC.W	   768		   12 X 2(+6)
+FTURNC18 DC.W	   819		   1/20 AT 2-14
+FTURNC19 DC.W	   228		   60/90*1/6 AT 2-11
+FTURNC20 DC.W	   -11702	 - 1/.35 AT 2-12
+FTURNC21 DC.W	   26446	  157 X +1.316 AT 2-7
+FTURNC22 DC.W	   20448	  157 X 4.07 AT 2-5
+FTURNC23 DC.W	   2560 	  10 X 2(+8)
+FTURNC24 DC.W	   539		 (1/4.75)*(1/1.6) AT 2-12
+FTURNC25 DC.L	   125829120	  7.5 AT 2-24
+FTURNC26 DC.L	   -125829120	 -7.5 AT 2-24
+FTURNC27 DC.W	   546		  1/30 AT 2-14
+FTURNC28 DC.L	   1048570	  1 AT 2-20  (LESS 6)
+FTURNC29 DC.L	   -1048570	  -1 AT 2-20 (LESS 6)
+FTURNC30 DC.W	   17189	  .06557 AT 2-18 WAS 157*..06557 AT 2-11(21083
+FTURNC31 DC.L	   5329 	  173*.00047 AT 2-16
+FTURNC32 DC.W	   -128 	  -1 AT 2-7
+FTURNC33 DC.L	   81920	  5 AT 2-14
+FTURNC34 DC.L	   -81920	  -5 AT 2-14
+FTURNC35 DC.W	   27308	  6.667 AT 2-12
+FTURNC36 DC.L	   1638 	  .1 AT 2-14
+FTURNC37 DC.W	   16747	  157*6.667 AT 2-4
+FTURNC38 DC.W	   27308	  6.667 AT 2-12
+FTURNC39 DC.L	   754974720	  180 AT 2-22
+FTURNC40 DC.L	   -754974720	  -180 AT 2-22
+FTK1	 DC.W	   26214	  .05 X 2(19)
+TURN	 EQU *
+	 MOVE.L    #$FE6000,A6	       I/O BASE ADDRESS IN A6
+	 TST.B	   FFREEZE
+	 BEQ.S	   UNFREEZE	       BR IF NOT FREEZE
+	 TRAP	   #0		       SKIP PROGRAM IF FLT FREEZE IS ON
+***********************************************************************
+*								      *
+*    THIS MODULE COMPUTES:NORMALIZED RUDDER AT 2-14(RT PED FWD IS NEG)*
+*			  RA DOT (DEGREES/SEC SQ.)AT 2-7	      *
+*			  RA (DEGREES/SECOND) AT 2-25(LONG) 2-9(WORD  *
+*			  PSI DOT(DEGREES/SECOND) AT 2-8	      *
+*			  PSI (DEGREES) AT 2-22(LONG) 2-6(WORD)       *
+*			  BETA DOT (DEGREES/SECOND) AT 2-7	      *
+*			  BETA (DEGREES) AT 2-25(LONG) 2-9(WORD)      *
+*			  LAMBDA DOT (DEGREES/SECOND) AT 2-8	      *
+*			  LAMBDA (DEGREES) AT 2-24(LONG) 2-8(WORD)    *
+*			  TURN NEEDLE (NEEDLE WIDTHS) AT 2-15	      *
+*			  TURN NEEDLE (D/A) 10 VOLTS=6 NEEDLEWIDTHS   *
+*			  INDICATED BALL WIDTH AT 2-15(1 SEC T.C.)    *
+*					   OCTOBER 27 1983	      *
+***********************************************************************
+*
+**************************************************************************
+* RA DOT(DEG/SEC SQ )=173*Q*[-.0165 RUD + .001462 BETA-.0007179*AILERON  *
+*		  -.0036*(CL)*(AIL) +.00025*ROUGH AIR+.00047]		 *
+*		  -173*[.0000739*THRUST*VP/30 +.00003455*RA*VCAL]	 *
+*		  -173*K1*(.15615 RUDDER*VP/30 +.O58*RA)		 *
+*	 WHERE:K1=1 IF ON GROUND,ZERO OTHERWISE 			 *
+*	       VP/30 IS LIMITED TO 1					 *
+*	       RUDDER A/D=+3.5VOLTS(RT PEDAL FWD)-3.5 VOLTS(LEFT FWD)	 *
+*	       POSITIVE RUDDER=NOSE LEFT(LEFT PEDAL FWD)		 *
+*		     NOTE:NORMALIZED RUDDER IS DEADBANDED BY +,-,.1	 *
+*			    -200<RA DOT<200				 *
+**************************************************************************
+UNFREEZE MOVEP.W   IRUD(A6),D7	       RUDDER A/D
+	 MOVE.B    #0,IRUD(A6)	       START A/D CONVERSION
+	 BCHG	   #15,D7	       COMPLEMENT SIGN
+	 BPL.S	   NEXT 	       BRANCH IF POSITIVE
+	 ADDQ.W    #1,D7	       ADD 1 IF NEGATIVE
+NEXT	 MULS	   FTURNC20,D7	       -1/.35*RUDDER AT 2-27
+	 ASR.L	   #8,D7	       2-19
+	 ASR.L	   #5,D7	       2-14
+	 BMI.S	   NEXT1
+	 SUB.L	   FTURNC36,D7	       RUDDER-.1 AT 2-14
+	 BPL.S	   NEXT2	       BRANCH IF POSITIVE
+	 CLR.L	   D7		       DEADBAND IF LESS THAN .1
+	 BRA.S	   NEXT2
+NEXT1	 ADD.L	   FTURNC36,D7	       RUDDER+.1 AT 2-14
+	 BMI.S	   NEXT2	       BRANCH IF MINUS
+	 CLR.L	   D7		       DEADBAND IF GREATER THAN -.1
+NEXT2	 MOVE.W    D7,FDELRUD	       RUDDER AT 2-14(RT PEDAL FWD=NEG RUDDER)
+	 MULS	   FTURNC02,D7	       173*.0165*RUDDER AT 2-20
+	 MOVE.W    FBETA,D0	       BETA X 2-9
+	 MULS	   FTURNC01,D0	       173 X .001462 X BETA AT 2-2O
+	 SUB.L	   D7,D0	       173*(.001462*BETA-.0165*RUDDER) AT 2-20
+	 MOVE.W    FDELAIL,D1	       NORM AILERON X 2(+14)
+	 MULS	   #127,D1	       173 X .0007179 X AILERON AT 2-24
+	 ASR.L	   #4,D1	       2-20
+	 SUB.L	   D1,D0       173*(.001462*BETA-.0165*RUDDER-.0007179*AILERON)
+	 MOVE.W    FDELAIL,D1	       NORM AILERON X 2(+14)
+	 MULS	   #5,D1	       173 X .0036 X AILERON AT 2-17
+	 ASR.L	   #3,D1	       2-14
+	 MULS	   FCL,D1	       CL X 2(+13)= 2(+27)
+	 ASR.L	   #7,D1	       2-20
+	 SUB.L	   D1,D0
+	 ASR.L	   #4,D0	       2-16
+	 ADD.L	   FTURNC31,D0	       173*.00047 AT 2-16
+	 MOVE.W    FRUFAIR,D1	       VP*ROUGH AIR AT 2-6
+	 MULS	   FVPINV,D1	       1845/VP*VP*ROUGH AIR AT 2-10
+	 ASR.L	   #4,D1	       1845*ROUGH AIR AT 2-6
+	 MULS	   FTURNC03,D1	       173*.00025*ROUGH AIR AT 2-28
+	 ASR.L	   #8,D1	       2-20
+	 ASR.L	   #4,D1	       2-16
+	 ADD.L	   D1,D0
+	 ASR.L	   #8,D0	       2(+8)
+	 MULS	   FQ,D0	       DYN PR X 2(+6)  =2(+14)
+	 MOVE.W    FVP,D2	       VP AT 2-6
+	 MULS	   FTURNC27,D2	       VP/30 AT 2-20
+	 CMP.L	   FTURNC28,D2	       (VP/30)-1  AT 2-20
+	 BMI.S	   NEXT3
+	 MOVE.L    FTURNC28,D2	       LIMIT IN D2 AT 2-20
+NEXT3	 ASR.L	   #8,D2	       VP/30(LIMITED TO 1) AT 2-12
+	 MOVE.W    ENTHRUST,D1	       THRUST X 2(+5)
+	 MULS	   FTURNC04,D1	       173 X .0000739 X THRUST AT 2-20
+	 ASR.L	   #8,D1	       2-12
+	 ASR.L	   #2,D1	       2-10
+	 MULS	   D2,D1	       VP/30*173*.000074*THRUST AT 2-22
+	 ASR.L	   #8,D1	       2-14
+	 SUB.L	   D1,D0	       2-14
+	 MOVE.W    FVCAL,D1	       VCAL X 2(+6)
+	 MULS	   #3,D1	       173 X .00003455 X 2(+9) = 2(+15)
+	 ASR.L	   #5,D1	       2-10
+	 MULS	   FRA,D1	       173*.00003455*VCAL*RA AT 2-19
+	 ASR.L	   #5,D1	       2-14
+	 SUB.L	   D1,D0	       2-14
+	 TST.B	   FWOG 	       WEIGHT ON GROUND
+	 BEQ.S	   INAIR	       BRANCH IF NOT ON GROUND
+	 MOVE.W    FDELRUD,D1	       NORM RUDDER X 2(+14)
+	 MULS	   FTURNC05,D1	       173 X .15615 X RUDDER AT 2-18
+	 ASR.L	   #8,D1	       2-10
+	 MULS	   D2,D1	       VP/30*173*.15615*RUDDER AT 2-22
+	 ASR.L	   #8,D1	       2-14
+	 MOVE.W    FRA,D4	       RA AT 2-9
+	 MULS	   FTURNC06,D4	       173*.058*RA AT 2-18
+	 ASR.L	   #7,D4	       2-14	 1/8 ORIGINAL***(WAS 4)****
+	 ADD.L	   D4,D1	       173*(.058*RA+.15615*RUD*VP/30) AT 2-14
+	 SUB.L	   D1,D0	       2-14
+INAIR	 ASR.L	   #1,D0	       RADOT X 2(13)
+	 CMP.L	   FTURNC07,D0	       200  AT 2-13
+	 BMI.S	   NEXT4	       BR IF RADOT<200
+	 MOVE.L    FTURNC07,D0	       LIMIT RADOT TO 200
+NEXT4	 CMP.L	   FTURNC08,D0	       -200  AT 2-13
+	 BPL.S	   NEXT5	       BR IF RADOT>-200
+	 MOVE.L    FTURNC08,D0	       LIMIT RADOT TO -200
+NEXT5	 ASR.L	   #6,D0	       2-7
+	 TST.B	   FMODE1	       1=MODE 1 SELECTED
+	 BEQ.S	   NEXT6	       BRANCH IF NOT MODE 1
+	 CLR.L	   D0		       ZERO IN D0
+NEXT6	 MOVE.W    FRADOT,D1	       RADOT(N-1) AT 2-7
+	 MOVE.W    D0,FRADOT	       RADOT AT 2-7   -200<RADOT<200
+*	 *************************************************************
+*	 *	   RA(DEGREES)= INTEGRAL(RA DOT *DT)		     *
+*	 *		-30<RA<30				     *
+*	 *		DT=.05(20 ITERATIONS/SEC)		     *
+*	 *************************************************************
+	 SUB.W	   D1,D0	       RADOT(N) -RADOT(N-1) AT 2-7
+	 ASR.W	   #1,D0	       1/2RADOT(N)-1/2RADOT(N-1)AT 2-7
+	 ADD.W	   FRADOT,D0	       3/2RADOT(N)-1/2RADOT(N-1) AT 2-7
+	 MULS	   FTK1,D0	       .05 *(---) AT 2-26
+	 ASR.L	   #1,D0	       2-25
+	 ADD.L	   FRA,D0	       RATE OF TURN(N) AT 2-25
+	 BMI.S	   NEXT7
+	 CMP.L	   FTURNC11,D0	       30 AT 2-25
+	 BMI.S	   NEXT8	       BR IF RA<30
+	 MOVE.L    FTURNC11,D0	       LIMIT RA TO 30 AT 2-25
+	 BRA.S	   NEXT8
+NEXT7	 CMP.L	   FTURNC12,D0	       -30
+	 BPL.S	   NEXT8	       BR IF RA>-30
+	 MOVE.L    FTURNC12,D0	       LIMIT RA TO -30 AT 2-25
+NEXT8	 TST.B	   FMODE1	       1=MODE 1 SELECTED
+	 BEQ.S	   NEXT9	       BRANCH IF NOT MODE 1
+	 CLR.L	   D0		       ZERO IN D0
+NEXT9	 MOVE.L    D0,FRA	       RA AT 2-25(LONG) 2-9(WORD)
+*	 *************************************************************
+*	 *  PSI DOT(DEG/SEC)= RA (COS PHI) + QA (SIN PHI)+SYNC	     *
+*	 *		     -60<PSI DOT<60			     *
+*	 *	   NOTE:SYNC=32*SIN(COCKPIT HEADING-ACFT HEADING)    *
+*	 *		    DURING INITIAL TURN ON		     *
+*	 *************************************************************
+	 MOVE.W    FCOSPHI,D3	       COS PHI X 2(+15)
+	 MULS	   FRA,D3	       RA X COS PHI AT 2-24
+	 MOVE.W    FSINPHI,D4	       SIN PHI X 2(+15)
+	 MULS	   FQA,D4	       QA X SIN PHI AT 2-24
+	 ADD.L	   D4,D3	       RA(COS PHI)+QA(SINPHI) AT 2-24
+	 CMP.L	   FTURNC11,D3	       60 X 2(24)
+	 BMI.S	   NEXT10	       BR IF <60
+	 MOVE.L    FTURNC11,D3	       LIMIT TO 60  AT 2-24
+NEXT10	 CMP.L	   FTURNC12,D3	       -60 X 2(24)
+	 BPL.S	   NEXT11	       BR IF >-60
+	 MOVE.L    FTURNC12,D3	       LIMIT TO -60 AT 2-24
+NEXT11	 ASR.L	   #8,D3	       2-16
+	 ASR.L	   #8,D3	       2-8
+	 TST.B	   FMODE1	       1=MODE 1 SELECTED
+	 BEQ.S	   NEXT12	       BRANCH IF NOT MODE 1
+	 CLR.L	   D3		       ZERO IN D3
+NEXT12	 TST.B	   FINIT	       1=INITIALIZED
+	 BNE.S	   NEXT13	       BRANCH IF INITIALIZED
+	 MOVE.W    MSINPSI,D0	       SIN COCKPIT HEADING AT 2-15
+	 MULS	   FCOSPSI,D0	 SIN COCKPIT HEADING *COS HEADING AT 2-30
+	 MOVE.W    MCOSPSI,D1	       COS COCKPIT HEADING AT 2-15
+	 MULS	   FSINPSI,D1	 COS COCKPIT HEADING*SIN HEADING AT 2-30
+	 SUB.L	   D1,D0	       SIN ERROR AT 2-30
+	 ASR.L	   #8,D0	       2-22
+	 ASR.L	   #7,D0	       2-15
+	 ASR.L	   #2,D0	       32*SIN ERROR AT 2-8
+	 ADD.W	   D0,D3	       PSI DOT (N) AT 2-8
+NEXT13	 MOVE.W    FPSIDOT,D4	       PSI DOT(N-1) X 2(+8)
+	 MOVE.W    D3,FPSIDOT	       -60<PSI DOT<60 X 2(+8)
+*	 *************************************************************
+*	 *	   PSI(DEGREES) = INTEGRAL(PSI DOT*DT)		     *
+*	 *	      -180<PSI<180				     *
+*	 *		 DT=.05(20 ITERATIONS/SEC)		     *
+*	 *************************************************************
+
+	 SUB.W	   D4,D3	       PSIDOT(N) -PSIDOT(N-1) AT 2-8
+	 ASR.W	   #1,D3	       1/2 PSIDOT(N) -1/2 PSIDOT(N-1)AT 2-8
+	 ADD.W	   FPSIDOT,D3	       3/2 PSIDOT(N) -1/2 PSIDOT(N-1)AT 2-8
+	 MULS	   FTK1,D3	       .05 X 2(+19)X(.....)X2(+8)  =2(+27)
+	 ASR.L	   #5,D3	       2-22
+	 ADD.L	   FPSI,D3	       PSI X 2-22
+	 BPL.S	   NEXT14	       BR IF >0
+	 CMP.L	   FTURNC40,D3	      (PSI+180) AT 2-22
+	 BPL.S	   NEXT15	       BRANCH IF PSI IS GREATER THAN -180
+	 ADD.L	   FTURNC13,D3	       PSI + 360 AT 2-22
+	 BRA.S	   NEXT15
+NEXT14	 CMP.L	   FTURNC39,D3	       (PSI-180) AT 2-22
+	 BMI.S	   NEXT15	       BR IF <180
+	 SUB.L	   FTURNC13,D3	       (PSI-360) AT 2-22
+NEXT15	 MOVE.L    D3,FPSI	       PSI AT 2-22(LONG) 2-6(WORD)
+**********************************************************************
+*								     *
+*	  BETA DOT=6.667*[1845*SIN PHI/VP+157*VCAL/WG(-.06557*BETA   *
+*			      +.155*RUD) -RA ]			     *
+*			      -200<BETA DOT<200 		     *
+*			     WHERE:LEFT PEDAL FWD GIVES POS RUDDER   *
+*	    POSITVE BETA IS NOSE TO THE LEFT OF THE LINE OF FLIGHT   *
+**********************************************************************
+	 MOVE.L    FBETA,D6	       BETA X 2-25
+	 ASR.L	   #8,D6	       2-17
+	 ASR.L	   #7,D6	       2-10
+	 MULS	   FTURNC30,D6	       (.06557) X BETA AT 2-28
+	 MOVE.W    FDELRUD,D5	       NORM RUDDER X 2(+14)
+	 MULS	   FTURNC14,D5	       .155*RUDDER AT 2-29
+	 ASR.L	   #1,D5	       2-28
+	 SUB.L	   D6,D5	       (.155*RUDDER-.06557*BETA) AT 2-28
+	 ASR.L	   #8,D5	       (.155*RUDDER-.06557*BETA) AT 2-20
+	 ASR.L	   #8,D5	       (.155*RUDDER-.06557*BETA) AT 2-12
+	 MOVE.W    FWGINV,D4	       1/WG AT 2-17
+	 MULS	   FTURNC37,D4	       157*6.667/WG AT 2-21
+	 ASR.L	   #6,D4	       157*6.667/WG AT 2-15
+	 MULS	   FVCAL,D4	       157*6.667*VCAL/WG AT 2-21
+	 ASR.L	   #8,D4	       157*6.667*VCAL/WG AT 2-13
+	 ASR.L	   #7,D4	       157*6.667*VCAL/WG AT 2-6
+	 MULS	   D4,D5      157*6.667*VCAL/WG*(.155*RUD-.06557*BETA)AT 2-18
+	 ASR.L	   #2,D5	       2-16
+	 MOVE.W    FTURNC38,D3	       6.667 AT 2-12
+	 MULS	   FVPINV,D3	       1845/VP *6.667 AT 2-16
+	 ASR.L	   #8,D3	       1845/VP *6.667 AT 2-8
+	 ASR.L	   #7,D3	       1845/VP *6.667 AT 2-1
+	 MULS	   FSINPHI,D3	       1845/VP *6.667*SIN PHI AT 2-16
+	 ADD.L	   D3,D5	       2-16
+	 MOVE.W    FRA,D1	       RA AT 2-9
+	 MULS	   FTURNC38,D1	       6.667*RA AT 2-21
+	 ASR.L	   #5,D1	       6.667*RA AT 2-16
+	 SUB.L	   D1,D5	       2-16
+	 ASR.L	   #3,D5	       2-13
+	 CMP.L	   FTURNC07,D5	       200 X 2(13)
+	 BMI.S	   NEXT16	       BR IF <200
+	 MOVE.L    FTURNC07,D5	       LIMIT TO 200
+NEXT16	 CMP.L	   FTURNC08,D5	       -200 X 2(13)
+	 BPL.S	   NEXT17	       BR IF >-200
+	 MOVE.L    FTURNC08,D5	       LIMIT TO -200
+NEXT17	 ASR.L	   #6,D5	       2-7
+	 TST.B	   FMODE1	       1=MODE 1 SELECTED
+	 BEQ.S	   NEXT18	       BRANCH IF NOT MODE 1
+	 CLR.L	   D5		       ZERO IN D5
+NEXT18	 MOVE.W    FBETADOT,D6	       BETA DOT(N-1) X 2(+7)
+	 MOVE.W    D5,FBETADOT	       -200<BETA DOT<200 X 2(+7)
+*	 *************************************************************
+*	 *	   BETA = INTEGRAL(BETA DOT *DT)	   (DEGREES) *
+*	 *		  -30<BETA<30				     *
+*	 *	   BETA =ZERO ON GROUND 			     *
+*	 *		   DT=.05(20 ITERATIONS/SEC)		     *
+*	 *************************************************************
+	 SUB.W	   D6,D5	       BETADOT(N) - BETADOT(N-1) AT 2-7
+	 ASR.W	   #1,D5	       1/2 BETADOT(N) - 1/2 BETADOT(N-1)
+	 ADD.W	   FBETADOT,D5	       3/2 BETADOT(N) - 1/2 BETADOT(N-1)
+	 MULS	   FTK1,D5	       .05 X 2(+19) X (........) =2(+26)
+	 ASR.L	   #1,D5	       2-25
+	 ADD.L	   FBETA,D5	       BETA X 2(+25)
+	 BMI.S	   NEXT19
+	 CMP.L	   FTURNC11,D5	       BETA -30 AT 2-25
+	 BMI.S	   NEXT20	       BR IF <30
+	 MOVE.L    FTURNC11,D5		LIMIT TO 30 AT 2-25
+	 BRA.S	   NEXT20
+NEXT19	 CMP.L	   FTURNC12,D5	       BETA+30 AT 2-25
+	 BPL.S	   NEXT20	       BR IF >-30
+	 MOVE.L    FTURNC12,D5	       LIMIT TO -30 AT 2-25
+NEXT20	 TST.B	   FWOG 	       WEIGHT ON GROUND
+	 BEQ.S	   NEXT21	       BR IF NOT ON GROUND
+	 CLR.L	   D5		       BETA = 0 ON GROUND
+NEXT21	 TST.B	   FMODE1	       1=MODE 1 SELECTED
+	 BEQ.S	   NEXT22	       BRANCH IF NOT MODE 1
+	 CLR.L	   D5		       ZERO IN D5
+NEXT22	 MOVE.L    D5,FBETA	       BETA AT 2-25(LONG) 2-9(WORD)
+**********************************************************************
+*								     *
+*  LAMBDA DOT=(157*Q/WG)*(4.07*DEL RUD+1.316*BETA)+AZA*LAMBDA	     *
+*		    -.117*(RA+LAMBDA)*(WOG)			     *
+*		      -5<LAMBDA DOT<5	      (DEGREES/SECOND)	     *
+*	    NOTE: LAMBDA DOT=ZERO IF MODE 1 IS SELECTED 	     *
+**********************************************************************
+	 MOVE.W    FBETA,D5	       BETA AT 2-9
+	 MULS	   FTURNC21,D5	       157*1.316*BETA AT 2-16
+	 MOVE.W    FDELRUD,D3	       NORM RUD X 2(+14)
+	 MULS	   FTURNC22,D3	       157 X4.07 X RUDDER AT 2-19
+	 ASR.L	   #3,D3	       2-16
+	 ADD.L	   D3,D5	       157*(4.07*RUDDER+1.316*BETA)AT 2-16
+	 ASR.L	   #8,D5	       2-8
+	 ASR.L	   #6,D5	       2-2
+	 MULS	   FWGINV,D5	      157/WG*(4.07*RUDDER+1.316*BETA) AT 2-19
+	 ASR.L	   #8,D5	       2-11
+	 MULS	   FQ,D5	       DYN PRESS X 2(+6) = 2(17)
+	 MOVE.W    FLAMBDA,D6	       LAMBDA X 2(8)
+	 MULS	   FAZA,D6	       AZA X LAMBDA AT 2-20
+	 ASR.L	   #3,D6	       2-17
+	 ADD.L	   D6,D5	       2-17
+	 ASR.L	   #3,D5	       2-14
+	 TST.B	   FWOG 	       1=ON GROUND
+	 BEQ.S	   NEXT23	       BRANCH IF IN AIR
+	 MOVE.W    FRA,D6	       RA X 2(9)
+	 ASR.W	   #1,D6	       2-8
+	 ADD.W	   FLAMBDA,D6	       RA +LAMBDA AT 2-8
+	 MULS	   #15,D6	       .117 X 2(7) = 2(15)
+	 ASR.L	   #1,D6	       2-14
+	 SUB.L	   D6,D5	       2-14
+NEXT23	 CMP.L	   FTURNC33,D5	       5 AT 2-14
+	 BMI.S	   NEXT24	       BR IF <5
+	 MOVE.L    FTURNC33,D5	       LIMIT TO 5
+NEXT24	 CMP.L	   FTURNC34,D5	       -5 AT 2-14
+	 BPL.S	   NEXT25	       BR IF >-5
+	 MOVE.L    FTURNC34,D5	       LIMIT TO -5 AT 2-14
+NEXT25	 ASR.L	   #6,D5	       2-8
+	 TST.B	   FMODE1	       1=MODE 1 SELECTED
+	 BEQ.S	   NEXT26	       BRANCH IF NOT MODE 1
+	 CLR.L	   D5		       ZERO IN D5
+NEXT26	 MOVE.W    FLAMDOT,D4	       LAMBDA DOT(N-1) AT 2-8
+	 MOVE.W    D5,FLAMDOT	       LAMBDA DOT(N) AT 2-8
+**************************************************************************
+*									 *
+*		   LAMBDA=INTEGRAL(LAMBDA DOT*DT)*K1	      (DEGREES)  *
+*			  WHERE:DT=.05(20 ITERATIONS/SECOND)		 *
+*				-7.5<LAMDA<7.5				 *
+*				KI=0 IF MODE 1,ONE OTHERWISE		 *
+**************************************************************************
+	 SUB.W	   D4,D5	       LAMDOT(N)-LAMDOT(N-1) AT 2-8
+	 ASR.W	   #1,D5	       1/2LAMDOT(N)-1/2LAMDOT(N-1) AT 2-8
+	 ADD.W	   FLAMDOT,D5	       3/2LAMDOT(N)-1/2LAMDOT(N-1)AT 2-8
+	 MULS	   FTK1,D5	       .05*(---) AT 2-27
+	 ASR.L	   #3,D5	       2-24
+	 ADD.L	   FLAMBDA,D5	       LAMBDA(N)AT 2-24(LONG) 2-8(WORD)
+	 CMP.L	   FTURNC25,D5	       LIMIT=7.5
+	 BMI.S	   NEXT27
+	 MOVE.L    FTURNC25,D5	       LIMIT IN D5 AT 2-24
+NEXT27	 CMP.L	   FTURNC26,D5
+	 BPL.S	   NEXT28
+	 MOVE.L    FTURNC26,D5	       LIMIT IN D5 AT 2-24
+NEXT28	 TST.B	   FMODE1	       1=MODE 1 SELECTED
+	 BEQ.S	   NEXT29	       BRANCH IF NOT MODE 1
+	 CLR.L	   D5		       ZERO IN D5
+NEXT29	 MOVE.L    D5,FLAMBDA	       LAMBDA(N)AT 2-24(LONG) 2-8(WORD)
+**********************************************************************
+*								     *
+*	      BALL INDICATER=LAMBDA/4.75	    (BALL WIDTHS)    *
+*		   INDICATER DRIVE:+10 VOLTS=1.6 RIGHT BALL WIDTHS   *
+*		   1 SECOND TIME CONSTANT ON INDICATER DRIVE	     *
+**********************************************************************
+	 MOVE.W    FLAMBDA,D5	       LAMBDA AT 2-8
+	 MULS	   FTURNC24,D5	       (1/4.75)*(1/1.6)*LAMBDA AT 2-20
+	 SUB.L	   FBALL,D5	       BALL(N)-BALL(N-1) AT 2-20
+	 ASR.L	   #8,D5	       2-12
+	 MULS	   FTURNC18,D5	       1/20*[BALL(N)-BALL(N-1)] AT 2-26
+	 ASR.L	   #6,D5	       2-20
+	 ADD.L	   FBALL,D5	       BALL(N) AT 2-20
+	 MOVE.L    D5,FBALL	       BALL(N) AT 2-20(LONG) 2-4(WORD)
+	 ASR.L	   #5,D5	       2-15
+	 BCHG	   #15,D5	       COMPLEMENT SIGN BIT
+	 MOVEP.W   D5,OBALLP(A6)       A/D(+10V=1.6 BALL WIDTHS TO THE RIGHT
+**********************************************************************
+*								     *
+*	 TURN NEEDLE=RA*60/90			(NEEDLE WIDTHS)      *
+*		   1 NEEDLE WIDTH=90 DEG/MINUTE 		     *
+*	 INDICATED TURN(D/A)	  +10 VOLTS=6 NEEDLE WIDTHS(RT)      *
+*		     (4 MINUTE TURN INDICATER)			     *
+**********************************************************************
+	 MOVE.W    FRA,D0	       RA AT 2-9
+	 MULS	   FTURNC19,D0	       60/90*RA*1/6 AT 2-20
+	 CMP.L	   FTURNC28,D0	       LIMIT=1 AT 2-20
+	 BMI.S	   NEXT30
+	 MOVE.L    FTURNC28,D0	       LIMIT IN D0 AT 2-20
+NEXT30	 CMP.L	   FTURNC29,D0
+	 BPL.S	   NEXT31
+	 MOVE.L    FTURNC29,D0	       LIMIT IN D0 AT 2-20
+NEXT31	 ASR.L	   #5,D0	       2-15
+	 BCHG	   #15,D0	       COMPLEMENT SIGN BIT
+	 MOVEP.W   D0,OTURNP(A6)       STORE TURN NEEDLE D/A
+	 TRAP	   #0
+	 END
+

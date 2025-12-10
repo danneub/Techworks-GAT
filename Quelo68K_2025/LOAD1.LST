@@ -1,0 +1,210 @@
+Quelo   ...QLINK D2.0L  3/11/85   ...Run on May 21, 2025  10:41:51   ...Page  1
+D:LOAD1.HEX , D:LOAD1.LST ,  = D:LOAD1.CF
+   ...
+
+>>>  ERROR  line[1] Invalid label   [1] D:LOAD1.CF
+            line[1] o;?=/*   [1] D:LOAD1.CF
+>>>  ERROR  line[2] Invalid label   [2] D:LOAD1.CF
+            line[2] =/*   [2] D:LOAD1.CF
+>>>  ERROR  line[3] Invalid label   [3] D:LOAD1.CF
+            line[3] =/*   [3] D:LOAD1.CF
+>>>  ERROR  line[3] Label not permitted   [3] D:LOAD1.CF
+            line[3] =/*   [3] D:LOAD1.CF
+>>>  ERROR  line[3] Object file missing   [3] D:LOAD1.CF
+            line[3] D:MODULES.LTX   [3] D:LOAD1.CF
+>>>  ERROR  line[4] Invalid label   [4] D:LOAD1.CF
+            line[4] =/*   [4] D:LOAD1.CF
+>>>  ERROR  line[5] Invalid label   [5] D:LOAD1.CF
+            line[5] =/*   [5] D:LOAD1.CF
+>>>  ERROR  line[6] Invalid label   [6] D:LOAD1.CF
+            line[6] =LINK.LO   [6] D:LOAD1.CF
+>>>  ERROR  line[38] Invalid label   [38] D:LOAD1.CF
+            line[38] =DEL   [38] D:LOAD1.CF
+>>>  ERROR  line[39] Invalid label   [39] D:LOAD1.CF
+            line[39] =BUILDS   [39] D:LOAD1.CF
+>>>  ERROR  line[40] Invalid label   [40] D:LOAD1.CF
+            line[40] =COPY   [40] D:LOAD1.CF
+>>>  ERROR  line[41] Invalid label   [41] D:LOAD1.CF
+            line[41] =END   [41] D:LOAD1.CF
+Quelo   ...QLINK D2.0L  3/11/85   ...Run on May 21, 2025  10:41:51   ...Page  2
+D:LOAD1.HEX , D:LOAD1.LST ,  = D:LOAD1.CF
+   ...
+
+>>>  ERROR  line[1] Invalid label   [1] D:LOAD1.CF
+            line[1] o;?=/*   [1] D:LOAD1.CF
+00000000                    1.  o;?=/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+>>>  ERROR  line[2] Invalid label   [2] D:LOAD1.CF
+            line[2] =/*   [2] D:LOAD1.CF
+>>>  ERROR  line[2] Invalid directive   [2] D:LOAD1.CF
+00000000                    2.  =/*    Build whole Primary Trainer load                           *
+>>>  ERROR  line[3] Invalid label   [3] D:LOAD1.CF
+            line[3] =/*   [3] D:LOAD1.CF
+>>>  ERROR  line[3] Duplicate definition   [3] D:LOAD1.CF
+            line[3] =/*   [3] D:LOAD1.CF
+00000000                    3.  =/*  Link modules and build S-Record file ready for 'DOWN-LOADING *
+>>>  ERROR  line[4] Invalid label   [4] D:LOAD1.CF
+            line[4] =/*   [4] D:LOAD1.CF
+>>>  ERROR  line[4] Duplicate definition   [4] D:LOAD1.CF
+            line[4] =/*   [4] D:LOAD1.CF
+00000000                    4.  =/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+>>>  ERROR  line[5] Invalid label   [5] D:LOAD1.CF
+            line[5] =/*   [5] D:LOAD1.CF
+>>>  ERROR  line[5] Duplicate definition   [5] D:LOAD1.CF
+            line[5] =/*   [5] D:LOAD1.CF
+00000000                    5.  =/*
+>>>  ERROR  line[6] Invalid label   [6] D:LOAD1.CF
+            line[6] =LINK.LO   [6] D:LOAD1.CF
+>>>  ERROR  line[6] Invalid directive   [6] D:LOAD1.CF
+00000000                    6.  =LINK.LO        ,LOADl.LO,LOAD1.LK;IXMHUZ=128
+>>>  ERROR  line[7] Invalid directive   [7] D:LOAD1.CF
+00000000                    7.  SEGMENT  DATA:1     $0800
+>>>  ERROR  line[8] Invalid directive   [8] D:LOAD1.CF
+>>>  ERROR  line[8] Duplicate definition   [8] D:LOAD1.CF
+            line[8] SEGMENT   [8] D:LOAD1.CF
+00000000                    8.  SEGMENT  STAK:2     $0900
+>>>  ERROR  line[9] Invalid directive   [9] D:LOAD1.CF
+>>>  ERROR  line[9] Duplicate definition   [9] D:LOAD1.CF
+            line[9] SEGMENT   [9] D:LOAD1.CF
+00000000                    9.  SEGMENT  PROG:12,0  $F04000
+>>>  ERROR  line[10] Invalid directive   [10] D:LOAD1.CF
+>>>  ERROR  line[10] Duplicate definition   [10] D:LOAD1.CF
+            line[10] SEGMENT   [10] D:LOAD1.CF
+00000000                   10.  SEGMENT  POOL:3     $A000
+>>>  ERROR  line[11] Invalid directive   [11] D:LOAD1.CF
+00000000                   11.  INPUT LCPU1.RO
+>>>  ERROR  line[12] Invalid directive   [12] D:LOAD1.CF
+>>>  ERROR  line[12] Duplicate definition   [12] D:LOAD1.CF
+            line[12] INPUT   [12] D:LOAD1.CF
+00000000                   12.  INPUT FTS1:1..EXEC.RO
+>>>  ERROR  line[13] Invalid directive   [13] D:LOAD1.CF
+>>>  ERROR  line[13] Duplicate definition   [13] D:LOAD1.CF
+            line[13] INPUT   [13] D:LOAD1.CF
+00000000                   13.  INPUT FTS1:l..DEBUG.RO
+>>>  ERROR  line[14] Invalid directive   [14] D:LOAD1.CF
+>>>  ERROR  line[14] Duplicate definition   [14] D:LOAD1.CF
+            line[14] INPUT   [14] D:LOAD1.CF
+00000000                   14.  INPUT TDATA1.RO
+>>>  ERROR  line[15] Invalid directive   [15] D:LOAD1.CF
+>>>  ERROR  line[15] Duplicate definition   [15] D:LOAD1.CF
+Quelo   ...QLINK D2.0L  3/11/85   ...Run on May 21, 2025  10:41:51   ...Page  3
+D:LOAD1.HEX , D:LOAD1.LST ,  = D:LOAD1.CF
+   ...
+
+            line[15] INPUT   [15] D:LOAD1.CF
+00000000                   15.  INPUT IVINIT1.RO
+>>>  ERROR  line[16] Invalid directive   [16] D:LOAD1.CF
+>>>  ERROR  line[16] Duplicate definition   [16] D:LOAD1.CF
+            line[16] INPUT   [16] D:LOAD1.CF
+00000000                   16.  INPUT LIST1.RO
+>>>  ERROR  line[17] Invalid directive   [17] D:LOAD1.CF
+>>>  ERROR  line[17] Duplicate definition   [17] D:LOAD1.CF
+            line[17] INPUT   [17] D:LOAD1.CF
+00000000                   17.  INPUT NAME1.RO
+>>>  ERROR  line[18] Invalid directive   [18] D:LOAD1.CF
+>>>  ERROR  line[18] Duplicate definition   [18] D:LOAD1.CF
+            line[18] INPUT   [18] D:LOAD1.CF
+00000000                   18.  INPUT LOOKUP0.RO
+>>>  ERROR  line[19] Invalid directive   [19] D:LOAD1.CF
+>>>  ERROR  line[19] Duplicate definition   [19] D:LOAD1.CF
+            line[19] INPUT   [19] D:LOAD1.CF
+00000000                   19.  INPUT LOOKUPl.RO
+>>>  ERROR  line[20] Invalid directive   [20] D:LOAD1.CF
+>>>  ERROR  line[20] Duplicate definition   [20] D:LOAD1.CF
+            line[20] INPUT   [20] D:LOAD1.CF
+00000000                   20.  INPUT MATH.RO
+>>>  ERROR  line[21] Invalid directive   [21] D:LOAD1.CF
+>>>  ERROR  line[21] Duplicate definition   [21] D:LOAD1.CF
+            line[21] INPUT   [21] D:LOAD1.CF
+00000000                   21.  INPUT ENGINE.RO
+>>>  ERROR  line[22] Invalid directive   [22] D:LOAD1.CF
+>>>  ERROR  line[22] Duplicate definition   [22] D:LOAD1.CF
+            line[22] INPUT   [22] D:LOAD1.CF
+00000000                   22.  INPUT LIFT.RO
+>>>  ERROR  line[23] Invalid directive   [23] D:LOAD1.CF
+>>>  ERROR  line[23] Duplicate definition   [23] D:LOAD1.CF
+            line[23] INPUT   [23] D:LOAD1.CF
+00000000                   23.  INPUT SPEED.RO
+>>>  ERROR  line[24] Invalid directive   [24] D:LOAD1.CF
+>>>  ERROR  line[24] Duplicate definition   [24] D:LOAD1.CF
+            line[24] INPUT   [24] D:LOAD1.CF
+00000000                   24.  INPUT CLIMB.RO
+>>>  ERROR  line[25] Invalid directive   [25] D:LOAD1.CF
+>>>  ERROR  line[25] Duplicate definition   [25] D:LOAD1.CF
+            line[25] INPUT   [25] D:LOAD1.CF
+00000000                   25.  INPUT PITCH.RO
+>>>  ERROR  line[26] Invalid directive   [26] D:LOAD1.CF
+>>>  ERROR  line[26] Duplicate definition   [26] D:LOAD1.CF
+            line[26] INPUT   [26] D:LOAD1.CF
+00000000                   26.  INPUT ROLL.RO
+>>>  ERROR  line[27] Invalid directive   [27] D:LOAD1.CF
+>>>  ERROR  line[27] Duplicate definition   [27] D:LOAD1.CF
+            line[27] INPUT   [27] D:LOAD1.CF
+00000000                   27.  INPUT TURN.RO
+>>>  ERROR  line[28] Invalid directive   [28] D:LOAD1.CF
+>>>  ERROR  line[28] Duplicate definition   [28] D:LOAD1.CF
+            line[28] INPUT   [28] D:LOAD1.CF
+00000000                   28.  INPUT MOTION.RO
+>>>  ERROR  line[29] Invalid directive   [29] D:LOAD1.CF
+>>>  ERROR  line[29] Duplicate definition   [29] D:LOAD1.CF
+Quelo   ...QLINK D2.0L  3/11/85   ...Run on May 21, 2025  10:41:51   ...Page  4
+D:LOAD1.HEX , D:LOAD1.LST ,  = D:LOAD1.CF
+   ...
+
+            line[29] INPUT   [29] D:LOAD1.CF
+00000000                   29.  INPUT NMATH.RO
+>>>  ERROR  line[30] Invalid directive   [30] D:LOAD1.CF
+>>>  ERROR  line[30] Duplicate definition   [30] D:LOAD1.CF
+            line[30] INPUT   [30] D:LOAD1.CF
+00000000                   30.  INPUT NAVRCV.RO
+>>>  ERROR  line[31] Invalid directive   [31] D:LOAD1.CF
+>>>  ERROR  line[31] Duplicate definition   [31] D:LOAD1.CF
+            line[31] INPUT   [31] D:LOAD1.CF
+00000000                   31.  INPUT NAV1.RO
+>>>  ERROR  line[32] Invalid directive   [32] D:LOAD1.CF
+>>>  ERROR  line[32] Duplicate definition   [32] D:LOAD1.CF
+            line[32] INPUT   [32] D:LOAD1.CF
+00000000                   32.  INPUT RMNKFG.RO
+>>>  ERROR  line[33] Invalid directive   [33] D:LOAD1.CF
+>>>  ERROR  line[33] Duplicate definition   [33] D:LOAD1.CF
+            line[33] INPUT   [33] D:LOAD1.CF
+00000000                   33.  INPUT COMM.RO
+>>>  ERROR  line[34] Invalid directive   [34] D:LOAD1.CF
+>>>  ERROR  line[34] Duplicate definition   [34] D:LOAD1.CF
+            line[34] INPUT   [34] D:LOAD1.CF
+00000000                   34.  INPUT NAVFREQ.RO
+>>>  ERROR  line[35] Invalid directive   [35] D:LOAD1.CF
+>>>  ERROR  line[35] Duplicate definition   [35] D:LOAD1.CF
+            line[35] INPUT   [35] D:LOAD1.CF
+00000000                   35.  INPUT GATVIS.RO
+>>>  ERROR  line[36] Invalid directive   [36] D:LOAD1.CF
+>>>  ERROR  line[36] Duplicate definition   [36] D:LOAD1.CF
+            line[36] INPUT   [36] D:LOAD1.CF
+00000000                   36.  INPUT VISIO.RO
+00000000                   37.  END
+>>>  ERROR  line[38] Invalid label   [38] D:LOAD1.CF
+            line[38] =DEL   [38] D:LOAD1.CF
+>>>  ERROR  line[38] Invalid directive   [38] D:LOAD1.CF
+00000000                   38.  =DEL LOAD1.MX
+>>>  ERROR  line[39] Invalid label   [39] D:LOAD1.CF
+            line[39] =BUILDS   [39] D:LOAD1.CF
+>>>  ERROR  line[39] Invalid directive   [39] D:LOAD1.CF
+00000000                   39.  =BUILDS LOAD1
+>>>  ERROR  line[40] Invalid label   [40] D:LOAD1.CF
+            line[40] =COPY   [40] D:LOAD1.CF
+>>>  ERROR  line[40] Invalid directive   [40] D:LOAD1.CF
+00000000                   40.  =COPY LOADl.MX,#CN11
+>>>  ERROR  line[41] Invalid label   [41] D:LOAD1.CF
+            line[41] =END   [41] D:LOAD1.CF
+00000000                   41.  =END
+                           42.  
+   88 Errors
+AD1.CF
+>>>  ERROR  line[39] Invalid directive   [39] D:LOAD1.CF
+00000000                   39.  =BUILDS LOAD1
+>>>  ERROR  line[40] Invalid label   [40] D:LOAD1.CF
+            line[40] =COPY   [40] D:LOAD1.CF
+>>>  ERROR  line[40] Invalid directive   [40] D:LOAD1.CF
+00000000                   40.  =COPY LOADl.MX,#CN11
+>>>  ERROR  line[41] Invalid label   [41] D:LOAD1.CF
+            line[41] =END   [41] D:LOAD1.CF
+00000000      

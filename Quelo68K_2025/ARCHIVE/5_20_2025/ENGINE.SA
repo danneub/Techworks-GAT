@@ -1,0 +1,304 @@
+	 OPT	   MEX,CEX,NOPCS
+	 XDEF	   ENGINE
+*
+	 INCLUDE   ESYM.SA
+	 INCLUDE   FSYM.SA
+	 INCLUDE   IO.SA
+*
+	 SECTION   12
+ENRPMC01 DC.W	   19680	  2460 X 2(+3)
+ENRPMC02 DC.W	   1200 	  150 X 2(+3)
+ENRPMC03 DC.W	   1256 	  157 X 2(+3)
+ENRPMC04 DC.W	   4240 	  530 X 2(+3)
+ENRPMC05 DC.W	   128		 .0312 X 2(+12)
+ENRPMC06 DC.W	   3400 	  425 X 2(+3)
+ENRPMC07 DC.W	   8192 	  1 X 2(+13)
+ENRPMC08 DC.W	   16384	  4 X 2(+12)
+ENRPMC09 DC.W	   856		  107 X 2(+3)
+ENRPMC10 DC.W	   272		  34 X 2(+3)
+ENRPMC11 DC.W	   184		  23 X 2(+3)
+ENRPMC12 DC.W	   509		  3.977 AT 2-7
+ENRPMC13 DC.L	   13107200	  400 AT 2-15
+ENRPMC14 DC.L	   -13107200	 -400 AT 2-15
+ENRPMC15 DC.W	   13263	  1.619 AT 2-13
+ENRPMC16 DC.W	   4800 	  600 AT 2-3
+ENTHRC01 DC.W	   3166 	  1.546 X 2(+11)
+ENTHRC02 DC.W	   465		 .227 X 2(+11)
+EK01	 DC.W	   -31130	-.95 X 2(15)
+EK02	 DC.W	   15303	 .467 X 2(15)
+EK03	 DC.L	   524287	  2(+19) -1
+EK04	 DC.W	   31130	 .95 X 2(+15)
+EK05	 DC.W	   30739	  1/.533 AT 2-14
+**********************************************************************
+*								     *
+*		      DIGITAL GAT ENGINE MODULE 		     *
+*								     *
+*	 THIS MODULE STORES:FUEL CUTOFF BOOLEAN 	 1=CUTOFF    *
+*			    CARB HEAT BOOLEAN		 1=ON	     *
+*			    ENGINE FAIL BOOLEAN 	 1=FAIL      *
+*			    LEFT MAG SELECT BOOLEAN	 1=SEL	     *
+*			    RIGHT MAG SELECT BOOLEAN	 1=SEL	     *
+*			    START SELECTED BOOLEAN	 1=SEL	     *
+*			    BOTH MAG SELECT BOOLEAN	 1=SEL	     *
+*			    ENGINE FIRED BOOLEAN	 1=FIRED     *
+*			    NORMALIZED THROTTLE POSITION AT 2-13     *
+*			    WINDMILLING RPM		 AT 2-3      *
+*			    FULL RPM			 AT 2-3      *
+*			    IDLE RPM			 AT 2-3      *
+*			    DEMANDED RPM		 AT 2-3      *
+*			    ACTUAL RPM			 AT 2-3      *
+*			    THRUST(LBS) 		 AT 2-5      *
+*			    RANDOM NUMBER		 AT 2-15     *
+*			    VP*ROUGH AIR		 AT 2-6      *
+*					     SEPTEMBER 9,1983	     *
+**********************************************************************
+*
+ENGINE	 EQU	   *
+	 MOVE.L    #$FE6000,A6		   LOAD I/O BASE ADDRESS
+	 TST.B	   FFREEZE		   1=FREEZE
+	 BEQ.S	   UNFREEZE		   BRANCH IF NOT FLIGHT FREEZE
+	 TRAP	   #0			   RETURN TO EXEC
+*	 *************************************************************
+*	 *	   FUEL CUTOFF IF FULL LEAN MIXTURE		     *
+*	 *	   MIXTURE A/D:+10 VOLTS=FULL LEAN		     *
+*	 *************************************************************
+UNFREEZE MOVEP.W   IMIX1(A6),D7 	 FUEL MIXTURE A/D
+	 MOVE.B    #0,IMIX1(A6) 	 START A/D CONVERSION
+	 BCHG	   #15,D7		 COMPLEMENT SIGN BIT
+	 CMP.W	   EK04,D7		 (FUEL MIX-.95) AT 2-15
+	 SPL.B	   ECUTOFF		 1=FUEL CUTOFF
+*	 *************************************************************
+*	 *	   CARBURETOR HEAT ON IF NOT FULL COLD		     *
+*	 *	   CARB HEAT A/D:-10 VOLTS=FULL COLD		     *
+*	 *************************************************************
+	 MOVEP.W   ICARBH1(A6),D6	 CARBURETOR HEAT A/D
+	 MOVE.B    #0,ICARBH1(A6)	 START A/D CONVERSION
+	 BCHG	   #15,D6		 COMPLEMENT SIGN BIT
+	 CMP.W	   EK01,D6		 (CARB HEAT+.95) AT 2-15
+	 SPL.B	   ECARBHT		 1=CARB HEAT ON
+*	 *************************************************************
+*	 *	   THROTTLE A/D = +4.67V @ IDLE;+10V @ FULL	     *
+*	 *	   NORM THROTTLE = (A/D -.467) X 1/.533 	     *
+*	 *		NOTE:THROTTLE POSITION IS NEVER NEGATIVE     *
+*	 *************************************************************
+	 MOVEP.W   ITHR1(A6),D5 	 THROTTLE A/D
+	 MOVE.B    #0,ITHR1(A6) 	 START A/D CONVERSION
+	 BCHG	   #15,D5		 COMPLEMENT SIGN BIT
+	 SUB.W	   EK02,D5		 (THROTTLE-.467) AT 2-15
+	 MULS	   EK05,D5		 1/.533*(THROTTLE-.467) AT 2-29
+	 BPL.S	   NEXT
+	 CLR.L	   D5			 ZERO SLICE
+NEXT	 MOVE.L    D5,ENTHROTT	       NORMALIZED THROTTLE 2-29(LONG)2-13(WORD)
+*	 *************************************************************
+*	 *	   ENGINE FAIL IF INSTR FAIL SWITCH ON		     *
+*	 *************************************************************
+	 BTST.B    #IENGFAIL,IINSTDI1(A6)     ENGINE FAIL(INSTR)
+	 SNE.B	   EFAIL		      1=FAIL
+*	 *************************************************************
+*	 *	   IGNITION SWITCH POSITION			     *
+*	 *************************************************************
+	 BTST.B    #IIGNLT,IMPSDI1(A6)	       IGNITION SWITCH LEFT
+	 SNE	   EMAGLT		       1=LEFT MAG SELECTED
+	 BTST.B    #IIGNRT,IMPSDI1(A6)	       IGNITION SWITCH RIGHT
+	 SNE	   EMAGRT		       1=RT MAG SELECTED
+	 BTST.B    #IIGNST,IMPSDI1(A6)	       IGNITION SWITCH START
+	 SNE	   ESTART		       1=START SELECTED
+	 BTST.B    #IIGNBT,IMPSDI1(A6)	       IGNITION SWITCH BOTH
+	 SNE	   EMAGBOTH		       1=BOTH MAGS SELECTED
+*	 *************************************************************
+*	 *		       WINDMILLING RPM			     *
+*	 *	       (RPM DUE TO AIRSPEED AND ALTITUDE)	     *
+*	 *		   ERPMWM = 3.977*VCAL+.0327*ALTITUDE	     *
+*	 *************************************************************
+	 MOVE.W    FVCAL,D2		 VCAL AT 2-6
+	 MULS	   ENRPMC12,D2		 3.977*V CAL AT 2-13
+	 MOVE.W    FHP,D1		 ALTITUDE AT 2-1
+	 MULS	   ENRPMC05,D1		.0312*ALTITUDE AT 2-13
+	 ADD.L	   D1,D2		 (3.977*V CAL+.0312*ALT)AT 2-13
+	 ASR.L	   #8,D2		  2-5
+	 ASR.L	   #2,D2		  2-3
+	 MOVE.W    D2,ERPMWM		 (RPM DUE TO AIRSPEED AND ALT)AT 2-3
+**********************************************************************
+*	      COMPUTE IGNITION ON BOOLEAN			     *
+*	      COMPUTE ENGINE FIRED BOOLEAN			     *
+*	 -------------------------------------			     *
+*      IGNITION ON=K1+K2+K3+K4					     *
+*	    WHERE:K1=1 IF BOTH MAGNETOES ARE SELECTED,ZERO OTHERWISE *
+*		  K2=1 IF LEFT MAGNETO IS SELECTED,ZERO OTHERWISE    *
+*		  K3=1 IF RIGHT MAGNETO IS SELECTED,ZERO OTHERWISE   *
+*		  K4=1 IF START IS SELECTED,ZERO OTHERWISE	     *
+*								     *
+*    EFIRED=K5*K6*K7*(K8+K9)+K10				     *
+*	    WHERE:K5=1 IF IGNITION IS ON,ZERO OTHERWISE 	     *
+*		  K6=1 IF NOT CUTOFF,ZERO OTHERWISE		     *
+*		  K7=1 IF NOT FAILED,ZERO OTHERWISE		     *
+*		  K8=1 IF RPM>425,ZERO OTHERWISE		     *
+*		  K9=1 IF ENGINE IS FIRED,ZERO OTHERWISE	     *
+*		  K10=1 IF ENGINE BYPASS IS ON,ZERO ITHERWISE	     *
+**********************************************************************
+	 MOVE.B    EMAGBOTH,D0		 1=BOTH MAGNETOS SELECTED
+	 OR.B	   EMAGLT,D0		 1=BOTH OR LEFT MAGNETOS SELECTED
+	 OR.B	   EMAGRT,D0	   1=BOTH OR LEFT OR RT MAGNETOS SELECTED
+	 OR.B	   ESTART,D0	1=BOTH OR LEFT OR RT MAGNETOS OR START SELECTED
+	 MOVE.B    D0,EIGNITN		 1=IGNITION ON
+	 NOT.B	   D0			 0=IGNITION ON
+	 OR.B	   EFAIL,D0		 1 = FAIL OR IGNITION OFF
+	 OR.B	   ECUTOFF,D0		 1 = FAIL OR IGNITION OFF OR CUTOFF
+	 NOT.B	   D0			 0 = FAIL OR IGNITION OFF OR CUTOFF
+	 MOVE.W    ENRPM,D1		 RPM  AT 2-3
+	 CMP.W	   ENRPMC06,D1		 425  AT 2-3
+	 SPL.B	   D1			 1=RPM>425
+	 OR.B	   EFIRED,D1		 1=RPM>425 OR ENG FIRED
+	 AND.B	   D0,D1   [1=RPM>425 OR ENG FIRED]AND IGNITION AND FUEL AVAIL
+	 BTST.B    #IENGFIR,IINSTMDI(A6)	 1=BY PASS ON
+	 SNE.B	   D4				 1=BY PASS ON
+	 OR.B	   D4,D1
+	 MOVE.B    D1,EFIRED
+	 BNE.S	   FIRED		 BRANCH IF FIRED
+**********************************************************************
+*		   ELSE 425 RPM IN 7.3 SECONDS IF START SWITCH ON    *
+*		   AND MASTER SWITCH ON 			     *
+**********************************************************************
+	 MOVE.W    ENRPM,D1		 RPM AT 2-3
+	 MOVE.B    ESTART,D0		 1=START SW ON
+	 AND.B	   EMASTER,D0		 1=MASTER SW AND START SW ON
+	 BEQ	   UNFIRE		 BRANCH IF NOT START
+	 ADD.W	   #94,D1		 START RUN UP 5 SEC TO 425 RPM
+	 CMP.W	   ENRPMC16,D1		 (---)-600 AT 2-3
+	 BMI.S	   POTT 		 BRANCH IF LESS THAN 600 RPM
+	 MOVE.W    ENRPMC16,D1		 LIMIT IN D1 AT 2-3
+POTT	 MOVE.W    D1,ENRPM		 RPM AT 2-3
+	 BRA	   NEXT9		 SKIP RPM & THRUST IF  START
+**********************************************************************
+*		   IF ENGINE FIRED FULL RPM = 2460 + 1.619 VCAL      *
+*		   - 157 RTMAG - 107 LTMAG			     *
+**********************************************************************
+FIRED	 MOVE.W    FVCAL,D0		 VCAL X 2 (+6)
+	 MULS	   ENRPMC15,D0		 1.619 *VCAL AT 2-19
+	 ASR.L	   #8,D0		 2-11
+	 ASR.L	   #8,D0		 2-3
+	 ADD.W	   ENRPMC01,D0		 2460 + 1.619 VCAL X 2(+3)
+	 TST.B	   EMAGRT		 1=RT MAG
+	 BEQ.S	   NEXT1		 BR IF NOT RT MAG
+	 SUB.W	   ENRPMC03,D0		 -157 RT MAG X 2(+3)
+NEXT1	 TST.B	   EMAGLT		 1=LT MAG
+	 BEQ.S	   NEXT2		 BR IF NOT LT MAG
+	 SUB.W	   ENRPMC09,D0		 -107 LT MAG X 2(+3)
+NEXT2	 MOVE.W    D0,ENFULL		 RPM @ FULL THROTTLE X 2(+3)
+*	 *************************************************************
+*	 *	   IF ENGINE FIRED IDLE RPM = 530 + 3.977 VCAL	     *
+*	 *	   + .0312 H -34 RTMAG -23 LTMAG		     *
+*	 *************************************************************
+	 MOVE.W    ERPMWM,D2		(3.977*VCAL + .0312*H) X 2(+3)
+	 ADD.W	   ENRPMC04,D2		 +530 X 2(+3)
+	 TST.B	   EMAGRT		 RT MAG
+	 BEQ.S	   NEXT3		 BR IF NOT RT MAG
+	 SUB.W	   ENRPMC10,D2		 -34 RTMAG X 2(+3)
+NEXT3	 TST.B	   EMAGLT		 LT MAG
+	 BEQ.S	   NEXT4		 BR IF NOT LT MAG
+	 SUB.W	   ENRPMC11,D2		 -23 LT MAG X 2(+3)
+NEXT4	 MOVE.W    D2,ENIDLE		 RPM @ IDLE X 2(+3)
+*	 *************************************************************
+*	 *	   IF ENGINE FIRED DEMANDED RPM = FULL RPM +	     *
+*	 *	   (IDLE RPM - FULL RPM)(1 -THR)SQ -150 CARBHT	     *
+*	 *************************************************************
+	 MOVE.W    ENRPMC07,D4		 1 X 2 (+13)
+	 SUB.W	   ENTHROTT,D4		 1-THROTTLE
+	 MULS	   D4,D4		 (1-THR) SQUARED X 2 (+26)
+	 ASR.L	   #8,D4		 2 (+18)
+	 ASR.L	   #4,D4		 2 (+14)
+	 SUB.W	   ENFULL,D2		 ENIDLE-ENFULL X 2(+3)
+	 MULS	   D2,D4		 (ENIDLE-ENFULL)(1-THR)SQ X2(+6)=2(17)
+	 ASR.L	   #8,D4		 2 (+9)
+	 ASR.L	   #6,D4		 2 (+3)
+	 ADD.W	   ENFULL,D4		 ENFULL+(ENIDLE-ENFULL)(1-THR)SQ X 2(3)
+	 TST.B	   ECARBHT		 CARB HEAT ON
+	 BEQ.S	   NEXT5		 BR IF CARB HEAT OFF
+	 SUB.W	   ENRPMC02,D4		 -150 CARB HT X 2(+3)
+	 BRA.S	   NEXT5
+*	 *************************************************************
+*	 *	   IF ENGINE NOT FIRED DEMANDED RPM = WINDMILL RPM   *
+*	 *************************************************************
+UNFIRE	 MOVE.W    ERPMWM,D4		 WINDMILL IF UNFIRED
+NEXT5	 MOVE.W    D4,ENRPMDEM		 RPM DEMANDED X 2(+3)
+*	 *************************************************************
+*	 *		       (-------LIMITED------)		     *
+*	 *	   RPM = RPM + 4*(DEMANDED RPM - RPM)*DT*1.25	     *
+*	 *		 WHERE:DT=1/5(ITERATION RATE IS 5/SEC)	     *
+*	 *		      -400<LIMIT<400			     *
+*	 *************************************************************
+	 SUB.W	   ENRPM,D4		 (ENRPMDEM -ENRPM) AT 2-3
+	 MULS	   ENRPMC08,D4		 4*(ENRPMDEM -ENRPM) AT 2-15	      )
+	 CMP.L	   ENRPMC13,D4		 LIMIT=400
+	 BMI.S	   NEXT6		 BRANCH IF LESS THAN 400
+	 MOVE.L    ENRPMC13,D4		 LIMIT IN D4 AT 2-15
+NEXT6	 CMP.L	   ENRPMC14,D4		 LIMIT=-400
+	 BPL.S	   NEXT7		 BRANCH IF > -400
+	 MOVE.L    ENRPMC14,D4		 LIMIT IN D4 AT 2-15
+NEXT7	 ASR.L	   #8,D4		 2-7
+	 ASR.L	   #6,D4		 1.25*DT*(---)AT 2-3
+	 ADD.W	   ENRPM,D4
+	 MOVE.W    D4,ENRPM		 RPM AT 2-3
+*	 *************************************************************
+*	 *   THRUST(LBS) = .1875 RPM - .01 H - 1.546 VCAL	     *
+*	 *	   + .227 VCAL(IF WIMDMILL)			     *
+*	 *************************************************************
+	 MULS	   #3,D4		 3 = .1875 X 2 (+4) X RPM = 2(+7)
+	 MOVE.W    FHP,D5		 ALTITUDE AT 2-1
+	 MULS	   #41,D5		 41 = .01 X 2 (+12) =.01H X 2 (+13)
+	 ASR.L	   #6,D5		 2 (+7)
+	 SUB.L	   D5,D4		 .1875RPM -.01H X 2 (+7)
+	 MOVE.W    ENTHRC01,D5		 1.546 X 2 (+11)
+	 TST.B	   EFIRED		 1=ENGINE FIRED
+	 BNE.S	   NEXT8		 BRANCH IF ENG FIRED
+	 SUB.W	   ENTHRC02,D5		 .227 X 2 (+11) IF WINDMILL
+NEXT8	 MULS	   FVCAL,D5		 VCAL(1.546 -.227WM) X 2 (+17)
+	 ASR.L	   #8,D5		 2 (+9)
+	 ASR.L	   #2,D5		 2 (+7)
+	 SUB.L	   D5,D4		 .1875RPM-.01H-1.546V+.227V(WM)X 2 (+7)
+	 ASR.L	   #2,D4		 2 (+5)
+	 MOVE.W    D4,ENTHRUST		 THRUST X 2(+5)
+*	 *************************************************************
+*	 *	   INDICATED RPM   0 = 0V ; 3125 = +10V 	     *
+*	 *************************************************************
+
+NEXT9	 MOVE.W    ENRPM,D0		 RPM X 2(+3)
+	 MULS	   #21,D0		 (RPM/3125) X 2(+19)
+	 CMP.L	   EK03,D0		 (RPM/3125-1) AT 2-19
+	 BMI.S	   NEXT10		 BR IF LESS THAN 1
+	 MOVE.L    EK03,D0		 LIMIT TO 1 AT 2-19
+NEXT10	 ASR.L	   #4,D0		 (RPM/3125) LIMITED AT 2-15
+	 MOVE.W    D0,EIRPM		 INDICATED RPM/3125
+	 BCHG	   #15,D0		 COMPLEMENT SIGN BIT
+	 MOVEP.W   D0,OIRPM(A6) 	 INDICATED RPM
+**********************************************************************
+*								     *
+*		      COMPUTE RANDOM NUMBER			     *
+*								     *
+**********************************************************************
+	 MOVE.W    FRAND,D0	      RANDOM NUMBER AT 2-15
+	 ADD.W	   D0,D0	      2*RANDOM NUMBER AT 2-15
+	 ADD.W	   D0,D0	      3*RANDOM NUMBER AT 2-15
+	 MOVE.W    D0,D1
+	 ADD.W	   FRAND,D0	      4*RANDOM NUMBER AT 2-15
+	 MOVE.W    D0,D2
+	 MOVE.W    D0,D1
+	 ADD.W	   D0,D0	      5*RANDOM NUMBER AT 2-15
+	 ADD.W	   D2,D0	      6*RANDOM NUMBER AT 2-15
+	 ADDQ.W    #1,D0	      6*RANDOM NUMBER +1   AT 2-15
+	 MOVE.W    D0,FRAND	      RANDOM NUMBER AT 2-15
+************************************************************************
+*			COMPUTE(ROUGH AIR*VP)			       *
+*	  VP*ROUGH AIR=VP*RANDOM NUMBER*INSTRUCTER ROUGH AIR MAGNITUDE *
+*								       *
+************************************************************************
+	 MULS	   FRAAMPL,D0	 INST ROUGH AIR MAG *RANDOM NO AT 2-30
+	 ASR.L	   #8,D0		 2-22
+	 ASR.L	   #8,D0		 2-14
+	 MULS	   FVP,D0		 VP*ROUGH AIR AT 2-20
+	 ASR.L	   #8,D0		 2-12
+	 ASR.L	   #6,D0		 2-6
+	 MOVE.W    D0,FRUFAIR		 VP*ROUGH AIR AT 2-6
+	 TRAP	   #0		      RETURN TO EXEC
+	 END
+

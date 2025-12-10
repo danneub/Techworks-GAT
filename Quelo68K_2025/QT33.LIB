@@ -1,0 +1,33 @@
+* 1.0	01/16/85  P. Adams
+*
+*	QLIB test specification
+*
+*	0.    Print this file, QT33.LIB for reference.
+*
+*	1.    Assemble LT30.A68, LT31.A68, LT32.A68 and print
+*	      the resulting LT30.PRN, LT31.PRN, LT32.PRN files.
+*
+*		  A68K -L LT30
+*		  A68K -L LT31
+*		  A68K -L LT32
+*
+*	2.    Run QLIB using this librarian specification file,
+*	      QT33.LIB.  Print the resulting LIBRARY.LST file.
+*
+*		  QLIB -SLIX QT33
+*
+*	3.    Generate the librarian module summary and symbol
+*	      table report.  Print the resulting QT33.RPT file.
+*
+*		  QSYM -IB QT33
+*
+*
+idnt library,1,0 QLIB test specification
+create library
+add lt30
+add lt31
+add lt32
+mlist
+slist
+end
+

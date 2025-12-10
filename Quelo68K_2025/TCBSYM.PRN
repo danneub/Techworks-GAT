@@ -1,0 +1,36 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:21:44     ...Page  1
+D:TCBSYM.LTX , D:TCBSYM.PRN , D:TCBSYM.SYM = D:TCBSYM.SA
+   ...
+
+     # 00000000             1.           OFFSET    0
+     # 00000000 <8>         2.  TCBNAME  DS.B      08       TASK NAME
+     # 00000008 <4>         3.  TCBDS    DS.L      01       TASK DATA SEGMENT POINTER
+     # 0000000C <4>         4.  TCBCS    DS.L      01       TASK CODE SEGMENT POINTER
+     # 00000010 <4>         5.  TCBSS    DS.L      01       TASK STACK SEGMENT POINTER
+     # 00000014 <2>         6.  TCBID    DS.W      01       TASK ID NUMBER
+     # 00000016 <2>         7.  TCBDSL   DS.W      01       TASK DATA SEGMENT LENGTH
+     # 00000018 <2>         8.  TCBCSL   DS.W      01       TASK CODE SEGMENT LENGTH
+     # 0000001A <2>         9.  TCBSSL   DS.W      01       TASK STACK SEGMENT LENGTH
+     # 0000001C <4>        10.  TCBENTRY DS.L      01       TASK ENTRY POINT
+     # 00000020 <4>        11.  TCBEXEP  DS.L      01       TASK EXECPTION ENTRY POINT
+     # 00000024 <1>        12.  TCBHOLD  DS.B      01       TASK HOLD FLAG
+     # 00000025 <1>        13.  TCBRUN   DS.B      01       TASK RUN FLAG
+     # 00000026 <1>        14.  TCBERR   DS.B      01       TASK ERROR FLAG
+     # 00000027 <1>        15.  TCBWAIT  DS.B      01       TASK WAIT FLAG
+     # 00000028 <1>        16.  TCBEX    DS.B      01       TASK EXCEPTION ENTRY FLAG
+     # 00000029 <1>        17.           DS.B      01       SPARE
+     # 0000002A <2>        18.  TCBPRI   DS.W      01       TASK PRIORITY CODE
+     # 0000002C <2>        19.  TCBSR    DS.W      01       TASK STATUS REGISTER
+     # 0000002E <4>        20.  TCBPC    DS.L      01       TASK PROGRAM COUNTER
+     # 00000032 <3C>       21.  TCBREGS  DS.L      15       TASK REGISTER D0-D7/A0-A6
+     # 0000006E <4>        22.  TCBUSP   DS.L      01       TASK STACK POINTER (A7)
+     # 00000072 <2>        23.  TCBIR    DS.W      01       TASK INSTUCTION REGISTER
+     # 00000074 <2>        24.  TCBAI    DS.W      01       TASK ACCESS INFORMATION
+     # 00000076 <2>        25.  TCBVN    DS.W      01       TASK VECTOR NUMBER
+                           26.  *        DS.W      01       SPARE
+     # 00000078 <4>        27.  TCBAA    DS.L      01       TASK ERROR ACCESS ADDRESS
+     # 0000007C <4>        28.  TCBLINK  DS.L      01       LINK TO NEXT TCB
+    0 Errors
+OINTER (A7)
+     # 00000072 <2>        23.  TCBIR    DS.W      01       TASK INSTUCTION REGISTER
+     # 00000074 <2>        24.  TCBAI    DS.W      

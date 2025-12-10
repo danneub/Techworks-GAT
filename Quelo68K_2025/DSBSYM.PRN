@@ -1,0 +1,17 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:48:55     ...Page  1
+D:DSBSYM.LTX , D:DSBSYM.PRN , D:DSBSYM.SYM = D:DSBSYM.SA
+   ...
+
+     # 00000000             1.  DSBNAME  EQU        0       NAME OF SYMBOL
+     # 00000008             2.  DSBADDR  EQU        8       ADDRESS OF SYMBOL
+     # 0000000C             3.  DSBLEN   EQU       12       LENGTH OF SYMBOL
+     # 0000000D             4.  DSBTYPE  EQU       13       TYPE OF SYMBOL
+     # 0000000E             5.  DSBUPD   EQU       14       UPDATE FLAG
+     # 0000000F             6.  DSBSCALE EQU       15       SCALE CODE
+     # 00000010             7.  DSBDATA1 EQU       16       DATA
+     # 00000014             8.  DSBDATA2 EQU       20       DATA N-1
+     # 00000018             9.  DSBARRAY EQU       24       ARRAY CODE (0=NO ARRAY DISPLAY,
+    0 Errors
+DSBLEN   EQU       12       LENGTH OF SYMBOL
+     # 0000000D             4.  DSBTYPE  EQU       13       TYPE OF SYMBOL
+     # 0000000E             5.  DSBUPD   EQU       14 

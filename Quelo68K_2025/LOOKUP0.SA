@@ -1,0 +1,8 @@
+	 XDEF	   DPTABLE0
+	 XDEF	   DPCOUNT0
+	 SECTION   12
+DPTABLE0 EQU	   *
+*
+DPCOUNT0 DC.W		      0
+	 END
+

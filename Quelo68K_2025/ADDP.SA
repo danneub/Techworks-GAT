@@ -1,0 +1,499 @@
+NJNFAC   EQU     2                   NUMBER OF PRESELECT ADDRESSES
+*
+NDDPPS0  DC.L    NVTSEA26            STATION  0 LAT ADDRESS  SEAPORT BEACH
+NDDPPS1  DC.L    NVTMND26            STATION  5 LAT ADDRESS  MOUNTAIN DALE
+         DC.L    NVTVOR26
+*
+NDDPTAB  EQU     *      DDP STATION PARAMETERS
+*
+*                         STA NO 0  ILS 29               SEAPORT BEACH
+*
+NVT0000  DC.W    0                   +00       STA NO 0                  DEC
+NVT0002  DC.W    $0023               +00       STA TYPE                  HEX   
+NVT0004  DC.L    109900000           +00       STA FREQ/CHAN            HZ/NO
+NVT0008  DC.L    %10100010101000100010111000000000 STA IDENT ../..././.- BIN
+NVT0012  DC.L    %00000000000000000000000000000000 STA IDENT I  S E A    BIN
+NVT0016  DC.W    %0                                MISC  CODES           BIN
+NVT0018  DC.W    132                 +00        ELEVATION                FT
+NVT0020  DC.W    20                  +00        RANGE 1                  NM
+NVT0022  DC.W    0                   +00        RANGE 2         SP       NM
+NVT0024  DC.W    0                   +00        RANGE 3         SP       NM
+*                  LAT  +(N) LON +(E)  +23        -0.4082855 0.4121345
+NVTSEA26 DC.L    -3424947            +23        LAT                      DEG
+NVT0030  DC.L    3457235             +23        LON                      DEG
+NVT0034  DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+NVT0036  DC.W    -72<<6              +06        RNWY/MAG VAR             DEG
+NVT0038  DC.W    -31164              +15        SIN(MAGVAR/RNWY) SP      NORM
+NVT0040  DC.W    10126               +15        COS(MAGVAR/RNWY) SP      NORM
+NVT0042  DC.W    10000               +00        RUNWAY LENGTH            FT
+NVT0044  DC.L    0                   +00        SPARE
+NVT0048  DC.L    0                   +00        SPARE
+NVT0052  DC.L    0                   +00        SPARE/REMARKS
+NVT0056  DC.L    0                   +00        SPARE/REMARKS
+NVT0060  DC.L    0                   +00        SPARE/REMARKS
+*
+*                        STA NO 1    DM            SEAPORT BEACH
+*
+         DC.W    1                   +00        STA NO 1                 DEC
+         DC.W    $008C               +00        STA TYPE                 HEX   
+         DC.L    000000000 N/A       +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %00000000 N/A       +00        STA IDENT 1/2            BIN
+         DC.L    %00000000 N/A       +00        STA IDENT 2/2            BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    132                 +00        ELEVATION                FT
+         DC.W    1         N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT +(N) LON +(E)   +23        -0.439062     0.5069913
+         DC.L    -3683119            +23        LAT                      DEG
+         DC.L    4252951             +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    -72<<6              +06        RNWY/MAG VAR             DEG
+         DC.W    -31164              +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    10126               +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0         N/A       +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                            STA NO 2   MM  (ILS 29)         SEAPORT BEACH
+*
+         DC.W    2                   +00        STA NO 2                 DEC
+         DC.W    $008B               +00        STA TYPE                 HEX   
+         DC.L    000000000 N/A       +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %00000000 N/A       +00        STA IDENT 1/2            BIN
+         DC.L    %00000000 N/A       +00        STA IDENT 2/2            BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    132                 +00        ELEVATION                FT
+         DC.W    1         N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        -0.4208443     0.4511844
+         DC.L    -3530298            +23        LAT                      DEG
+         DC.L    3784809             +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    -72<<6              +06        RNWY/MAG VAR             DEG
+         DC.W    -31164              +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    10126               +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                       STA NO 3     SPARE
+*                       STA NO 4     SPARE
+*
+*                       STA NO 5    ILS  05               MOUNTAIN DALE
+*
+         DC.W    5                   +00        STA NO 5                 DEC
+         DC.W    $0023               +00        STA TYPE                 HEX   
+         DC.L    108300000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %10100011101110001110100011101010 STA IDENT ../--/-./-..BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT I  M  N  D  BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    3241                +00        ELEVATION                FT
+         DC.W    20        N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        -0.5065842  -.5554492     
+NVTMND26 DC.L    4249536             +23        LAT                      DEG
+         DC.L    -4659446            +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    53<<6               +06        RNWY/MAG VAR             DEG
+         DC.W    26170               +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    19720               +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    9525                +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                       STA NO 6    ILS  05 DM            MOUNTAIN DALE
+*
+         DC.W    6                   +00        STA NO 6                 DEC
+         DC.W    $008C               +00        STA TYPE                 HEX   
+         DC.L    000000000 N/A       +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %00000000 N/A       +00        STA IDENT 1/2            BIN
+         DC.L    %00000000 N/A       +00        STA IDENT 2/2            BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    3241                +00        ELEVATION                FT
+         DC.W    1         N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        -0.4449333  -.63742667   DEG
+         DC.L    3732371             +23        LAT                      DEG
+         DC.L    -5347122            +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    053<<6              +06        RNWY/MAG VAR             DEG
+         DC.W    26170               +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    19720               +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                       STA NO 7   MM (ILS 05)               MOUNTAIN DALE
+*
+         DC.W    7                   +00        STA NO 7                 DEC
+         DC.W    $008B               +00        STA TYPE                 HEX   
+         DC.L    000000000 N/A       +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %00000000 N/A       +00        STA IDENT                BIN
+         DC.L    %00000000 N/A       +00        STA IDENT 2/2            BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    3241                +00        ELEVATION                FT
+         DC.W    1         N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        0.48069      -0.589975
+         DC.L    4032320             +23        LAT                      DEG
+         DC.L    -4949069            +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    053<<6              +06        RNWY/MAG VAR             DEG
+         DC.W    26170               +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    19720               +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+         PAGE
+************************************************************
+*                          VOR
+************************************************************
+*
+*                          STA NO 60 VTC                   GREENPARK
+*
+         DC.W    60                  +00        STA NO 60                DEC
+         DC.W    $0068               +00        STA TYPE                 HEX   
+         DC.L    1088800000          +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %11101110100011101000101110111010 STA IDENT --./-./.--. BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT G   N  P    BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    2250                +00        ELEVATION                FT
+         DC.W    140       N/A       +00        RANGE 1                  NM
+         DC.W    140                 +00        RANGE 2         SP       NM
+         DC.W    140                 +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        0.428  0.846667
+NVTVOR26 DC.L    3590324             +23        LAT                      DEG
+         DC.L    7102358             +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                          STA NO 61 VTC                   GAINSBURG
+*
+         DC.W    61                  +00        STA NO 61                DEC
+         DC.W    $0068               +00        STA TYPE                 HEX   
+         DC.L    110400000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %11101110100011101000111010101000 STA IDENT --./-./-... BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT G   N  B    BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    3950                +00        ELEVATION                FT
+         DC.W    140       N/A       +00        RANGE 1                  NM
+         DC.W    140                 +00        RANGE 2         SP       NM
+         DC.W    140                 +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        0.673333  0.0093333      DEG
+         DC.L    5648329             +23        LAT                      DEG
+         DC.L    78293               +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                          STA NO 62 VTC                   GAINSBURG
+*
+         DC.W    62                  +00        STA NO 62                DEC
+         DC.W    $0068               +00        STA TYPE                 HEX   
+         DC.L    112700000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %11101110001110100011101010000000 STA IDENT --/-./-..   BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT M   N  D    BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    3241                +00        ELEVATION                FT
+         DC.W    140       N/A       +00        RANGE 1                  NM
+         DC.W    140                 +00        RANGE 2         SP       NM
+         DC.W    140                 +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        0.5186667  -0.5893333    DEG
+         DC.L    4350891             +23        LAT                      DEG
+         DC.L    -4943686            +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                          STA NO 63 VTC                   LINKVILLE
+*
+         DC.W    63                  +00        STA NO 63                DEC
+         DC.W    $0068               +00        STA TYPE                 HEX   
+         DC.L    1143000             +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %10111010100011101000111010111000 STA IDENT --./-./-... BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT L   N  K    BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    950                 +00        ELEVATION                FT
+         DC.W    140       N/A       +00        RANGE 1                  NM
+         DC.W    140                 +00        RANGE 2         SP       NM
+         DC.W    140                 +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        -0.6706667  -0.253333    DEG
+         DC.L    -5625960            +23        LAT                      DEG
+         DC.L    -2125111            +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                          STA NO 64 VTC                   SEAPORT BEACH
+*
+         DC.W    64                  +00        STA NO 64                DEC
+         DC.W    $0068               +00        STA TYPE                 HEX   
+         DC.L    115500000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %10101000100010111000000000000000 STA IDENT ..././.-    BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT G   N  B    BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    132                 +00        ELEVATION                FT
+         DC.W    140       N/A       +00        RANGE 1                  NM
+         DC.W    140                 +00        RANGE 2         SP       NM
+         DC.W    140                 +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        -0.3306667   0.5         DEG
+         DC.L    -27773833           +23        LAT                      DEG
+         DC.L    4194304             +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                          STA NO 65 VTC                   GOATHILL
+*
+         DC.W    65                  +00        STA NO 65                DEC
+         DC.W    $0068               +00        STA TYPE                 HEX   
+         DC.L    116800000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %11101110100011100010101010000000 STA IDENT --./-/....  BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT G   T  H    BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    132                 +00        ELEVATION                FT
+         DC.W    140       N/A       +00        RANGE 1                  NM
+         DC.W    140                 +00        RANGE 2         SP       NM
+         DC.W    140                 +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        0.246667  0.6626667      DEG
+         DC.L    2069193             +23        LAT                      DEG
+         DC.L    -5558851            +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+NVOREND  EQU     *
+         PAGE
+************************************************************
+*                     ADF TYPES
+************************************************************
+*
+*                          STA NO 90 LOM             MOUNTAIN DALE
+*
+         DC.W    90                  +00        STA NO 90                DEC
+         DC.W    $00B3               +00        STA TYPE                 HEX   
+         DC.L    000201000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %11101110001110100000000000000000 STA IDENT --/-.       BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT M  N        BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    3241                +00        ELEVATION                FT
+         DC.W    30        N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        0.4449333  -0.63742667   DEG
+         DC.L    3732371             +23        LAT                      DEG
+         DC.L    -5347122            +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                          STA NO 91 NDB             PELTON       
+*
+         DC.W    91                  +00        STA NO 91                DEC
+         DC.W    $00B3               +00        STA TYPE                 HEX   
+         DC.L    000240000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %11101000101110111010000000000000 STA IDENT -./.--.     BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT N  P        BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    85                  +00        ELEVATION                FT
+         DC.W    30        N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        -0.26      0.6626667     DEG
+         DC.L    -2181038            +23        LAT                      DEG
+         DC.L    5558851             +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                          STA NO 92 LOM             SEAPORT BEACH
+*
+         DC.W    92                  +00        STA NO 92                DEC
+         DC.W    $00B3               +00        STA TYPE                 HEX   
+         DC.L    000329000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %10101000100000000000000000000000 STA IDENT .../.       BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT B   E       BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    132                 +00        ELEVATION                FT
+         DC.W    60        N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        -0.43931833 0.50952167   DEG
+         DC.L    -3685269            +23        LAT                      DEG
+         DC.L    4274178             +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*                          STA NO 93 NDB             WEATHER       
+*
+         DC.W    93                  +00        STA NO 93                DEC
+         DC.W    $00B3               +00        STA TYPE                 HEX   
+         DC.L    000483000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %10111011100011101010111000000000 STA IDENT .--/-..-    BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT W   X       BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    2500                +00        ELEVATION                FT
+         DC.W    30        N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        0.206667   0.906667      DEG
+         DC.L    1733648             +23        LAT                      DEG
+         DC.L    7605674             +23        LON                      DEG
+         DC.W    0                   +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+*
+*                          STA NO 99 SPARE           (LAST STA)    
+*
+         DC.W    99                  +00        STA NO 99                DEC
+         DC.W    $00B3               +00        STA TYPE                 HEX   
+NVT9904  DC.L    000400000           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %10111000111010101000000000000000 STA IDENT .-/-...     BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT A  B        BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    394                 +00        ELEVATION                FT
+         DC.W    30        N/A       +00        RANGE 1                  NM
+         DC.W    0                   +00        RANGE 2         SP       NM
+         DC.W    0                   +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        +40.585533 -75.550000    DEG
+NVT9926  DC.L    ((((((40585533<<3/10)<<3/10)<<3/10)<<3/10)<<3/10)<<3/10)<<5 DEG
+         DC.L   -((((((75550000<<3/10)<<3/10)<<3/10)<<3/10)<<3/10)<<3/10)<<5 DEG
+         DC.W   -((1080<<4)/100)<<2  +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+         PAGE
+************************************************************
+*                     DME TYPES
+************************************************************
+*
+*                    STA NO 81      SPARE
+*
+NDDPDME  EQU     *
+         DC.W    81                  +00        STA NO 81                DEC
+         DC.W    $0068               +00        STA TYPE                 HEX   
+         DC.L    000000010           +00        STA FREQ/CHAN           HZ/NO
+         DC.L    %00000000000000000000000000000000 STA IDENT 1/2         BIN
+         DC.L    %00000000000000000000000000000000 STA IDENT 2/2         BIN
+         DC.W    %0        N/A       +00        MISC  CODES              BIN
+         DC.W    15                  +00        ELEVATION                FT
+         DC.W    140                 +00        RANGE 1                  NM
+         DC.W    140                 +00        RANGE 2         SP       NM
+         DC.W    140                 +00        RANGE 3         SP       NM
+*                LAT+(N)  LON +(E)   +23        38D51N34S  -77D02M12S    DEG
+         DC.L  ((((((38859436<<3/10)<<3/10)<<3/10)<<3/10)<<3/10)<<3/10)<<5 DEG
+         DC.L -((((((77036653<<3/10)<<3/10)<<3/10)<<3/10)<<3/10)<<3/10)<<5 DEG
+         DC.W    -((0800<<4)/100)<<2 +06        MAG VAR   E/W +/-        DEG
+         DC.W    0                   +06        RNWY/MAG VAR             DEG
+         DC.W    0                   +15        SIN(MAGVAR/RNWY) SP      NORM
+         DC.W    0                   +15        COS(MAGVAR/RNWY) SP      NORM
+         DC.W    0          N/A      +00        RUNWAY LENGTH            FT
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+         DC.L    0                   +00        SPARE/REMARKS
+*
+NFTABEND EQU     *
+*

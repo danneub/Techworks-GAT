@@ -1,0 +1,31 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:52:01     ...Page  1
+D:LCPU1.LTX , D:LCPU1.PRN , D:LCPU1.SYM = D:LCPU1.SA
+   ...
+
+                            1.  **********************************************************************
+                            2.  *                                                                    *
+                            3.  *        CPU LOCAL CONSTANTS                                         *
+                            4.  *                                                                    *
+                            5.  **********************************************************************
+                            6.           XDEF      LCPU
+                            7.           XREF      RTINIT
+C'000000                    8.           SECTION   12
+     C'00000000             9.  LCPU     EQU       *
+C'000000  45 58 45 43 20   10.           DC.B      'EXEC    '          NAME (0)
+          20 20 20
+C'000008  01 00 00 00      11.           DC.B      1,0,0,0             CPU #1,SPARE FLAGS (8),(9),(10),(11)
+C'00000C '00000000         12.           DC.L      RTINIT              ENTRY POINT (12)
+C'000010  00000800         13.           DC.L      $0800               RAM MEMORY START (16)
+C'000014  00004000         14.           DC.L      $4000               RAM MEMORY END (20)
+C'000018  00000000         15.           DC.L      0,0                 SPARE (24),(28)
+          00000000
+C'000020                   16.           END
+    0 Errors
+C.B      1,0,0,0             CPU #1,SPARE FLAGS (8),(9),(10),(11)
+C'00000C '00000000         12.           DC.L      RTINIT              ENTRY POINT (12)
+C'000010  00000800         13.           DC.L      $0800               RAM MEMORY START (16)
+C'000014  00004000         14.           DC.L      $4000               RAM MEMORY END (20)
+C'000018  00000000         15.           DC.L      0,0                 SPARE (24),(28)
+          00000000
+C'000020                   16.           END
+    0 E

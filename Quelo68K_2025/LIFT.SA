@@ -1,0 +1,282 @@
+	 OPT	   MEX,CEX,NOPCS
+	 XDEF	   LIFT
+*
+	 INCLUDE   FSYM.SA
+	 INCLUDE   ESYM.SA
+	 INCLUDE   IO.SA
+*
+	 SECTION   12
+FTIMC1	 DC.W	   100			  100 AT 2-0
+FTIMC2	 DC.W	   1			  1 AT 2-0
+FFLAPC1  DC.L	   82			 .1*.05 AT 2-14
+FFLAPC2  DC.L	   -82			-.1*.05 AT 2-14
+FFLAPC3  DC.W	   16382		  1 AT 2-14    (LESS 2)
+FCLC1	 DC.W	   10093		 .O77 AT 2-17
+FCLC2	 DC.W	   2539 		 .62 AT 2-12
+FCLC3	 DC.W	   1091 		 .00052 AT 2-21
+FCLC4	 DC.W	   157			  157 AT 2-0
+FCLC5	 DC.W	   4096 		  1 AT 2-12
+FCLC6	 DC.L	   2097146		  4 AT 2-19 (LESS 6)
+FCLC7	 DC.L	   -2097146		 -4 AT 2-19 (LESS 6)
+FCLC8	 DC.L	   33550336		  8191 AT 2-12
+FCLC9	 DC.L	   -33550336		 -8191 AT 2-12
+FCLC10	 DC.L	   81334596		 .077*15.74 AT 2-26
+FCLC11	 DC.L	   -81334596		 -.077*15.74 AT 2-26
+FCLC12	 DC.L	   20185		 .077 AT 2-18
+FWGC1	 DC.W	   500			  500 AT 2-0
+FWGC2	 DC.L	   52428800		  1600 AT 2-15
+FWGC3	 DC.L	   1048576		  1 AT 2-20
+*********************************************************************
+*	 THIS MODULE COMPUTES:LIFT COEFFICIENT		 AT 2-13    *
+*			      GROSS WT			 AT 2-3     *
+*			      1/GROSS WT		 AT 2-17    *
+*			      FLAP POSITION(NORMALIZED)  AT 2-14    *
+*			      WT ON WHEELS(WOW)(G'S)     AT 2-12    *
+*			      AZA (G'S)                  AT 2-12    *
+*			      AZA DOT/20 (G'S/SEC)       AT 2-12    *
+*			      FZA     (LBS)		 AT 2-2     *
+*			      FLT FREEZE BOOLEAN	 1=FREEZE   *
+*			      MASTER SW BOOLEAN 	 1=ON	    *
+*			      INITIALIZATION TIMER	 AT 2-0     *
+*			      FINIT	   BOOLEAN  (1=INITIALIZED) *
+*      MULTIPLEXED A/I INPUTS:FBAROPR			 FSPARE0    *
+*			      FRAAMPL			 FSPARE1    *
+*			      FENGVOL			 FWINDVEL   *
+*			      FFUELQR			 FWINDC     *
+*			      FFUELQL			 FWINDS     *
+*			      FCYLTP			 FOAT	    *
+*			      FOILTP			 FGRWT	    *
+*			      FOILPR			 FCGIN	    *
+*				 *				    *
+*      MULTIPLEXER OUTPUTS:   IAI1MPX				    *
+*			      IAI2MPX				    *
+*				 *				    *
+*      INSTRUMENT DRIVE OUTPUTS:				    *
+*			      OFUELLT				    *
+*			      OFUELRT				    *
+*			      OOILP				    *
+*			      OCYLT				    *
+*			      OOILT				    *
+*	 MODULE IS SKIPPED IF FLIGHT FREEZE IS ACTIVATED	    *
+*					      SEPTEMBER 23,1983     *
+*********************************************************************
+*
+**********************************************************************
+*      INPUT MULTIPLEXED A/I QUANTITIES: (ALL AT 2-15)		     *
+*	       BARO PRESSURE(INSTR)	      FSPARE0		     *
+*	       ROUGH AIR AMPLITUDE(INSTR)     FSPARE1		     *
+*	       ENGINE SOUND VOLUME	      FWINDVEL		     *
+*	       RIGHT FUEL QUANTITY	      FWINDC		     *
+*	       LEFT FUEL QUANTITY	      FWINDS		     *
+*	       CYLINDER HEAD TEMPERATURE      FOAT		     *
+*	       OIL TEMPERATURE		      FGRWT		     *
+*	       OIL PRESSURE		      FCGIN		     *
+*								     *
+*      OUTPUT MULTIPLEXER DISCRETE OUTPUTS:			     *
+*					   MULTIPLEXER NO.1	     *
+*					   MULTIPLEXER NO.2	     *
+*								     *
+*      OUTPUT INSTRUMENT DRIVE QUANTITIES:			     *
+*					  LEFT FUEL QUANTITY	     *
+*					  RIGHT FUEL QUANTITY	     *
+*					  OIL PRESSURE		     *
+*					  CYLINDER HEAD TEMPERATURE  *
+*					  OIL TEMPERATURE	     *
+*      NOTE:A/D CONVERSION COMMAND IS OUTPUTTED AT END OF MODULE     *
+*	    IN ORDER TO ALLOW ENOUGH TIME FOR HARDWARE MULTIPLEXER   *
+*	    CHIP TO SETTLE TO ITS FINAL VALUE BEFORE BEING	     *
+*	    INTERROGATED					     *
+**********************************************************************
+*	    FREEZE=FREEZE SW ACTIVATED OR LINKAGE POWER OFF	     *
+**********************************************************************
+LIFT	 EQU *
+	 MOVE.L    #$FE6000,A6		  (I/O BASE ADDRESS)IN A6
+	 BTST.B    #IFLTFRZ,IINSTMDI(A6)  1=FLIGHT FREEZE
+	 SNE.B	   D1			  1=FLIGHT FREEZE
+	 BTST.B    #ILINKPWR,IMPSDI1(A6)  1=LINKAGE POWER IS ON
+	 SEQ.B	   D5			  1=POWER OFF
+	 OR.B	   D5,D1		  1=FREEZE OR LINKAGE POWER OFF
+	 MOVE.B    D1,FFREEZE		  1=FREEZE OR LINKAGE POWER OFF
+	 BEQ.S	   UNFREEZL		  BRANCH IF NOT FLIGHT FREEZE
+	 TRAP	   #0			  REAL TIME RETURN TO EXEC
+UNFREEZL MOVE.L    #FBAROPR,A0		  BASE ADDRESS OF FBARO IN A0
+	 MOVEP.W   IINSTAI1(A6),D0	  MULTIPLEXED A/I IN D0 AT 2-15
+	 BCHG	   #15,D0		  COMPLEMENT SIGN BIT
+	 ASR.W	   #5,D0
+	 ASL.W	   #5,D0		  DEADBAND LEAST SIGNIFIGANT BIT
+	 BPL.S	   NEXT 		  BRANCH IF POSITIVE
+	 ADDQ.W    #1,D0		  ADD 1 IF NEGATIVE A/D INPUT
+NEXT	 CLR.L	   D1
+	 MOVE.W    FMPX,D1		  MULTIPLEX COUNTER AT 2-1
+	 CMP.W	   #14,D1		 (MULTIPLEX COUNTER-7) AT 2-1
+	 BMI.S	   NEE1 		  BRANCH IF LESS THAN 7
+	 MOVE.W    #14,D1		  UPPER LIMIT IN D1 AT 2-1
+NEE1	 MOVE.W    D0,0(A0,D1)		  STORE MULTIPLEXED WORD
+	 MOVE.L    #FSPARE0,A0		  BASE ADDRESS OF FSPARE0 IN A0
+	 MOVEP.W   IINSTAI2(A6),D0	  MULTIPLEXED A/I IN D0 AT 2-15
+	 BCHG	   #15,D0		  COMPLEMENT SIGN BIT
+	 ASR.W	   #5,D0
+	 ASL.W	   #5,D0		  DEADBAND LEAST SIGNIFIGANT BIT
+	 BPL.S	   NEXT1		  BRANCH IF POSITIVE
+	 ADDQ.W    #1,D0		  ADD 1 IF NEGATIVE
+NEXT1	 MOVE.W    D0,0(A0,D1)		  STORE MULTIPLEXED WORD
+	 SUBQ.W    #2,D1		  DECREMENT COUNTER BY 2
+	 BMI.S	   NEXT2		  BRANCH IF NEGATIVE
+	 MOVE.W    D1,FMPX		  STORE MULTIPLEXER
+	 BRA.S	   NEXT3
+NEXT2	 MOVE.W    #14,D1		  RESET COUNTER(0 TO 7) AT 2-1
+	 MOVE.W    D1,FMPX		  STORE UPDATED COUNTER
+NEXT3	 ASR.W	   #1,D1		  MULTIPLEXER AT 2-0
+	 MOVE.B    D1,IAI1MPX(A6)	  STORE OUTPUT D/O MULTIPLEX BYTE
+	 MOVE.B    D1,IAI2MPX(A6)	  STORE OUTPUT D/O MULTIPLEX BYTE
+	 MOVE.W    FFUELQL,D0		  LEFT FUEL QTY AT 2-15
+	 BCHG	   #15,D0		  COMPLEMENT SIGN BIT
+	 MOVEP.W   D0,OFUELLT(A6)	  LEFT FUEL QTY(A/O)10V=25 GAL
+	 MOVE.W    FFUELQR,D0		  RIGHT FUEL QTY AT 2-15
+	 BCHG	   #15,D0		  COMPLEMENT SIGN BIT
+	 MOVEP.W   D0,OFUELRT(A6)	  RIGHT FUEL QTY(A/O)10V=25 GAL
+	 MOVE.W    FOILPR,D0		  OIL PRESSURE AT 2-15
+	 BCHG	   #15,D0		  COMPLEMENT SIGN BIT
+	 MOVEP.W   D0,OOILP(A6) 	  OIL PRESSURE(A/O)10V=100 PSI
+	 MOVE.W    FCYLTP,D0		  CYLINDER HEAD TEMP AT 2-15
+	 BCHG	   #15,D0		  COMPLEMENT SIGN BIT
+	 MOVEP.W   D0,OCYLT(A6) 	  CYL HEAD TEMP(A/O)10V=460 DEG F
+	 MOVE.W    FOILTP,D0		  OIL TEMP AT 2-15
+	 BCHG	   #15,D0		  COMPLEMENT SIGN BIT
+	 MOVEP.W   D0,OOILT(A6) 	  OIL TEMP(A/O)10V=260 DEG F
+******************************************************************************
+*									     *
+*			     INITIALIZE LOAD				     *
+*									     *
+*		  TIMER=(TIMER+1)*K		      (5 SECOND TIMER)	     *
+*		  FINIT=1 IF TIMER IS EQUAL TO 100,ZERO OTHERWISE	     *
+*			 WHERE:K=1 IF LOAD IS RUNNING,ZERO OTHERWISE	     *
+*			       0<TIMER<101				     *
+******************************************************************************
+	 MOVE.W    FTIMER50,D6		  TIMER(N-1) AT 2-0
+	 CMP.W	   FTIMC1,D6		  TIMER(N-1)-100  AT 2-0
+	 SPL.B	   FINIT		  1=LOAD INITIALIZED
+	 BPL.S	   NEXT4		  BRANCH IF INITIALIZED
+	 ADD.W	   FTIMC2,D6		  TIMER(N-1)+1 AT 2-0
+	 MOVE.W    D6,FTIMER50		  TIMER(N) AT 2-0
+******************************************************************************
+*									     *
+*	    FLAP POSITION=INTEGRAL(C*DT)				     *
+*		 WHERE:C=ZERO IF MASTER SW. IS OFF			     *
+*		       C=ZERO IF FLAP SWITCHES ARE ALL DEACTIVATED	     *
+*		       C=32*(DEMANDED FLAP POS-ACTUAL FLAP POS)LIMITED	     *
+*			     -.1< LIMIT<.1				     *
+*		       DT=.05(20 ITERATIONS/SEC)			     *
+*		       0 < FLAP POSITION < 1	     NORMALIZED AT 2-14      *
+******************************************************************************
+NEXT4	 BTST.B    #IMSTSW,IMPSDI1(A6)	  1=MASTER SW. ON
+	 SNE.B	   EMASTER		  1=MASTER SWITCH ON
+	 BEQ.S	   NEXT8		  FREEZE FLAPS IF MASTER SW. IS NOT ON
+	 MOVE.W    FFLAPS,D0		  FFLAPS AT 2-14
+	 MOVE.W    FFLAPC3,D1		  1 AT 2-14
+	 BTST.B    #IFLAPDN,IMPSDI2(A6)   1=FLAPS DOWN COMMAND
+	 BNE.S	   NEXT5		  BRANCH IF FLAPS DOWN IS DEMANDED
+	 ASR.W	   #1,D1		  .5 AT 2-14
+	 BTST.B    #IFLAPHLF,IMPSDI2(A6)  1=HALF FLAPS DEMANDED
+	 BNE.S	   NEXT5		  BRANCH IF HALF FLAPS ARE DEMANDED
+	 CLR.W	   D1			  ZERO IN D1
+	 BTST.B    #IFLAPUP,IMPSDI2(A6)   1=FLAPS UP REQUESTED
+	 BNE.S	   NEXT5		  BRANCH IF FLAPS UP DEMANDED
+	 MOVE.W    D0,D1		  FLAPS IN D1
+NEXT5	 SUB.W	   D0,D1		  (FLAPS DEM-ACTUAL FLAPS)AT 2-14
+	 MULS	   #32,D1		  32*(---) AT 2-14
+	 CMP.L	   FFLAPC1,D1		  (---)-(.1*.05) AT 2-14
+	 BMI.S	   NEXT6		  BRANCH IF LESS THAN .1*.05
+	 MOVE.L    FFLAPC1,D1		  LIMIT IN D1 AT 2-14
+NEXT6	 CMP.L	   FFLAPC2,D1		 (---)+(.1*.05) AT 2-14
+	 BPL.S	   NEXT7		  BRANCH IF GREATER THAN -.1*.05
+	 MOVE.L    FFLAPC2,D1		  LIMIT IN D1 AT 2-14
+NEXT7	 ADD.W	   FFLAPS,D1		  FLAPS(N)IN D1 AT 2-14
+	 MOVE.W    D1,FFLAPS		  FLAPS(N) AT 2-14
+*********************************************************************
+*	 GROSS WT =1600+500*(INSTRUCTER INPUT)			    *
+*	 1/GROSS WT=1/GROSS WT					    *
+*********************************************************************
+NEXT8	 MOVE.W    FGRWT,D0		 (A/I)+10V=500 LBS    AT 2-15
+	 MULS	   FWGC1,D0		  500*(A/I) AT 2-15
+	 ADD.L	   FWGC2,D0		  1600+500*(INST) AT 2-15
+	 ASR.L	   #8,D0		  2-7
+	 ASR.L	   #4,D0		  2-3
+	 MOVE.W    D0,FWG		  GROSS WT AT 2-3
+	 MOVE.L    FWGC3,D6		  1 AT 2-20
+	 DIVS	   D0,D6		  1/WG AT 2-17
+	 MOVE.W    D6,FWGINV		  1/WG AT 2-17
+*********************************************************************
+*	     CL=.077+.077*ALPHA+.62*FLAPS+.00052*THRUST 	    *
+*		 NOTE:.077*ALPHA IS LIMITED TO 1.212 (.077*15.74)   *
+*********************************************************************
+	 MOVE.W    FFLAPS,D6		  FLAPS AT 2-14
+	 MULS	   FCLC2,D6		 .62*FLAPS AT 2-26
+	 MOVE.W    ENTHRUST,D7		  THRUST AT 2-5
+	 MULS	   FCLC3,D7		 .00052*THRUST AT 2-26
+	 ADD.L	   D6,D7		 .62*FLAPS+.00052*THRUST AT 2-26
+	 MOVE.W    FALPHA,D6		  ALPHA AT 2-9
+	 MULS	   FCLC1,D6		 .077*ALPHA AT 2-26
+	 CMP.L	   FCLC10,D6		  LIMIT=.077*15.74=1.212 AT 2-26
+	 BMI.S	   NEXT9		  BRANCH IF LESS THAN 1.212 AT 2-26
+	 MOVE.L    FCLC10,D6		  LIMIT IN D6 AT 2-26
+NEXT9	 CMP.L	   FCLC11,D6		  LIMIT=-1.212 AT 2-26
+	 BPL.S	   NEXT10
+	 MOVE.L    FCLC11,D6		  LIMIT IN D6 AT 2-26
+NEXT10	 ADD.L	   D6,D7		 .077*ALPHA+.62*FLAPS+.00052*THRUST AT
+	 ASR.L	   #8,D7		  2-18
+	 ADD.L	   FCLC12,D7	.077+.077*ALPHA+.62*FLAPS+.00052*THRUST AT 2-18
+	 ASR.L	   #5,D7		  2-13
+	 MOVE.W    D7,FCL		  CL TOTAL AT 2-13
+**********************************************************************
+*			     FZA=-QSCL				     *
+*		       -8191<QSCL<8191				     *
+**********************************************************************
+	 MULS	   FCLC4,D7		  157*CL AT 2-13
+	 ASR.L	   #7,D7		  2-6
+	 MULS	   FQ,D7		  157*Q*CL AT 2-12
+	 CMP.L	   FCLC8,D7		  QSCL-8191 AT 2-12
+	 BMI.S	   NEXT11		  BRANCH IF QSCL<8191
+	 MOVE.L    FCLC8,D7		  LIMIT IN D7  AT 2-12
+NEXT11	 CMP.L	   FCLC9,D7		  QSCL+8191 AT 2-12
+	 BPL.S	   NEXT12		  BRANCH IF QSCL>-8191
+	 MOVE.L    FCLC9,D7		  LIMIT IN D7 AT 2-12
+NEXT12	 ASR.L	   #8,D7		  2-4
+	 ASR.L	   #2,D7		  2-2
+	 NEG.W	   D7			  FZA AT 2-2
+	 MOVE.W    D7,FFZA		  FZA AT 2-2
+************************************************************
+*	 AZA=-(QSCL/WG)*(1-.54*ALPHA STALL)		   *
+*	 AZA DOT=20*{AZA(N)-AZA(N-1)}			   *
+*	 WOW=(1+AZA)*(WOG) NEVER NEGATIVE		   *
+*		   -4<AZA<4				   *
+************************************************************
+	 MULS	   FWGINV,D7		  -QSCL/WG AT 2-19
+	 CMP.L	   FCLC6,D7		  -QSCL/WG -4	AT 2-19
+	 BMI.S	   NEXT13		   BRANCH IF -QSCL/WG<4
+	 MOVE.L    FCLC6,D7		   LIMIT IN D7	 AT 2-19
+NEXT13	 CMP.L	   FCLC7,D7		  -QSCL/WG+4	AT 2-19
+	 BPL.S	   NEXT14		   BRANCH IF -QSCL/WG>-4
+	 MOVE.L    FCLC7,D7		   LIMIT IN D7 AT 2-19
+NEXT14	 ASR.L	   #7,D7		   2-12
+	 TST.B	   FSTALL		   1=STALL
+	 BEQ.S	   NEXT15		   BRANCH IF NOT STALLED
+	 MULS	   #118,D7		  .46*AZA AT 2-20
+	 ASR.L	   #8,D7		   2-12
+NEXT15	 MOVE.W    FAZA,D4		   AZA(N-1) AT 2-12
+	 MOVE.W    D7,FAZA		   AZA(N) AT 2-12
+	 SUB.W	   D4,D7		   AZA(N)-AZA(N-1) AT 2-12
+	 MOVE.W    D7,FAZADOT		   AZA DOT/20  AT 2-12
+	 MOVE.W    FCLC5,D1		   1 AT 2-12
+	 ADD.W	   FAZA,D1		  (1-QSCL/WG)AT 2-12
+	 BPL.S	   NEXT16		   BRANCH IF POSITIVE
+	 CLR.W	   D1			  (1-QSCL/WG)ZERO SLICED AT 2-12
+NEXT16	 TST.B	   FWOG 		   1=ON GROUND
+	 BNE.S	   NEXT17		   BRANCH IF ON GROUND
+	 CLR.W	   D1			   ZERO IF IN AIR
+NEXT17	 MOVE.W    D1,FWOW		   WOW AT 2-12
+	 MOVE.B    #0,IINSTAI1(A6)	   START D/A CONVERSION
+	 MOVE.B    #0,IINSTAI2(A6)	   START D/A CONVERSION
+	 TRAP	   #0			   REAL TIME RETURN TO EXEC
+	 END
+

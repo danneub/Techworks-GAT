@@ -1,0 +1,103 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:42:23    ...Page  1
+D:VISIO.LTX , D:VISIO.PRN , D:VISIO.SYM = D:VISIO.SA
+   ...
+
+                            1.  
+                            2.  *        VISIO     VISUAL I/O HANDLER                                *
+                            3.  *                                                                    *
+                            4.  **********************************************************************
+                            5.           XDEF      VISIO
+                            6.  *
+                            7.           INCLUDE   VSYM.SA
+     # 00001750             8:  VISON     EQU   $00001750 B 001 L H   00 = VISUAL I/O OFF   FF = VISUAL I/O ON
+     # 00001751             9:  VFILL     EQU   $00001751 B 001 L H   SPARE BYTE
+     # 00001752            10:  SYNC1     EQU   $00001752 B 001 L H   F0 = START SYNC CHARACTER
+     # 00001753            11:  VFLAG1    EQU   $00001753 B 001 L H   VISUAL FLAG1
+     # 00001754            12:  VISHDG    EQU   $00001754 W 001 L S00 VISUAL HEADING(DEGREES) AT 2-0
+     # 00001756            13:  VISPITCH  EQU   $00001756 W 001 L S00 VISUAL PITCH ANGLE(DEGREES) AT 2-0
+     # 00001758            14:  VISROLL   EQU   $00001758 W 001 L S00 VISUAL ROLL ANGLE(DEGREES) AT 2-0
+     # 0000175A            15:  VISALT    EQU   $0000175A L 001 L H   VISUAL ALTITUDE ABOVE GROUND (FEET) FLOAT
+     # 0000175E            16:  VISXF     EQU   $0000175E L 001 L H   VISUAL EAST/WEST POSITION (FEET) FLOAT
+     # 00001762            17:  VISYF     EQU   $00001762 L 001 L H   VISUAL NORTH/SOUTH POSITION (FEET) FLOAT
+     # 00001766            18:  VFLAG2    EQU   $00001766 B 001 L H   VISUAL FLAG2
+     # 00001767            19:  SYNC22    EQU   $00001767 B 001 L H   0F = STOP SYNC CHARACTER
+     # 00001768            20:  VFIRST    EQU   $00001768 B 001 L H   FIRST PASS FLAG
+     # 00001769            21:  VTEMP1    EQU   $00001769 B 001 L H   VISUAL TEMP
+     # 0000176A            22:  VISX      EQU   $0000176A L 001 L S10 VISUAL X
+     # 0000176E            23:  VISY      EQU   $0000176E L 001 L S10 VISUAL Y
+                           24.  *
+C'000000                   25.           SECTION   12
+     C'00000000            26.  VISIO    EQU       *
+C'000000  4A38 1750        27.           TST.B     VISON               TEST VISUAL FLAG
+C'000004  670E             28.           BEQ.S     VISOFF              BRANCH IF FALSE
+                           29.  *
+C'000006  4BF8 1752        30.           LEA       SYNC1,A5            LOAD ADDRESS OF BUFFER START
+C'00000A  4DF8 1768        31.           LEA       SYNC22+1,A6         LOAD ADDRESS OF BUFFER END+1
+C'00000E  4EB9'00000016    32.           JSR       DSPLN               OUTPUT BUFFER
+                           33.  *
+C'000014  4E40             34.  VISOFF   TRAP      #0                  RETURN
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:42:23    ...Page  2
+D:VISIO.LTX , D:VISIO.PRN , D:VISIO.SYM = D:VISIO.SA
+   ...
+
+                           36.  **********************************************************************
+                           37.  *                                                                    *
+                           38.  *        DSPLN     DISPLAY LINE TO PORT 1                            *
+                           39.  *                                                                    *
+                           40.  *                  A5=START ADDRESS A6=END ADDRESS                   *
+                           41.  *                                                                    *
+                           42.  **********************************************************************
+     C'00000016            43.  DSPLN    EQU       *
+C'000016  101D             44.           MOVE.B    (A5)+,D0            LOAD BYTE TO OUTPUT
+C'000018  4EB9'00000024    45.           JSR       DSPB                DISPLAY THE BYTE
+C'00001E  BDCD             46.           CMP.L     A5,A6               COMPARE TO END POINTER
+C'000020  66F4             47.           BNE.S     DSPLN               BRANCH IF NOT EQUAL
+C'000022  4E75             48.           RTS
+                           49.  **********************************************************************
+                           50.  *                                                                    *
+                           51.  *        DSPB      DISPLAY BYTE (D0=DATA)                            *
+                           52.  *                                                                    *
+                           53.  **********************************************************************
+     C'00000024            54.  DSPB     EQU       *
+C'000024  4EB9'00000036    55.           JSR       TXSTAT              TEST TX STATUS
+                           56.  *
+C'00002A  4A02             57.           TST.B     D2                  TEST FOR ZERO
+C'00002C  67F6             58.           BEQ.S     DSPB                TRY AGAIN
+                           59.  *
+C'00002E  4EB9'00000042    60.           JSR       TXWRITE             OUTPUT DATA
+                           61.  *
+C'000034  4E75             62.           RTS                           RETURN
+                           63.  **********************************************************************
+                           64.  *                                                                    *
+                           65.  *        LOW LEVEL SERIAL I/O SUPPORT ROUTINES                       *
+                           66.  *                                                                    *
+                           67.  **********************************************************************
+     # 00FE8001            68.  ACIAC    EQU       $FE8001             CONTROL PORT
+     # 00FE8003            69.  ACIAD    EQU       $FE8003             DATA PORT
+                           70.  **********************************************************************
+                           71.  *                                                                    *
+                           72.  *        TXSTAT    READ TX STATUS INFORMATION                        *
+                           73.  *                                                                    *
+                           74.  **********************************************************************
+     C'00000036            75.  TXSTAT   EQU       *
+C'000036  1439 00FE8001    76.           MOVE.B    ACIAC,D2            READ STATUS
+C'00003C  C43C 0002        77.           AND.B     #$02,D2             MASK OFF ERROR BITS
+C'000040  4E75             78.           RTS                           RETURN
+                           79.  **********************************************************************
+                           80.  *                                                                    *
+                           81.  *        TXWRITE   WRITE TX DATA                                     *
+                           82.  *                                                                    *
+                           83.  **********************************************************************
+     C'00000042            84.  TXWRITE  EQU       *
+C'000042  13C0 00FE8003    85.           MOVE.B    D0,ACIAD            WRITE DATA
+C'000048  4E75             86.           RTS                           RETURN
+C'00004A                   87.           END
+    0 Errors
+                       *
+                           82.  *                                                                    *
+                           83.  **********************************************************************
+     C'00000042            84.  TXWRITE  EQU       *
+C'000042  13C0 00FE8003    85.           MOVE.B    D0,ACIAD            WRITE DATA
+C'000048  4E75             86.           RTS                           RETURN
+C'00004A                   87.           END
+    0 Er
