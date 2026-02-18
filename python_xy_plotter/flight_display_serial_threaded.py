@@ -434,12 +434,16 @@ if __name__ == '__main__':
     # Data container for time step (needs to be mutable for FuncAnimation)
     t_step = [1]
     print(f"HDG;PITCH;ROLL;ALT;EW_POS;NS_POS")
-    
-    # read in all the CSV file data
-    # read_csv_file(file_name)
-    # io_thread = threading.Thread(target = parse_serial_data,args=(data_queue,),daemon=True)
+   
+    # uncomment one of the following three lines to either:
+    # read from the rs-232 serial port
+    # read from a CSV format flight log 
+    # generate data to fly in a figure eight
+    io_thread = threading.Thread(target = parse_serial_data,args=(data_queue,),daemon=True)
     #io_thread = threading.Thread(target = retrieve_csv_data,args=(data_queue,),daemon=True)
-    io_thread = threading.Thread(target = generate_figure_eight,args=(data_queue,),daemon=True)
+    #io_thread = threading.Thread(target = generate_figure_eight,args=(data_queue,),daemon=True)
+
+    # start the input thread
     io_thread.start() 
     
     # FuncAnimation handles the live updating in a loop
