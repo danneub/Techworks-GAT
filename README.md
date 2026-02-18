@@ -1,7 +1,6 @@
 Neuburger's info about the GAT trainer software    12/4/2025
 
-i
-n github website  generate the Presonal Access Token
+in github website  generate the Presonal Access Token
 ( so that the PI can access/modify the repository )
 
 sign on to Github - danneub (pw - A*01!)
@@ -24,7 +23,7 @@ cd /home/pi/GAT
 git clone https://github.com/danneub/Techworks-GAT.git
 cd GAT
 git remote set-url origin https://danneub:[token]@github.com/danneub/Techworks-GAT.git
-
+- don't type in the [] characters
 
 
 This disk has several folders:
