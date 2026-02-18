@@ -1,5 +1,32 @@
 Neuburger's info about the GAT trainer software    12/4/2025
 
+i
+n github website  generate the Presonal Access Token
+( so that the PI can access/modify the repository )
+
+sign on to Github - danneub (pw - A*01!)
+project Techworks-GAT
+select user icon in upper right of page
+> settings
+> Developer Settings > Generate new token (classic)
+> check - classic -> scopes:repo
+save the token value generated
+
+-----------------------------------------------
+on the PI
+
+log in
+
+git config --global user.email "dhneuburger@gmail.com"
+git config --global user.name "danneub"
+mkdir /homa/pi/GAT
+cd /home/pi/GAT
+git clone https://github.com/danneub/Techworks-GAT.git
+cd GAT
+git remote set-url origin https://danneub:[token]@github.com/danneub/Techworks-GAT.git
+
+
+
 This disk has several folders:
  - /MOD-EMUP   - prom burner software. I'm not sure if this includes the version on the PC at techworks but might be useful for offline study of the tool
  - /photos - some photos of the Motorola cards in the VME bin
