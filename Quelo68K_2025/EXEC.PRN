@@ -1,5 +1,5 @@
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page  1
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page  1
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                             1.           OPT       MEX,CEX,NOPCS
@@ -12,8 +12,8 @@ D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
                             8.  *        VERSION:  2.0   11/30/83      D.R. TRIPP                            *
                             9.  *                                                                            *
                            10.  ******************************************************************************
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page  2
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page  2
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                            12.  **********************************************************************
@@ -65,8 +65,8 @@ D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
                            58.           XDEF      SMODTOUT            MODULE TIMEOUT COUNTERS
                            59.           XDEF      SBMODRUN            MODULE ENABLE FLAGS
                            60.           XDEF      TFRAME              TOTAL FRAME TIME (MICROSEC)
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page  3
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page  3
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                            62.  **********************************************************************
@@ -124,8 +124,8 @@ D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
 1'0000E4  <4>             114.  USTACK   DS.L      1                   ADDRESS OF USER STACK (END)
 1'0000E8  <4>             115.  LPOOL    DS.L      1                   ADDRESS OF LOCAL DATA POOL
 1'0000EC  <4>             116.  HEAP     DS.L      1                   ADDRESS OF HEAP DATA AREA
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page  4
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page  4
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           118.  **********************************************************************
@@ -133,26 +133,26 @@ D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
                           120.  *        DEBUG DATA-POOL SYMBOLS                                     *
                           121.  *                                                                    *
                           122.  **********************************************************************
-                          123.           INCLUDE   DSYM.SA
-     # 00000F00           124:  DSEG      EQU   $00000F00 L 001 L H   DEBUG DATA SEGMENT ADDRESS
-     # 00000F04           125:  DBUFF     EQU   $00000F04 B 080 L H   DEBUG INPUT BUFFER
-     # 00000F54           126:  DBUFFPTR  EQU   $00000F54 L 001 L H   DEBUG INPUT BUFFER POINTER
-     # 00000F58           127:  DBUFFCNT  EQU   $00000F58 B 001 L H   DEBUG INPUT BUFFER COUNT
-     # 00000F59           128:  DBUFFLNE  EQU   $00000F59 B 001 L H   DEBUG INPUT BUFFER LINE COMPLETE FLAG
-     # 00000F5A           129:  DBUFFCHG  EQU   $00000F5A B 001 L H   DEBUG INPUT BUFFER CHANGE FLAG
-     # 00000F5B           130:  D400I     EQU   $00000F5B B 001 L H   DEBUG MVME400 INSTALLED FLAG
-     # 00000F5C           131:  DLIST     EQU   $00000F5C L 128 L H   DEBUG DISPLAY LIST
-     # 0000115C           132:  DCOUNT    EQU   $0000115C W 001 L H   DEBUG DISPLAY LIST COUNT
-     # 0000115E           133:  DSPARE2   EQU   $0000115E W 001 L H   DEBUG SPARE WORD
-     # 00001160           134:  TFRAME    EQU   $00001160 L 001 L D   FRAME TIME ACTUAL
-     # 00001164           135:  TFRAMEA   EQU   $00001164 L 001 L D   FRAME TIME AVERAGE
-     # 00001168           136:  TFRAMEW   EQU   $00001168 L 001 L D   FRAME TIME WORST
-     # 0000116C           137:  TMODULE   EQU   $0000116C W 016 L D   MODULE TIMES ACTUAL
-     # 0000118C           138:  TMODULEA  EQU   $0000118C W 016 L D   MODULE TIMES AVERAGE
-     # 000011AC           139:  TMODULEW  EQU   $000011AC W 016 L D   MODULE TIMES WORST
-     # 000011CC           140:  DSPARE    EQU   $000011CC L 032 L H   DEBUG SPARE LONG WORDS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page  5
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+                          123.i          INCLUDE   DSYM.SA
+     # 00000F00           124.  DSEG      EQU   $00000F00 L 001 L H   DEBUG DATA SEGMENT ADDRESS
+     # 00000F04           125.  DBUFF     EQU   $00000F04 B 080 L H   DEBUG INPUT BUFFER
+     # 00000F54           126.  DBUFFPTR  EQU   $00000F54 L 001 L H   DEBUG INPUT BUFFER POINTER
+     # 00000F58           127.  DBUFFCNT  EQU   $00000F58 B 001 L H   DEBUG INPUT BUFFER COUNT
+     # 00000F59           128.  DBUFFLNE  EQU   $00000F59 B 001 L H   DEBUG INPUT BUFFER LINE COMPLETE FLAG
+     # 00000F5A           129.  DBUFFCHG  EQU   $00000F5A B 001 L H   DEBUG INPUT BUFFER CHANGE FLAG
+     # 00000F5B           130.  D400I     EQU   $00000F5B B 001 L H   DEBUG MVME400 INSTALLED FLAG
+     # 00000F5C           131.  DLIST     EQU   $00000F5C L 128 L H   DEBUG DISPLAY LIST
+     # 0000115C           132.  DCOUNT    EQU   $0000115C W 001 L H   DEBUG DISPLAY LIST COUNT
+     # 0000115E           133.  DSPARE2   EQU   $0000115E W 001 L H   DEBUG SPARE WORD
+     # 00001160           134.  TFRAME    EQU   $00001160 L 001 L D   FRAME TIME ACTUAL
+     # 00001164           135.  TFRAMEA   EQU   $00001164 L 001 L D   FRAME TIME AVERAGE
+     # 00001168           136.  TFRAMEW   EQU   $00001168 L 001 L D   FRAME TIME WORST
+     # 0000116C           137.  TMODULE   EQU   $0000116C W 016 L D   MODULE TIMES ACTUAL
+     # 0000118C           138.  TMODULEA  EQU   $0000118C W 016 L D   MODULE TIMES AVERAGE
+     # 000011AC           139.  TMODULEW  EQU   $000011AC W 016 L D   MODULE TIMES WORST
+     # 000011CC           140.  DSPARE    EQU   $000011CC L 032 L H   DEBUG SPARE LONG WORDS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page  5
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           142.  **********************************************************************
@@ -160,37 +160,37 @@ D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
                           144.  *        TASK CONTEXT BLOCK (TCB) OFFSET EQUATES                     *
                           145.  *                                                                    *
                           146.  **********************************************************************
-                          147.           INCLUDE   TCBSYM.SA
-     # 00000000           148:           OFFSET    0
-     # 00000000 <8>       149:  TCBNAME  DS.B      08       TASK NAME
-     # 00000008 <4>       150:  TCBDS    DS.L      01       TASK DATA SEGMENT POINTER
-     # 0000000C <4>       151:  TCBCS    DS.L      01       TASK CODE SEGMENT POINTER
-     # 00000010 <4>       152:  TCBSS    DS.L      01       TASK STACK SEGMENT POINTER
-     # 00000014 <2>       153:  TCBID    DS.W      01       TASK ID NUMBER
-     # 00000016 <2>       154:  TCBDSL   DS.W      01       TASK DATA SEGMENT LENGTH
-     # 00000018 <2>       155:  TCBCSL   DS.W      01       TASK CODE SEGMENT LENGTH
-     # 0000001A <2>       156:  TCBSSL   DS.W      01       TASK STACK SEGMENT LENGTH
-     # 0000001C <4>       157:  TCBENTRY DS.L      01       TASK ENTRY POINT
-     # 00000020 <4>       158:  TCBEXEP  DS.L      01       TASK EXECPTION ENTRY POINT
-     # 00000024 <1>       159:  TCBHOLD  DS.B      01       TASK HOLD FLAG
-     # 00000025 <1>       160:  TCBRUN   DS.B      01       TASK RUN FLAG
-     # 00000026 <1>       161:  TCBERR   DS.B      01       TASK ERROR FLAG
-     # 00000027 <1>       162:  TCBWAIT  DS.B      01       TASK WAIT FLAG
-     # 00000028 <1>       163:  TCBEX    DS.B      01       TASK EXCEPTION ENTRY FLAG
-     # 00000029 <1>       164:           DS.B      01       SPARE
-     # 0000002A <2>       165:  TCBPRI   DS.W      01       TASK PRIORITY CODE
-     # 0000002C <2>       166:  TCBSR    DS.W      01       TASK STATUS REGISTER
-     # 0000002E <4>       167:  TCBPC    DS.L      01       TASK PROGRAM COUNTER
-     # 00000032 <3C>      168:  TCBREGS  DS.L      15       TASK REGISTER D0-D7/A0-A6
-     # 0000006E <4>       169:  TCBUSP   DS.L      01       TASK STACK POINTER (A7)
-     # 00000072 <2>       170:  TCBIR    DS.W      01       TASK INSTUCTION REGISTER
-     # 00000074 <2>       171:  TCBAI    DS.W      01       TASK ACCESS INFORMATION
-     # 00000076 <2>       172:  TCBVN    DS.W      01       TASK VECTOR NUMBER
-                          173:  *        DS.W      01       SPARE
-     # 00000078 <4>       174:  TCBAA    DS.L      01       TASK ERROR ACCESS ADDRESS
-     # 0000007C <4>       175:  TCBLINK  DS.L      01       LINK TO NEXT TCB
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page  6
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+                          147.i          INCLUDE   TCBSYM.SA
+     # 00000000           148.           OFFSET    0
+     # 00000000 <8>       149.  TCBNAME  DS.B      08       TASK NAME
+     # 00000008 <4>       150.  TCBDS    DS.L      01       TASK DATA SEGMENT POINTER
+     # 0000000C <4>       151.  TCBCS    DS.L      01       TASK CODE SEGMENT POINTER
+     # 00000010 <4>       152.  TCBSS    DS.L      01       TASK STACK SEGMENT POINTER
+     # 00000014 <2>       153.  TCBID    DS.W      01       TASK ID NUMBER
+     # 00000016 <2>       154.  TCBDSL   DS.W      01       TASK DATA SEGMENT LENGTH
+     # 00000018 <2>       155.  TCBCSL   DS.W      01       TASK CODE SEGMENT LENGTH
+     # 0000001A <2>       156.  TCBSSL   DS.W      01       TASK STACK SEGMENT LENGTH
+     # 0000001C <4>       157.  TCBENTRY DS.L      01       TASK ENTRY POINT
+     # 00000020 <4>       158.  TCBEXEP  DS.L      01       TASK EXECPTION ENTRY POINT
+     # 00000024 <1>       159.  TCBHOLD  DS.B      01       TASK HOLD FLAG
+     # 00000025 <1>       160.  TCBRUN   DS.B      01       TASK RUN FLAG
+     # 00000026 <1>       161.  TCBERR   DS.B      01       TASK ERROR FLAG
+     # 00000027 <1>       162.  TCBWAIT  DS.B      01       TASK WAIT FLAG
+     # 00000028 <1>       163.  TCBEX    DS.B      01       TASK EXCEPTION ENTRY FLAG
+     # 00000029 <1>       164.           DS.B      01       SPARE
+     # 0000002A <2>       165.  TCBPRI   DS.W      01       TASK PRIORITY CODE
+     # 0000002C <2>       166.  TCBSR    DS.W      01       TASK STATUS REGISTER
+     # 0000002E <4>       167.  TCBPC    DS.L      01       TASK PROGRAM COUNTER
+     # 00000032 <3C>      168.  TCBREGS  DS.L      15       TASK REGISTER D0-D7/A0-A6
+     # 0000006E <4>       169.  TCBUSP   DS.L      01       TASK STACK POINTER (A7)
+     # 00000072 <2>       170.  TCBIR    DS.W      01       TASK INSTUCTION REGISTER
+     # 00000074 <2>       171.  TCBAI    DS.W      01       TASK ACCESS INFORMATION
+     # 00000076 <2>       172.  TCBVN    DS.W      01       TASK VECTOR NUMBER
+                          173.  *        DS.W      01       SPARE
+     # 00000078 <4>       174.  TCBAA    DS.L      01       TASK ERROR ACCESS ADDRESS
+     # 0000007C <4>       175.  TCBLINK  DS.L      01       LINK TO NEXT TCB
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page  6
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           177.  **********************************************************************
@@ -198,23 +198,23 @@ D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
                           179.  *        TASK DATA BLOCK (TDB) OFFSET EQUATES                        *
                           180.  *                                                                    *
                           181.  **********************************************************************
-                          182.           INCLUDE   TDBSYM.SA
-     # 00000000           183:           OFFSET    0
-     # 00000000 <8>       184:  TDBNAME  DS.B      08       TASK NAME
-     # 00000008 <4>       185:  TDBEP    DS.L      01       TASK ENTRY POINT
-     # 0000000C <4>       186:  TDBCS    DS.L      01       TASK CODE SEGMENT POINTER
-     # 00000010 <2>       187:  TDBCSL   DS.W      01       TASK CODE SEGMENT LENGTH
-     # 00000012 <2>       188:  TDBDSL   DS.W      01       TASK DATA SEGMENT LENGTH
-     # 00000014 <2>       189:  TDBSSL   DS.W      01       TASK STACK SEGMENT LENGTH
-     # 00000016 <2>       190:  TDBPRI   DS.W      01       TASK PRIORITY CODE
-     # 00000018 <1>       191:  TDBFLAG1 DS.B      01       TDB FLAG BITS
-     # 00000019 <1>       192:  TDBFLAG2 DS.B      01       TDB FLAG BITS
-     # 0000001A <1>       193:  TDBFLAG3 DS.B      01       TDB FLAG BITS
-     # 0000001B <1>       194:  TDBFLAG4 DS.B      01       TDB FLAG BITS
-     # 0000001C <4>       195:  TDBERROR DS.L      01       TASK ERROR ENTRY POINT
-     # 00000020 <4>       196:  TDBLINK  DS.L      01       LINK TO NEXT TDB
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page  7
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+                          182.i          INCLUDE   TDBSYM.SA
+     # 00000000           183.           OFFSET    0
+     # 00000000 <8>       184.  TDBNAME  DS.B      08       TASK NAME
+     # 00000008 <4>       185.  TDBEP    DS.L      01       TASK ENTRY POINT
+     # 0000000C <4>       186.  TDBCS    DS.L      01       TASK CODE SEGMENT POINTER
+     # 00000010 <2>       187.  TDBCSL   DS.W      01       TASK CODE SEGMENT LENGTH
+     # 00000012 <2>       188.  TDBDSL   DS.W      01       TASK DATA SEGMENT LENGTH
+     # 00000014 <2>       189.  TDBSSL   DS.W      01       TASK STACK SEGMENT LENGTH
+     # 00000016 <2>       190.  TDBPRI   DS.W      01       TASK PRIORITY CODE
+     # 00000018 <1>       191.  TDBFLAG1 DS.B      01       TDB FLAG BITS
+     # 00000019 <1>       192.  TDBFLAG2 DS.B      01       TDB FLAG BITS
+     # 0000001A <1>       193.  TDBFLAG3 DS.B      01       TDB FLAG BITS
+     # 0000001B <1>       194.  TDBFLAG4 DS.B      01       TDB FLAG BITS
+     # 0000001C <4>       195.  TDBERROR DS.L      01       TASK ERROR ENTRY POINT
+     # 00000020 <4>       196.  TDBLINK  DS.L      01       LINK TO NEXT TDB
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page  7
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           198.  **********************************************************************
@@ -233,8 +233,8 @@ D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
 3'000000                  211.           SECTION   3
 3'000000  <400>           212.  GPOOL    DS.L      256                 1K OF GLOBAL DATA POOL
      3'00000400           213.  GPOOLEND EQU       *                   GLOBAL DATA POOL END
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page  8
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page  8
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           215.  **********************************************************************
@@ -293,8 +293,8 @@ C'00003E  4A38'0002       267.  TESTBG   TST.B     SBGEXEC             TEST BGEX
 C'000042  6730            268.           BEQ.S     QUIT6               BRANCH IF FALSE
 C'000044  21C8'0048       269.           MOVE.L    A0,STEMP            SAVE A0
 C'000048  2078'0058       270.           MOVE.L    STCB,A0             LOAD ADDRESS OF ACTIVE TCB
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page  9
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page  9
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
 C'00004C  48E8 7FFF 0032  271.           MOVEM.L   D0-D7/A0-A6,TCBREGS(A0)       SAVE REGISTERS IN TCB
@@ -315,8 +315,8 @@ C'00008A  DFFC 0000000E   285.  QUIT6T   ADD.L     #14,A7              CLEAR DAT
 C'000090  4238'0005       286.           CLR.B     SBFIRST             RESET TO FIRST FRAME
 C'000094  4238'0004       287.           CLR.B     SMODULE             RESET TO FIRST MODULE
 C'000098  60DC            288.           BRA.S     QUIT6A              DO THE REST
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 10
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 10
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           290.  **********************************************************************
@@ -375,8 +375,8 @@ C'000120  4E66            341.           MOVE.L    A6,USP              LOAD USER
 C'000122  21FC'00000000   343.           MOVE.L    #RTINT6,$78         LOAD AUTO VECTOR #6
           0078
                           344.  *
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 11
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 11
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
 C'00012A  0839 0004       345.           BTST.B    #4,MSR              TEST SSB0
@@ -435,8 +435,8 @@ C'0001EA  13FC 0000       379.           MOVE.B    #$00,BR3L           LOAD LSB 
           00FE801F
 C'0001F2  13FC 0001       380.           MOVE.B    #$01,CR2            ENABLE A WRITE TO TIMER #1
           00FE8013
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 12
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 12
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           381.  *
@@ -495,8 +495,8 @@ C'0002A8  60A4            433.           BRA.S     TDBLOOP             LOOP UNTI
                           434.  *
 C'0002AA  21C8'0060       435.  ENDTDB   MOVE.L    A0,STCBN            SET LAST TCB
 C'0002AE  2178'005C 007C  436.           MOVE.L    STCB1,TCBLINK(A0)   LINK LAST TCB TO FIRST TCB
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 13
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 13
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           437.  *
@@ -537,10 +537,10 @@ C'000324  55 53 54 41 43  470.  MSG2     DC.B      'USTACK  '
           4B 20 20
 C'00032C  4C 50 4F 4F 4C  471.  MSG3     DC.B      'LPOOL   '
           20 20 20
-C'000334  48 45 41 50 20  472.  MSG5     DC.B      'HEAP    '
-          20 20 20
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 14
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+C'000334  48 45 41 50 20  472.  MSG5     DC.B      'HEAP TW '
+          54 57 20
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 14
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           474.  **********************************************************************
@@ -595,8 +595,8 @@ C'0003A2  7000            522.           MOVEQ.L   #0,D0               CLEAR RET
 C'0003A4  4E75            523.           RTS
 C'0003A6  7001            524.  ERRTCB   MOVEQ.L   #1,D0               SET RETURN CODE (ERROR)
 C'0003A8  4E75            525.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 15
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 15
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           527.  **********************************************************************
@@ -618,8 +618,8 @@ C'0003BE  4EB9 00F03A72   542.           JSR       PNT8HX              CONVERT T
 C'0003C4  4EB9 00F03CC0   543.           JSR       OUT1CR              OUTPUT LINE WITH CR/LF
 C'0003CA  4CDF 6000       544.           MOVEM.L   (A7)+,A5/A6         RESTORE A5/A6
 C'0003CE  4E75            545.           RTS                           RETURN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 16
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 16
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           547.  **********************************************************************
@@ -643,8 +643,8 @@ C'0003E4  51C0            564.           SF.B      D0                  SET RETUR
 C'0003E6  4E75            565.           RTS                           RETURN
 C'0003E8  50C0            566.  GETERR1  ST.B      D0                  SET RETURN CODE TRUE
 C'0003EA  4E75            567.           RTS                           RETURN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 17
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 17
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           569.  **********************************************************************
@@ -681,8 +681,8 @@ C'000440  51E8 0024       599.           SF.B      TCBHOLD(A0)         SET HOLD 
 C'000444  50E8 0026       600.           ST.B      TCBERR(A0)          SET ERROR FLAG TO TRUE
 C'000448  46FC 2500       601.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
 C'00044C  6000 027C       602.           BRA       BGEXEC              GOTO RTEXEC
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 18
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 18
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           604.  **********************************************************************
@@ -719,8 +719,8 @@ C'0004A4  51E8 0024       634.           SF.B      TCBHOLD(A0)         SET HOLD 
 C'0004A8  50E8 0026       635.           ST.B      TCBERR(A0)          SET ERROR FLAG TO TRUE
 C'0004AC  46FC 2500       636.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
 C'0004B0  6000 0218       637.           BRA       BGEXEC              GOTO RTEXEC
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 19
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 19
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           639.  **********************************************************************
@@ -754,8 +754,8 @@ C'0004FC  51E8 0024       666.           SF.B      TCBHOLD(A0)         SET HOLD 
 C'000500  50E8 0026       667.           ST.B      TCBERR(A0)          SET ERROR FLAG TO TRUE
 C'000504  46FC 2500       668.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
 C'000508  6000 01C0       669.           BRA       BGEXEC              GOTO RTEXEC
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 20
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 20
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           671.  **********************************************************************
@@ -789,8 +789,8 @@ C'000554  51E8 0024       698.           SF.B      TCBHOLD(A0)         SET HOLD 
 C'000558  50E8 0026       699.           ST.B      TCBERR(A0)          SET ERROR FLAG TO TRUE
 C'00055C  46FC 2500       700.           MOVE.W    #$2500,SR           ALLOW PTM INTERRUPT
 C'000560  6000 0168       701.           BRA       BGEXEC              GOTO RTEXEC
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 21
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 21
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           703.  **********************************************************************
@@ -811,8 +811,8 @@ C'000576  D1C1            717.           ADD.L     D1,A0               ADD OFFSE
 C'000578  1082            718.           MOVE.B    D2,(A0)             SET FLAG (TRUE OR FALSE)
 C'00057A  205F            719.  RTMODERR MOVE.L    (A7)+,A0            RESTORE A0
 C'00057C  4E73            720.           RTE
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 22
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 22
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           722.  **********************************************************************
@@ -827,8 +827,8 @@ C'00057E  46FC 2700       730.           MOVE.W    #$2700,SR           MASK INTE
 C'000582  4A00            731.           TST.B     D0                  TEST INPUT
 C'000584  56F8'0007       732.           SNE.B     SBTIME              SET TIMER CONTROL FLAG
 C'000588  4E73            733.           RTE
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 23
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 23
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           735.  **********************************************************************
@@ -874,8 +874,8 @@ C'0005E0  30BC 0000       771.           MOVE.W    #0,(A0)             CLEAR TIM
 C'0005E4  4ED1            773.           JMP       (A1)                RUN REAL TIME MODULE
 C'0005E6  50F8'0006       774.  RTTRAP   ST.B      SBNOTIME            SET NO TIME FLAG
 C'0005EA  4E40            775.  TRAP0    TRAP      #0                  DO NOT RUN THIS TIME
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 24
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 24
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           777.  **********************************************************************
@@ -924,8 +924,8 @@ C'000654  5889            819.           ADDQ.L    #4,A1               INCREMENT
 C'000656  5238'0004       820.           ADDQ.B    #1,SMODULE          INCREMENT MODULE NUMBER
 C'00065A  46FC 2400       821.           MOVE.W    #$2400,SR           ALLOW PTM INTERRUPT
 C'00065E  6000 FF50       822.           BRA       NOTFIRST            GO DO NEXT MODULE
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 25
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 25
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           824.  **********************************************************************
@@ -966,8 +966,8 @@ C'0006BE  4238'0004       858.           CLR.B     SMODULE             SET MODUL
 C'0006C2  4238'0001       859.           CLR.B     SRTEXEC             CLEAR RTEXEC FLAG
 C'0006C6  6002            860.           BRA.S     BGEXEC              GO TO BACK-GROUND EXEC
 C'0006C8  4E71            861.           NOP                           MAKE A GAP
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 26
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 26
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           863.  **********************************************************************
@@ -1021,8 +1021,8 @@ C'00075E  2F29 0020       910.           MOVE.L    TCBEXEP(A1),-(A7)   LOAD EXCE
 C'000762  3F3C 0000       911.           MOVE.W    #$0000,-(A7)        LOAD INITIAL SR ON STACK
 C'000766  50F8'0002       912.           ST.B      SBGEXEC             SET BACK-GROUND FLAG
 C'00076A  4E73            913.           RTE                           JUMP TO BACK-GROUND MODULE
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 27
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 27
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           915.  **********************************************************************
@@ -1061,8 +1061,8 @@ C'0007C0  215F 002E       947.           MOVE.L    (A7)+,TCBPC(A0)     SAVE PC I
 C'0007C4  51E8 0025       948.           SF.B      TCBRUN(A0)          SET RUN FLAG TO FALSE
 C'0007C8  50E8 0027       949.           ST.B      TCBWAIT(A0)         SET WAIT FLAG TO TRUE
 C'0007CC  6000 FEFC       950.           BRA       BGEXEC              GO BACK TO BGEXEC
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 28
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 28
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
                           952.  **********************************************************************
@@ -1099,12 +1099,12 @@ C'000814  51C8 FFFA       982.           DBRA      D0,RSUMLP           LOOP UNTI
 C'000818  51E8 0024       983.           SF.B      TCBHOLD(A0)         CLEAR HOLD FLAG
 C'00081C  2078'0048       984.           MOVE.L    STEMP,A0            RESTORE A0
 C'000820  4E73            985.  EXRSUM   RTE                           RETURN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:32:39    ...Page 29
-D:EXEC.LTX , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:33    ...Page 29
+D:EXEC.RO , D:EXEC.PRN , D:EXEC.SYM = D:EXEC.A68
    ...
 
-C'000822                  987.           END
+                          987.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:23
+C'000822                  988.           END
     0 Errors
- DBRA      D0,RSUMLP           LOOP UNTIL A0-> RIGHT TCB
-C'000818  51E8 0024       983.           SF.B      TCBHOLD(A0)         CLEAR HOLD FLAG
+       SF.B      TCBHOLD(A0)         CLEAR HOLD FLAG
 C'00081C  2078'0048       984.           MOVE.

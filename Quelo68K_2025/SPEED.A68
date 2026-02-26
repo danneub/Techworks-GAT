@@ -763,9 +763,9 @@ NEXT20	 MOVE.W    FQC1,D7		.001188 AT 2-17
 	 ASR.L	   #6,D7		 2-6
 	 MOVE.W    D7,FQ		 DYNAMIC PRESSURE AT 2-6
 	 TRAP	   #0			 REAL TIME RETURN TO EXEC
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:57
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:55
 	 END
-*******************
+******************
 *		Q(LB/FT SQ)=.001188*V CAL*V CAL 	   *
 ************************************************************
 NEXT20	 MOVE.W    FQC1,D7		.001188 AT 2-17

@@ -84,9 +84,9 @@ TXSTAT	 EQU	   *
 TXWRITE  EQU	   *
 	 MOVE.B    D0,ACIAD	       WRITE DATA
 	 RTS			       RETURN
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:49:33
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:42:32
 	 END
-**************
+*************
 TXSTAT	 EQU	   *
 	 MOVE.B    ACIAC,D2	       READ STATUS
 	 AND.B	   #$02,D2	       MASK OFF ERROR BITS

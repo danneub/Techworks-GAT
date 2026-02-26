@@ -1,4 +1,4 @@
-Quelo   ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:29
+Quelo   ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:28
 D:DEBUG.A68 , D:DEBUG.ERR = D:DEBUG.SA
 
   <00000000>    79.  DSBNAME  EQU	    0	    NAME OF SYMBOL
@@ -52,4 +52,4 @@ D:DEBUG.A68 , D:DEBUG.ERR = D:DEBUG.SA
   <00FE61CB>  1852.  NECB	 EQU	   $FE61CB	       NEC PORT B
     0 Errors detected
 00007>   140.  BELL	 EQU	   $07		       BELL TONE
-  <00F03A72>   142.  PNT8HX	 EQU
+  <00F03A72>   142.  PNT8HX	 EQ

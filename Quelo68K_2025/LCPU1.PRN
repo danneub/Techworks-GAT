@@ -1,5 +1,5 @@
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:52:01     ...Page  1
-D:LCPU1.LTX , D:LCPU1.PRN , D:LCPU1.SYM = D:LCPU1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:32    ...Page  1
+D:LCPU1.RO , D:LCPU1.PRN , D:LCPU1.SYM = D:LCPU1.A68
    ...
 
                             1.  **********************************************************************
@@ -19,13 +19,12 @@ C'000010  00000800         13.           DC.L      $0800               RAM MEMOR
 C'000014  00004000         14.           DC.L      $4000               RAM MEMORY END (20)
 C'000018  00000000         15.           DC.L      0,0                 SPARE (24),(28)
           00000000
-C'000020                   16.           END
+                           16.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:22
+C'000020                   17.           END
     0 Errors
-C.B      1,0,0,0             CPU #1,SPARE FLAGS (8),(9),(10),(11)
-C'00000C '00000000         12.           DC.L      RTINIT              ENTRY POINT (12)
+  12.           DC.L      RTINIT              ENTRY POINT (12)
 C'000010  00000800         13.           DC.L      $0800               RAM MEMORY START (16)
 C'000014  00004000         14.           DC.L      $4000               RAM MEMORY END (20)
 C'000018  00000000         15.           DC.L      0,0                 SPARE (24),(28)
           00000000
-C'000020                   16.           END
-    0 E
+                           16.~  ...M68K D2.0C  3/12/

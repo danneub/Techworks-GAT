@@ -1,4 +1,4 @@
-Quelo   ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:24
+Quelo   ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:23
 D:EXEC.A68 , D:EXEC.ERR = D:EXEC.SA
 
   <00000F00>   124.  DSEG	  EQU	$00000F00 L 001 L H   DEBUG DATA SEGMENT ADDRES
@@ -34,4 +34,4 @@ D:EXEC.A68 , D:EXEC.ERR = D:EXEC.SA
   <00FE61CB>   240.  NECB	 EQU	   $FE61CB	       NEC SERIAL PORT B
   <00000080>   491.  TCBSIZE  EQU	   $80		       128 BYTES FOR EACH TCB
     0 Errors detected
-2.  RT3C	 EQU	   $FE801D	       TIM
+2.  RT3C	 EQU	   $FE801D	       TI

@@ -28,9 +28,9 @@ RTNAME	 EQU	  *
 	 DC.B	 'RTDEBUG '
 	 DC.B	 'RTEND   '
 *
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:38
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:37
 	 END
-**********************
+*********************
 	 SECTION  12
 	 XDEF	   RTNAME
 	 XDEF	   RTNUMBER

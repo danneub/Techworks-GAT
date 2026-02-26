@@ -1150,9 +1150,9 @@ DPTABLE  EQU	   *
 	 DC.B	   $04,$03,$01,$0A
 *
 DPCOUNT  DC.W		   382
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:38
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:37
 	 END
-C.B	   'VFLAG2  '
+.B	   'VFLAG2  '
 	 DC.L	   $00001766
 	 DC.B	   $01,$00,$01,$00
 	 DC.B	   'SYNC22  '

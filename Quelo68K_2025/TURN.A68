@@ -865,8 +865,8 @@ NEXT31	 ASR.L	   #5,D0	       2-15
 	 BCHG	   #15,D0	       COMPLEMENT SIGN BIT
 	 MOVEP.W   D0,OTURNP(A6)       STORE TURN NEEDLE D/A
 	 TRAP	   #0
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:48:22
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:41:21
 	 END
-A,D0	       RA AT 2-9
+,D0	       RA AT 2-9
 	 MULS	   FTURNC19,D0	       60/90*RA*1/6 AT 2-20
 	 CMP.L	   FTURNC28,D0	       LIMIT=1 AT 2-2

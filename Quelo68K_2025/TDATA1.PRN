@@ -1,0 +1,35 @@
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:13    ...Page  1
+D:TDATA1.RO , D:TDATA1.PRN , D:TDATA1.SYM = D:TDATA1.A68
+   ...
+
+                            1.  **********************************************************************
+                            2.  *                                                                    *
+                            3.  *        TASKDATA  DATA USED TO ALLOCATE BACKGROUND TASKS            *
+                            4.  *                                                                    *
+                            5.  **********************************************************************
+                            6.           XDEF      TASKDATA
+                            7.           XREF      BGDEBUG
+                            8.           XREF      BGBUGEX
+C'000000                    9.           SECTION   12
+     C'00000000            10.  TASKDATA EQU       *
+C'000000  44 45 42 55 47   11.           DC.B      'DEBUG1  '          TASK NAME
+          31 20 20
+C'000008 '00000000         12.           DC.L      BGDEBUG             TASK ENTRY POINT
+C'00000C '00000000         13.           DC.L      BGDEBUG             TASK CODE SEGMENT POINTER
+C'000010  0000             14.           DC.W      0                   TASK CODE SEGMENT LENGTH
+C'000012  0100             15.           DC.W      256                 TASK DATA SEGMENT LENGTH
+C'000014  0100             16.           DC.W      256                 TASK STACK SEGMENT LENGTH
+C'000016  0000             17.           DC.W      0                   TASK PRIORITY CODE
+C'000018  03               18.           DC.B      $03                 TDB FLAG BITS
+C'000019  00               19.           DC.B      0                   TDB FLAG BITS
+C'00001A  00               20.           DC.B      0                   TDB FLAG BITS
+C'00001B  00               21.           DC.B      0                   TDB FLAG BITS
+C'00001C '00000000         22.           DC.L      BGBUGEX             TASK ERROR ENTRY POINT
+C'000020  00000000         23.           DC.L      0                   LINK TO NEXT TDB
+                           24.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:36
+C'000024                   25.           END
+    0 Errors
+
+C'00001A  00               20.           DC.B      0                   TDB FLAG BITS
+C'00001B  00               21.           DC.B      0                   TDB FLAG BITS
+C'00001C '00000000         22.           DC.L      BGBUGEX             TA

@@ -1,5 +1,5 @@
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  1
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page  1
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                             1.           OPT       MEX,CEX,NOPCS
@@ -22,8 +22,8 @@ C'00000C  2F01             17.           MOVE.L    D1,-(A7)            SAVE ANSW
 C'00000E  4EB9'00000018    18.           JSR       MSIN1               CALL SIN
 C'000014  221F             19.           MOVE.L    (A7)+,D1            RESTORE ANSWER OF COS
 C'000016  4E75             20.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  2
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page  2
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                            22.  **********************************************************************
@@ -82,8 +82,8 @@ C'00006C  600E             72.           BRA.S     ENDSIN1             BRANCH TO
 C'00006E  D07C E980        75.           ADD.W     #-5760,D0           ADD -90 DEGREES
 C'000072  4440             76.           NEG.W     D0                  NEGATE
 C'000074  4EB9'0000008A    77.           JSR       LFISIN              CALL LFI SIN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  3
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page  3
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
 C'00007A  4440             78.           NEG.W     D0                  NEGATE ANSWER
@@ -91,8 +91,8 @@ C'00007A  4440             78.           NEG.W     D0                  NEGATE AN
      C'0000007C            80.  ENDSIN1  EQU       *
 C'00007C  221F             81.           MOVE.L    (A7)+,D1            RESTORE D1
 C'00007E  4E75             82.           RTS                           RETURN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  4
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page  4
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                            84.  **********************************************************************
@@ -108,8 +108,8 @@ D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
 C'000080  D07C 1680        94.           ADD.W     #5760,D0            ADD 90 DEGREES
 C'000084  4EBA FF92        95.           JSR       MSIN1               CALL SIN
 C'000088  4E75             96.           RTS                           RETURN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  5
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page  5
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                            98.  **********************************************************************
@@ -137,8 +137,8 @@ C'0000B2  C1C1            119.           MULS      D1,D0               COMPLEMEN
 C'0000B4  D082            120.           ADD.L     D2,D0               ADD VALUES
 C'0000B6  EC80            121.           ASR.L     #6,D0               RETURN TO 2-15
 C'0000B8  4E75            122.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  6
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page  6
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                           124.  **********************************************************************
@@ -197,8 +197,8 @@ C'000116  5C12            176.           DC.W         23570            SIN( 46) 
 C'000118  5D9C            177.           DC.W         23964            SIN( 47) AT 2 X 15
 C'00011A  5F1E            178.           DC.W         24350            SIN( 48) AT 2 X 15
 C'00011C  6099            179.           DC.W         24729            SIN( 49) AT 2 X 15
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  7
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page  7
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
 C'00011E  620C            180.           DC.W         25100            SIN( 50) AT 2 X 15
@@ -243,8 +243,8 @@ C'00016A  7FEC            218.           DC.W         32748            SIN( 88) 
 C'00016C  7FFB            219.           DC.W         32763            SIN( 89) AT 2 X 15
 C'00016E  7FFF            220.           DC.W         32767            SIN( 90) AT 2 X 15
 C'000170  7FFB            221.           DC.W         32763            SIN( 91) AT 2 X 15
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  8
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page  8
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                           223.  **********************************************************************
@@ -293,8 +293,8 @@ C'0001AE  6A02            265.           BPL.S     DONE
 C'0001B0  9286            266.           SUB.L     D6,D1
 C'0001B2  4CDF 00F8       267.  DONE     MOVEM.L   (SP)+,D3-D7         RESTORE D3-D7
 C'0001B6  4E75            268.           RTS                           RETURN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page  9
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page  9
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                           270.  **********************************************************************
@@ -314,8 +314,8 @@ C'0001BA  E189            283.           LSL.L     #8,D1               EXTEND TO
 C'0001BC  61B4            284.           BSR       MULSL               MULTIPLY LONG
 C'0001BE  2001            285.           MOVE.L    D1,D0               STORE UPPER 32 BITS
 C'0001C0  4E75            286.           RTS                           RETURN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 10
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page 10
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                           288.  **********************************************************************
@@ -350,8 +350,8 @@ C'0001EA  E481            316.           ASR.L     #2,D1                        
 C'0001EC  2001            317.           MOVE.L    D1,D0                         STORE ANSWER
 C'0001EE  4CDF 000E       318.           MOVEM.L   (SP)+,D1-D3                   RESTORE REGISTERS
 C'0001F2  4E75            319.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 11
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page 11
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                           321.  **********************************************************************
@@ -374,8 +374,8 @@ C'0001FE  4840            337.           SWAP      D0                           
 C'000200  3002            338.           MOVE.W    D2,D0                         LOAD LOWER PART
 C'000202  241F            339.           MOVE.L    (SP)+,D2                      RESTORE D2
 C'000204  4E75            340.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 12
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page 12
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                           342.  **********************************************************************
@@ -428,8 +428,8 @@ C'00023E  4240            388.           CLR.W     D0                           
 C'000240  4840            389.           SWAP      D0                            D0 BECOMES OR OR 00R0
 C'000242  4CDF 000C       390.           MOVEM.L   (SP)+,D2-D3                   RESTORE REGISTERS
 C'000246  4E75            391.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 13
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page 13
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                           393.  **********************************************************************
@@ -475,8 +475,8 @@ C'00027C  241F            432.           MOVE.L    (A7)+,D2            LOAD SIGN
 C'00027E  6A04            433.           BPL.S     L4                  BRANCH IF POSITIVE
 C'000280  08C0 001F       434.           BSET.L    #31,D0              SET SIGN BIT
 C'000284  4E75            435.  L4       RTS                           RETURN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:54:16     ...Page 14
-D:MATH.LTX , D:MATH.PRN , D:MATH.SYM = D:MATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:37    ...Page 14
+D:MATH.RO , D:MATH.PRN , D:MATH.SYM = D:MATH.A68
    ...
 
                           437.  **********************************************************************
@@ -532,9 +532,9 @@ C'0002D0  EEA8            486.           LSR.L     D7,D0               SHIFT DAT
 C'0002D2  4480            487.           NEG.L     D0                  NEGATE NUMBER
 C'0002D4  EFA8            488.           LSL.L     D7,D0               SHFIT DATA BY 8+ -SHIFT COUNTER
 C'0002D6  4E75            489.  L12      RTS                           RETURN
-C'0002D8                  490.           END
+                          490.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:40
+C'0002D8                  491.           END
     0 Errors
-       485.           ADDQ.L    #8,D7               ADD 8 TO -SHIFT COUNTER
-C'0002D0  EEA8            486.           LSR.L     D7,D0               SHIFT DATA BY 8+ -SHIFT COUNTER
+           486.           LSR.L     D7,D0               SHIFT DATA BY 8+ -SHIFT COUNTER
 C'0002D2  4480            487.           NEG.L     D0                  NEGATE NUMBER
 C'0002D4  EFA8            488.           LSL.L     D7,D0               SHFIT DATA BY 8+

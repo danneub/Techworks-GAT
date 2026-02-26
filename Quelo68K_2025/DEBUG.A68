@@ -1928,9 +1928,9 @@ RXINIT	 EQU	   *
 	 MOVE.B    #$01,NECB+4	       POINT TO REGISTER ONE
 	 MOVE.B    #$18,NECB+4	       ENABLE RX INTERRUPTS
 	 RTS
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:29
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:28
 	 END
-********
+*******
 TXWRITE  EQU	   *
 	 MOVE.B    D0,NECB	       WRITE DATA
 	 RTS

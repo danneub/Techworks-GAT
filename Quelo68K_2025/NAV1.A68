@@ -2138,9 +2138,9 @@ INTEG1	 SUB.W	   D1,D0	       +15	 NEW-OLD
 	 ASR.L	   #2,D0	       +17-02+15 RESCALE
 	 ADD.W	   D1,D0	       +15	 UPDATE OLD
 	 RTS
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:48:41
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:41:40
 	 END
-ON ROUTINE
+N ROUTINE
 *
 ***************************************************
 *

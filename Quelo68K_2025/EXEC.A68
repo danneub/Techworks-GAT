@@ -469,7 +469,7 @@ TCBX	 BRA.S	   TCBX 	       LOOP FOREVER
 MSG1	 DC.B	   'SSTACK  '
 MSG2	 DC.B	   'USTACK  '
 MSG3	 DC.B	   'LPOOL   '
-MSG5	 DC.B	   'HEAP    '
+MSG5	 DC.B	   'HEAP TW '
 	 PAGE
 **********************************************************************
 *								     *
@@ -984,9 +984,9 @@ RSUMLP	 MOVE.L    TCBLINK(A0),A0      GET NEXT LINK
 	 MOVE.L    STEMP,A0	       RESTORE A0
 EXRSUM	 RTE			       RETURN
 	 PAGE
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:24
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:23
 	 END
- VALID TASK
+VALID TASK
 	 BGT.S	   EXRSUM	       EXIT IF GREATER THAN TASKNUM
 	 SUBQ.L    #1,D0	       ADJUST FOR OFFSET
 	 MOVE.L    A0,STEMP	       SAVE A0

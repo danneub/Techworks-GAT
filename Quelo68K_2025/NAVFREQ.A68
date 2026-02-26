@@ -1583,9 +1583,9 @@ LOOP	 EQU	   *
 	 MOVE.L    #00,A0			  CLEAR ADDRESS
 FOUND	 EQU	   *
 	 RTS
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:49:12
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:42:11
 	 END
-****************************
+***************************
 TABSERCH EQU	   *
 	 ST.B	   D1		       INITIALIZE VALIDITY FLAG
 LOOP	 EQU	   *

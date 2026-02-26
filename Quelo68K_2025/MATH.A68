@@ -487,7 +487,7 @@ L11	 NEG.L	   D7		       NEGATE SHIFT COUNTER
 	 NEG.L	   D0		       NEGATE NUMBER
 	 LSL.L	   D7,D0	       SHFIT DATA BY 8+ -SHIFT COUNTER
 L12	 RTS			       RETURN
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:42
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:40
 	 END
 
 	 CMP.L	   #8,D7	       TEST SHIFT COUNTER

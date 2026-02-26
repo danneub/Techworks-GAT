@@ -1,5 +1,5 @@
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:55:29     ...Page  1
-D:NAME1.LTX , D:NAME1.PRN , D:NAME1.SYM = D:NAME1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:14    ...Page  1
+D:NAME1.RO , D:NAME1.PRN , D:NAME1.SYM = D:NAME1.A68
    ...
 
                             1.           OPT       MEX,CEX,NOPCS
@@ -48,8 +48,18 @@ C'000074  52 54 44 45 42   28.           DC.B    'RTDEBUG '
 C'00007C  52 54 45 4E 44   29.           DC.B    'RTEND   '
           20 20 20
                            30.  *
-C'000084                   31.           END
+                           31.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:37
+C'000084                   32.           END
     0 Errors
-47 20 20
-C'00005C  43 4F 4D 4D 20   25.           DC.B    'COMM    '
-          20 2
+'000064  47 41 54 56 49   26.           DC.B    'GATVIS  '
+          53 20 20
+C'00006C  56 49 53 49 4F   27.           DC.B    'VISIO   '
+          20 20 20
+C'000074  52 54 44 45 42   28.           DC.B    'RTDEBUG '
+          55 47 20
+C'00007C  52 54 45 4E 44   29.           DC.B    'RTEND   '
+          20 20 20
+                           30.  *
+                           31.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:37
+C'000084                   32.           END
+    0 Err

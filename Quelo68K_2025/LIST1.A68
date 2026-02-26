@@ -104,9 +104,9 @@ RTLIST	 EQU	   *
 	 DC.B	   $FF,$FF,$00,$00
 	 DC.L	   RTEND
 ~e
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:37
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:36
 	 END
-$55,$00,$00,$00
+55,$00,$00,$00
 	 DC.L	   RMNKFG
 ~e
 ~c	 MODENTRY COMM,FF,00,00,00

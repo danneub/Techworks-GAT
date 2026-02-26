@@ -1,5 +1,5 @@
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  1
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page  1
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                             1.           OPT       MEX,CEX,NOPCS
@@ -10,8 +10,8 @@ D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
                             6.  *                  VERSION:  2.0  12/07/83   D.R. TRIPP              *
                             7.  *                                                                    *
                             8.  **********************************************************************
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  2
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page  2
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                            10.  **********************************************************************
@@ -70,8 +70,8 @@ D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
                            63.           XREF      DPTABLE0
                            64.           XREF      DPTABLE
                            65.  *
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  3
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page  3
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                            66.           XREF      RTNUMBER
@@ -80,8 +80,8 @@ D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
                            69.  *
                            70.           XREF      SBMODRUN
                            71.           XREF      SMODTOUT
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  4
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page  4
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                            73.  **********************************************************************
@@ -89,35 +89,35 @@ D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
                            75.  *        DEBUG SYMBOL BLOCK (DSB) SYMBOLS                            *
                            76.  *                                                                    *
                            77.  **********************************************************************
-                           78.           INCLUDE   DSBSYM.SA
-     # 00000000            79:  DSBNAME  EQU        0       NAME OF SYMBOL
-     # 00000008            80:  DSBADDR  EQU        8       ADDRESS OF SYMBOL
-     # 0000000C            81:  DSBLEN   EQU       12       LENGTH OF SYMBOL
-     # 0000000D            82:  DSBTYPE  EQU       13       TYPE OF SYMBOL
-     # 0000000E            83:  DSBUPD   EQU       14       UPDATE FLAG
-     # 0000000F            84:  DSBSCALE EQU       15       SCALE CODE
-     # 00000010            85:  DSBDATA1 EQU       16       DATA
-     # 00000014            86:  DSBDATA2 EQU       20       DATA N-1
-     # 00000018            87:  DSBARRAY EQU       24       ARRAY CODE (0=NO ARRAY DISPLAY,
+                           78.i          INCLUDE   DSBSYM.SA
+     # 00000000            79.  DSBNAME  EQU        0       NAME OF SYMBOL
+     # 00000008            80.  DSBADDR  EQU        8       ADDRESS OF SYMBOL
+     # 0000000C            81.  DSBLEN   EQU       12       LENGTH OF SYMBOL
+     # 0000000D            82.  DSBTYPE  EQU       13       TYPE OF SYMBOL
+     # 0000000E            83.  DSBUPD   EQU       14       UPDATE FLAG
+     # 0000000F            84.  DSBSCALE EQU       15       SCALE CODE
+     # 00000010            85.  DSBDATA1 EQU       16       DATA
+     # 00000014            86.  DSBDATA2 EQU       20       DATA N-1
+     # 00000018            87.  DSBARRAY EQU       24       ARRAY CODE (0=NO ARRAY DISPLAY,
                            88.  **********************************************************************
                            89.  *                                                                    *
                            90.  *        DEBUG DATA SEGMENT SYMBOLS                                  *
                            91.  *                                                                    *
                            92.  **********************************************************************
-                           93.           INCLUDE   BUGSYM.SA
-     # 00000000            94:  MMFLAG   EQU        0       MEMORY MODIFY FLAG
-     # 00000001            95:  MMTYPE   EQU        1       MEMORY MODIFY TYPE CODE
-     # 00000002            96:  MMNEGFLG EQU        2       MEMORY MODIFY NEGATE FLAG
-     # 00000003            97:  MMLEN    EQU        3       MEMORY MODIFY LENGTH CODE
-     # 00000004            98:  TBUFF    EQU        4       TEMP BUFFER
-     # 00000014            99:  SBUFF    EQU       20       SYMBOL BUFFER
-     # 0000001C           100:  MMADDR   EQU       28       ADDRESS OF CURENT MEMORY MODIFY
-     # 00000020           101:  NOTFIRST EQU       32       FIRST PASS FLAG
-     # 00000021           102:  DCNEG    EQU       33       DC COMMAND NAGATE FLAG
-     # 00000022           103:  MMSCALE  EQU       34       MEMORY MODIFY SCALE CODE
-     # 00000023           104:  MMARRAY  EQU       35       MEMORY MODIFY ARRAY CODE
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  5
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+                           93.i          INCLUDE   BUGSYM.SA
+     # 00000000            94.  MMFLAG   EQU        0       MEMORY MODIFY FLAG
+     # 00000001            95.  MMTYPE   EQU        1       MEMORY MODIFY TYPE CODE
+     # 00000002            96.  MMNEGFLG EQU        2       MEMORY MODIFY NEGATE FLAG
+     # 00000003            97.  MMLEN    EQU        3       MEMORY MODIFY LENGTH CODE
+     # 00000004            98.  TBUFF    EQU        4       TEMP BUFFER
+     # 00000014            99.  SBUFF    EQU       20       SYMBOL BUFFER
+     # 0000001C           100.  MMADDR   EQU       28       ADDRESS OF CURENT MEMORY MODIFY
+     # 00000020           101.  NOTFIRST EQU       32       FIRST PASS FLAG
+     # 00000021           102.  DCNEG    EQU       33       DC COMMAND NAGATE FLAG
+     # 00000022           103.  MMSCALE  EQU       34       MEMORY MODIFY SCALE CODE
+     # 00000023           104.  MMARRAY  EQU       35       MEMORY MODIFY ARRAY CODE
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page  5
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           106.  **********************************************************************
@@ -125,26 +125,26 @@ D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
                           108.  *        DEBUG DATA-POOL SYMBOLS                                     *
                           109.  *                                                                    *
                           110.  **********************************************************************
-                          111.           INCLUDE   DSYM.SA
-     # 00000F00           112:  DSEG      EQU   $00000F00 L 001 L H   DEBUG DATA SEGMENT ADDRESS
-     # 00000F04           113:  DBUFF     EQU   $00000F04 B 080 L H   DEBUG INPUT BUFFER
-     # 00000F54           114:  DBUFFPTR  EQU   $00000F54 L 001 L H   DEBUG INPUT BUFFER POINTER
-     # 00000F58           115:  DBUFFCNT  EQU   $00000F58 B 001 L H   DEBUG INPUT BUFFER COUNT
-     # 00000F59           116:  DBUFFLNE  EQU   $00000F59 B 001 L H   DEBUG INPUT BUFFER LINE COMPLETE FLAG
-     # 00000F5A           117:  DBUFFCHG  EQU   $00000F5A B 001 L H   DEBUG INPUT BUFFER CHANGE FLAG
-     # 00000F5B           118:  D400I     EQU   $00000F5B B 001 L H   DEBUG MVME400 INSTALLED FLAG
-     # 00000F5C           119:  DLIST     EQU   $00000F5C L 128 L H   DEBUG DISPLAY LIST
-     # 0000115C           120:  DCOUNT    EQU   $0000115C W 001 L H   DEBUG DISPLAY LIST COUNT
-     # 0000115E           121:  DSPARE2   EQU   $0000115E W 001 L H   DEBUG SPARE WORD
-     # 00001160           122:  TFRAME    EQU   $00001160 L 001 L D   FRAME TIME ACTUAL
-     # 00001164           123:  TFRAMEA   EQU   $00001164 L 001 L D   FRAME TIME AVERAGE
-     # 00001168           124:  TFRAMEW   EQU   $00001168 L 001 L D   FRAME TIME WORST
-     # 0000116C           125:  TMODULE   EQU   $0000116C W 016 L D   MODULE TIMES ACTUAL
-     # 0000118C           126:  TMODULEA  EQU   $0000118C W 016 L D   MODULE TIMES AVERAGE
-     # 000011AC           127:  TMODULEW  EQU   $000011AC W 016 L D   MODULE TIMES WORST
-     # 000011CC           128:  DSPARE    EQU   $000011CC L 032 L H   DEBUG SPARE LONG WORDS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  6
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+                          111.i          INCLUDE   DSYM.SA
+     # 00000F00           112.  DSEG      EQU   $00000F00 L 001 L H   DEBUG DATA SEGMENT ADDRESS
+     # 00000F04           113.  DBUFF     EQU   $00000F04 B 080 L H   DEBUG INPUT BUFFER
+     # 00000F54           114.  DBUFFPTR  EQU   $00000F54 L 001 L H   DEBUG INPUT BUFFER POINTER
+     # 00000F58           115.  DBUFFCNT  EQU   $00000F58 B 001 L H   DEBUG INPUT BUFFER COUNT
+     # 00000F59           116.  DBUFFLNE  EQU   $00000F59 B 001 L H   DEBUG INPUT BUFFER LINE COMPLETE FLAG
+     # 00000F5A           117.  DBUFFCHG  EQU   $00000F5A B 001 L H   DEBUG INPUT BUFFER CHANGE FLAG
+     # 00000F5B           118.  D400I     EQU   $00000F5B B 001 L H   DEBUG MVME400 INSTALLED FLAG
+     # 00000F5C           119.  DLIST     EQU   $00000F5C L 128 L H   DEBUG DISPLAY LIST
+     # 0000115C           120.  DCOUNT    EQU   $0000115C W 001 L H   DEBUG DISPLAY LIST COUNT
+     # 0000115E           121.  DSPARE2   EQU   $0000115E W 001 L H   DEBUG SPARE WORD
+     # 00001160           122.  TFRAME    EQU   $00001160 L 001 L D   FRAME TIME ACTUAL
+     # 00001164           123.  TFRAMEA   EQU   $00001164 L 001 L D   FRAME TIME AVERAGE
+     # 00001168           124.  TFRAMEW   EQU   $00001168 L 001 L D   FRAME TIME WORST
+     # 0000116C           125.  TMODULE   EQU   $0000116C W 016 L D   MODULE TIMES ACTUAL
+     # 0000118C           126.  TMODULEA  EQU   $0000118C W 016 L D   MODULE TIMES AVERAGE
+     # 000011AC           127.  TMODULEW  EQU   $000011AC W 016 L D   MODULE TIMES WORST
+     # 000011CC           128.  DSPARE    EQU   $000011CC L 032 L H   DEBUG SPARE LONG WORDS
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page  6
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           130.  **********************************************************************
@@ -163,8 +163,8 @@ D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
      # 00F03A80           143.  PNT4HX   EQU       $F03A80             VEMbug BINARY WORD TO HEX
      # 00F03A88           144.  PNT2HX   EQU       $F03A88             VEMbug BINARY BYTE TO HEX
      # 00F032B4           145.  HEX2DEC  EQU       $F032B4             VEMbug BINARY LONG TO DECIMAL
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  7
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page  7
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'000000                  147.           SECTION   12
@@ -218,8 +218,8 @@ C'000082  4EB9'0000141E   194.           JSR       RXEND               END OF IN
 C'000088  4E73            195.           RTE
 C'00008A  4EB9'00001414   196.  BAD4     JSR       RXRESET             RESET ERROR CONDITION
 C'000090  60EC            197.           BRA.S     QUIT4               BRANCH TO END OF HANDLER
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  8
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page  8
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           199.  **********************************************************************
@@ -252,8 +252,8 @@ C'0000D2  3151 0010       225.  LOADW    MOVE.W    (A1),DSBDATA1(A0)   STORE DAT
 C'0000D6  60E8            226.           BRA.S     NEXTDSB             DO NEXT DSB
 C'0000D8  2151 0010       227.  LOADLW   MOVE.L    (A1),DSBDATA1(A0)   STORE DATA
 C'0000DC  60E2            228.           BRA.S     NEXTDSB             DO NEXT DSB
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page  9
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page  9
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           230.  **********************************************************************
@@ -297,8 +297,8 @@ C'000152  42 55 53 20 45  264.  EMSG2    DC.B      'BUS ERROR',0
 C'00015C  41 44 44 52 45  265.  EMSG3    DC.B      'ADDRESS ERROR',0
           53 53 20 45 52
           52 4F 52 00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 10
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 10
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           267.  **********************************************************************
@@ -357,8 +357,8 @@ C'0001FC  7200            319.           MOVEQ.L   #0,D1               CLEAR D1
 C'0001FE  1029 0018       320.           MOVE.B    DSBARRAY(A1),D0     LOAD ARRAY INDEX
 C'000202  4EB9 00F03A88   321.           JSR       PNT2HX              CONVERT TO HEX
 C'000208  1CFC 0020       322.           MOVE.B    #' ',(A6)+          LOAD SPACE
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 11
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 11
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'00020C  1CFC 0020       323.           MOVE.B    #' ',(A6)+          LOAD SPACE
@@ -417,8 +417,8 @@ C'0002C8  1A29 000F       375.           MOVE.B    DSBSCALE(A1),D5     LOAD SCAL
 C'0002CC  1429 000C       376.           MOVE.B    DSBLEN(A1),D2       LOAD LENGTH CODE
 C'0002D0  4BE8 0004       377.           LEA       TBUFF(A0),A5        LOAD ADDRESS OF BUFFER
 C'0002D4  2C4D            378.           MOVE.L    A5,A6               COPY BUFFER POINTER
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 12
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 12
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'0002D6  4EB9'000009DC   379.           JSR       DISPLAY             LOAD BUFFER
@@ -477,8 +477,8 @@ C'000398  0C55 5452       431.           CMP.W     #'TR',(A5)          TEST FOR 
 C'00039C  6700 011A       432.           BEQ       TRCMD               BRANCH IF TR COMMAND
 C'0003A0  0C55 4443       433.           CMP.W     #'DC',(A5)          TEST FOR DC COMMAND
 C'0003A4  6700 014E       434.           BEQ       DCCMD               BRANCH IF DC COMMAND
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 13
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 13
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'0003A8  0C55 4D45       435.           CMP.W     #'ME',(A5)          TEST FOR ME COMMAND
@@ -495,8 +495,8 @@ C'0003D4  11FC 0000 0F58  445.           MOVE.B    #0,DBUFFCNT         SET BUFFE
 C'0003DA  51F8 0F59       446.           SF.B      DBUFFLNE            CLEAR BUFFER LINE COMPLETE FLAG
 C'0003DE  4EB9'000013EA   447.           JSR       RXENA               ENABLE RX
 C'0003E4  6000 FDA0       448.  BUGEND   BRA       BUGECHO             REPEAT FOREVER
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 14
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 14
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           450.  **********************************************************************
@@ -537,8 +537,8 @@ C'000442  1344 0018       484.           MOVE.B    D4,DSBARRAY(A1)     LOAD SYMB
 C'000446  1345 000F       485.           MOVE.B    D5,DSBSCALE(A1)     LOAD SYMBOL SCALE
 C'00044A  50E9 000E       486.           ST.B      DSBUPD(A1)          SET UPDATE FLAG
 C'00044E  6000 FF76       487.           BRA       ENDCMD              RESTART DEBUG
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 15
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 15
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           489.  **********************************************************************
@@ -565,8 +565,8 @@ C'00047E  1143 0001       509.           MOVE.B    D3,MMTYPE(A0)       SET MM TY
 C'000482  1145 0022       510.           MOVE.B    D5,MMSCALE(A0)      SET MM SCALE
 C'000486  4EB9'000012A8   511.           JSR       MMDISP              DISPLAY MEMORY
 C'00048C  6000 FF3E       512.           BRA       ENDCMDMM            END MM COMMAND
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 16
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 16
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           514.  **********************************************************************
@@ -604,8 +604,8 @@ C'0004AC  6000 FF18       539.           BRA       ENDCMD
 C'0004B0  7000            546.           MOVEQ.L   #0,D0               SET D0 TO FALSE
 C'0004B2  4E47            547.           TRAP      #7                  DISABLE TIMER SYSTEM
 C'0004B4  6000 FF10       548.           BRA       ENDCMD
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 17
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 17
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           550.  **********************************************************************
@@ -631,8 +631,8 @@ C'0004E4  21C0 1160       569.           MOVE.L    D0,TFRAME           CLEAR FRA
 C'0004E8  21C0 1164       570.           MOVE.L    D0,TFRAMEA          CLEAR FRAME TIME AVERAGE
 C'0004EC  21C0 1168       571.           MOVE.L    D0,TFRAMEW          CLEAR FRAME TIME WORST CASE
 C'0004F0  6000 FED4       572.           BRA       ENDCMD              LOOP BACK TO DEBUG
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 18
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 18
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           574.  **********************************************************************
@@ -691,8 +691,8 @@ C'000594  2007            626.           MOVE.L    D7,D0               COPY DATA
 C'000596  4EB9 00F032B4   627.           JSR       HEX2DEC             CONVERT TO DECIMAL
 C'00059C  4EB9'000013B0   628.           JSR       DSPLN               DISPLAY BUFFER
 C'0005A2  6000 FE22       629.           BRA       ENDCMD
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 19
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 19
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           631.  **********************************************************************
@@ -719,8 +719,8 @@ C'0005C2  6600 FDFC       651.           BNE       BUGERR              INPUT ERR
 C'0005C6  143C 00FF       652.           MOVE.B    #$FF,D2             SET FLAG (DISABLE MODULE)
 C'0005CA  4E46            653.           TRAP      #6                  DISABLE MODULE NUMBER IN D1
 C'0005CC  6000 FDF8       654.           BRA       ENDCMD
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 20
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 20
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           656.  **********************************************************************
@@ -779,8 +779,8 @@ C'00066A  6704            708.           BEQ.S     ISASSM              BRANCH IF
 C'00066C  1CBC 0046       709.           MOVE.B    #'F',(A6)           LOAD FORTRAN
 C'000670  528E            710.  ISASSM   ADDQ.L    #1,A6               INCREMENT POINTER
 C'000672  1CFC 0020       711.           MOVE.B    #' ',(A6)+          LOAD SPACE
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 21
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 21
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'000676  1CBC 0045       712.           MOVE.B    #'E',(A6)           LOAD ENABLED
@@ -793,8 +793,8 @@ C'00068A  2012            718.           MOVE.L    (A2),D0             LOAD TIME
 C'00068C  4EB9 00F032B4   719.           JSR       HEX2DEC             CONVERT TO DECIMAL
 C'000692  4EB9'000013B0   720.           JSR       DSPLN               OUTPUT BUFFER
 C'000698  6000 FD2C       721.           BRA       ENDCMD
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 22
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 22
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           723.  **********************************************************************
@@ -853,8 +853,8 @@ C'000700  4E75            773.           RTS
 C'000702  528D            774.  ISARRAY  ADDQ.L    #1,A5               SKIP +
 C'000704  4EB9'0000098E   775.           JSR       GETDC               CONVERT DECIMAL NUMBER
 C'00070A  4A00            776.           TST.B     D0                  TEST RETURN CODE
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 23
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 23
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'00070C  6612            777.           BNE.S     PARMERR             BRANCH IF NOT EQUAL
@@ -913,8 +913,8 @@ C'000794  0C15 0053       827.           CMP.B     #'S',(A5)           TEST FOR 
 C'000798  670E            828.           BEQ.S     STYPE               BRANCH IF S TYPE
 C'00079A  6084            829.           BRA       PARMERR             INVALID TYPE CODE
 C'00079C  7600            830.  HTYPE    MOVEQ.L   #0,D3               SET TYPE CODE TO HEX
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 24
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 24
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'00079E  6032            831.           BRA.S     TDONE               BRANCH TYPE DONE
@@ -937,8 +937,8 @@ C'0007CE  6D00 FF50       847.           BLT       PARMERR             BRANCH IF
 C'0007D2  7800            848.  TDONE    MOVEQ.L   #0,D4               CLEAR ARRAY INDEX
 C'0007D4  7000            849.           MOVEQ.L   #0,D0               SET RETURN CODE
 C'0007D6  4E75            850.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 25
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 25
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           852.  **********************************************************************
@@ -975,8 +975,8 @@ C'000812  6602            880.           BNE.S     PARMER              INPUT ERR
 C'000814  4E75            881.           RTS
 C'000816  7001            882.  PARMER   MOVEQ.L   #1,D0               SET RETURN CODE
 C'000818  4E75            883.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 26
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 26
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           885.  **********************************************************************
@@ -1034,8 +1034,8 @@ C'00087A  60AE            936.           BRA.S     SGLOB                        
                           937.  *
 C'00087C  7001            938.  SLEND    MOVEQ.L   #1,D0                         NOT FOUND SET ERROR CODE
 C'00087E  4E75            939.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 27
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 27
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           941.  **********************************************************************
@@ -1067,8 +1067,8 @@ C'0008AC  508C            966.  NXTNM    ADDQ.L    #8,A4               INCREMENT
 C'0008AE  51C8 FFDE       967.           DBRA      D0,NUPLP            LOOP RTNUMBER-1 TIMES
 C'0008B2  7001            968.           MOVEQ.L   #1,D0               SET RETURN CODE (ERROR)
 C'0008B4  4E75            969.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 28
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 28
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                           971.  **********************************************************************
@@ -1122,8 +1122,8 @@ C'000936  6002           1018.           BRA.S     MMSTEND             STORE END
 C'000938  2881           1019.  MMSTL    MOVE.L    D1,(A4)             STORE LONG WORD
 C'00093A  7000           1020.  MMSTEND  MOVEQ.L   #0,D0               SET RETURN CODE
 C'00093C  4E75           1021.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 29
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 29
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                          1023.  **********************************************************************
@@ -1168,8 +1168,8 @@ C'000986  241F           1061.  ENDHX    MOVE.L    (A7)+,D2            RESTORE D
 C'000988  4E75           1062.           RTS
 C'00098A  7001           1063.  HXERR    MOVEQ.L   #1,D0               SET ERROR RETURN CODE
 C'00098C  60F8           1064.           BRA.S     ENDHX               BRANCH TO END HEX
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 30
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 30
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                          1066.  **********************************************************************
@@ -1214,8 +1214,8 @@ C'0009D4  4E75           1104.           RTS                           RETURN
 C'0009D6  7001           1105.  DCERR    MOVEQ.L   #1,D0               SET ERROR RETURN CODE
 C'0009D8  241F           1106.           MOVE.L    (A7)+,D2            RESTORE D2
 C'0009DA  4E75           1107.           RTS                           RETURN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 31
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 31
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                          1109.  **********************************************************************
@@ -1274,8 +1274,8 @@ C'000A4E  4EB9'00001394  1161.           JSR       CLR2EOL             CLEAR TO 
 C'000A54  4CDF 20C0      1162.           MOVEM.L   (A7)+,D6/D7/A5      RESTORE D6/D7/A5
 C'000A58  4E75           1163.           RTS                           RETURN
 C'000A5A  B43C 0001      1164.  DISPDC   CMP.B     #1,D2               TEST FOR BYTE LENGTH
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 32
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 32
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'000A5E  6708           1165.           BEQ.S     DSD1                GO EXTEND AND DISPLAY DEC BYTE
@@ -1334,8 +1334,8 @@ C'000B18  30 35 34 37    1217.           DC.B      '0547'
 C'000B1C  30 35 36 36    1218.           DC.B      '0566'
 C'000B20  30 35 38 36    1219.           DC.B      '0586'
 C'000B24  30 36 30 35    1220.           DC.B      '0605'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 33
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 33
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'000B28  30 36 32 35    1221.           DC.B      '0625'
@@ -1394,8 +1394,8 @@ C'000BF8  31 36 34 31    1273.           DC.B      '1641'
 C'000BFC  31 36 36 30    1274.           DC.B      '1660'
 C'000C00  31 36 38 30    1275.           DC.B      '1680'
 C'000C04  31 36 39 39    1276.           DC.B      '1699'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 34
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 34
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'000C08  31 37 31 39    1277.           DC.B      '1719'
@@ -1454,8 +1454,8 @@ C'000CD8  32 37 33 34    1329.           DC.B      '2734'
 C'000CDC  32 37 35 34    1330.           DC.B      '2754'
 C'000CE0  32 37 37 33    1331.           DC.B      '2773'
 C'000CE4  32 37 39 33    1332.           DC.B      '2793'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 35
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 35
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'000CE8  32 38 31 32    1333.           DC.B      '2812'
@@ -1514,8 +1514,8 @@ C'000DB8  33 38 32 38    1385.           DC.B      '3828'
 C'000DBC  33 38 34 38    1386.           DC.B      '3848'
 C'000DC0  33 38 36 37    1387.           DC.B      '3867'
 C'000DC4  33 38 38 37    1388.           DC.B      '3887'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 36
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 36
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'000DC8  33 39 30 36    1389.           DC.B      '3906'
@@ -1574,8 +1574,8 @@ C'000E98  34 39 32 32    1441.           DC.B      '4922'
 C'000E9C  34 39 34 31    1442.           DC.B      '4941'
 C'000EA0  34 39 36 31    1443.           DC.B      '4961'
 C'000EA4  34 39 38 30    1444.           DC.B      '4980'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 37
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 37
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'000EA8  35 30 30 30    1445.           DC.B      '5000'
@@ -1634,8 +1634,8 @@ C'000F78  36 30 31 36    1497.           DC.B      '6016'
 C'000F7C  36 30 33 35    1498.           DC.B      '6035'
 C'000F80  36 30 35 35    1499.           DC.B      '6055'
 C'000F84  36 30 37 34    1500.           DC.B      '6074'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 38
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 38
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'000F88  36 30 39 34    1501.           DC.B      '6094'
@@ -1694,8 +1694,8 @@ C'001058  37 31 30 39    1553.           DC.B      '7109'
 C'00105C  37 31 32 39    1554.           DC.B      '7129'
 C'001060  37 31 34 38    1555.           DC.B      '7148'
 C'001064  37 31 36 38    1556.           DC.B      '7168'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 39
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 39
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'001068  37 31 38 38    1557.           DC.B      '7188'
@@ -1754,8 +1754,8 @@ C'001138  38 32 30 33    1609.           DC.B      '8203'
 C'00113C  38 32 32 33    1610.           DC.B      '8223'
 C'001140  38 32 34 32    1611.           DC.B      '8242'
 C'001144  38 32 36 32    1612.           DC.B      '8262'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 40
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 40
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'001148  38 32 38 31    1613.           DC.B      '8281'
@@ -1814,8 +1814,8 @@ C'001218  39 32 39 37    1665.           DC.B      '9297'
 C'00121C  39 33 31 36    1666.           DC.B      '9316'
 C'001220  39 33 33 36    1667.           DC.B      '9336'
 C'001224  39 33 35 35    1668.           DC.B      '9355'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 41
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 41
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'001228  39 33 37 35    1669.           DC.B      '9375'
@@ -1850,8 +1850,8 @@ C'001298  39 39 32 32    1697.           DC.B      '9922'
 C'00129C  39 39 34 31    1698.           DC.B      '9941'
 C'0012A0  39 39 36 31    1699.           DC.B      '9961'
 C'0012A4  39 39 38 30    1700.           DC.B      '9980'
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 42
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 42
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                          1702.  **********************************************************************
@@ -1890,8 +1890,8 @@ C'001302  1A28 0022      1734.           MOVE.B    MMSCALE(A0),D5      LOAD SCAL
 C'001306  4EBA F6D4      1735.           JSR       DISPLAY             CONVERT DATA TO ASCII
 C'00130A  4EB9'000013B0  1736.           JSR       DSPLN               DISPLAY BUFFER
 C'001310  4E75           1737.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 43
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 43
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                          1739.  **********************************************************************
@@ -1950,13 +1950,13 @@ C'001382  2C4D           1791.           MOVE.L    A5,A6               COPY BUFF
 C'001384  1CFC 001B      1792.           MOVE.B    #$1B,(A6)+          LEAD IN CODE
 C'001388  1CFC 001C      1793.           MOVE.B    #$1C,(A6)+          CLEAR SCREEN CODE
 C'00138C  4EB9'000013B0  1794.           JSR       DSPLN               OUTPUT TO TERMINAL
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 44
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 44
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
 C'001392  4E75           1795.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 45
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 45
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                          1797.  **********************************************************************
@@ -2007,8 +2007,8 @@ C'0013CC  4EB9'00001430  1841.           JSR       TXWRITE   OUTPUT DATA
 C'0013D2  4E75           1842.           RTS
 C'0013D4  4E41           1843.  HOLDIT   TRAP      #1        HOLD TASK
 C'0013D6  60EA           1844.           BRA.S     DSPB      TRY AGAIN
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 46
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 46
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                          1846.  **********************************************************************
@@ -2067,8 +2067,8 @@ C'001412  4E75           1888.           RTS
 C'001414  13FC 0030      1895.           MOVE.B    #$30,NECB+4         RESET RX (CLEAR ERROR)
           00FE61CF
 C'00141C  4E75           1896.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 21, 2025  10:33:53    ...Page 47
-D:DEBUG.LTX , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:42:47    ...Page 47
+D:DEBUG.RO , D:DEBUG.PRN , D:DEBUG.SYM = D:DEBUG.A68
    ...
 
                          1898.  **********************************************************************
@@ -2107,8 +2107,8 @@ C'001438  13FC 0001      1928.           MOVE.B    #$01,NECB+4         POINT TO 
 C'001440  13FC 0018      1929.           MOVE.B    #$18,NECB+4         ENABLE RX INTERRUPTS
           00FE61CF
 C'001448  4E75           1930.           RTS
-C'00144A                 1931.           END
+                         1931.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:28
+C'00144A                 1932.           END
     0 Errors
-                *
-                         1926.  **********************************************************************
+*****************************
      C'00001438   

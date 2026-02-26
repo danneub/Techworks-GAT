@@ -5,6 +5,8 @@
 * =/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 * =/*
 * =LINK.LO        ,LOADl.LO,LOAD1.LK;IXMHUZ=128
+         LINK LCPU1.RO
+         LINK EXEC.RO
          LINK NAME1.RO
          LINK LOOKUP0.RO
          LINK LOOKUP1.RO
@@ -28,8 +30,6 @@
          LINK NAVFREQ.RO
          LINK GATVIS.RO
          LINK VISIO.RO
-         LINK LCPU1.RO
-         LINK EXEC.RO
          LINK DEBUG.RO
 DATA.SEG:
           org $0800

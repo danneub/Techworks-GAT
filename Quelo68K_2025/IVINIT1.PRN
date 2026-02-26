@@ -1,5 +1,5 @@
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:51:49     ...Page  1
-D:IVINIT1.LTX , D:IVINIT1.PRN , D:IVINIT1.SYM = D:IVINIT1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:13    ...Page  1
+D:IVINIT1.RO , D:IVINIT1.PRN , D:IVINIT1.SYM = D:IVINIT1.A68
    ...
 
                             1.  **********************************************************************
@@ -16,8 +16,8 @@ C'000000  4EB9'00000000    11.           JSR       INIT4               INITIALIZ
 C'000006  21FC'00000000    12.           MOVE.L    #INT4,$70           LOAD ADDRESS FOR IV #4
           0070
 C'00000E  4E75             13.           RTS
-C'000010                   14.           END
+                           14.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:36
+C'000010                   15.           END
     0 Errors
-              8.           XREF      INIT4               INTERRUPT #4 INITIALIZER
-C'000000                    9.           SECTION   12
+                   9.           SECTION   12
      C'00000000            10.

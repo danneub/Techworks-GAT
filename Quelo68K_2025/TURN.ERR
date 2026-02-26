@@ -1,4 +1,4 @@
-Quelo   ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:48:22
+Quelo   ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:41:21
 D:TURN.A68 , D:TURN.ERR = D:TURN.SA
 
   <0000147A>     5.  FALPHA	  EQU	$0000147A L 001 L S25  ANGLE OF ATTACK (DEGRE
@@ -418,4 +418,4 @@ D:TURN.A68 , D:TURN.ERR = D:TURN.SA
   <00000001>   446.  OISSPA2N     EQU    1			INST. SEL SPARE     (NOT)
   <00000000>   447.  OISSPA3N     EQU    0			INST. SEL SPARE     (NOT)
     0 Errors detected
-  441.  OISCOM2N     EQU    6			INS
+  441.  OISCOM2N     EQU    6			IN

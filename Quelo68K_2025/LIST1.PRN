@@ -1,5 +1,5 @@
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  -74:51:16    ...Page  1
-D:LIST1.LTX , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:13    ...Page  1
+D:LIST1.RO , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
    ...
 
                             1.           OPT       MEX,CEX,NOPCS
@@ -12,8 +12,8 @@ D:LIST1.LTX , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
                             8.m          DC.B      $\2,$\3,$\4,$\5
                             9.m          DC.L      \1
                            10.m          ENDM
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  -74:51:16    ...Page  2
-D:LIST1.LTX , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:13    ...Page  2
+D:LIST1.RO , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
    ...
 
                            12.  **********************************************************************
@@ -72,8 +72,8 @@ C'000034 '00000000         63.1          DC.L      TURN
 C'000038  FF 00 00 00      65.1          DC.B      $FF,$00,$00,$00
 C'00003C '00000000         66.1          DC.L      MOTION
                            67.c          MODENTRY NAVFREQ,FF,00,00,00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  -74:51:16    ...Page  3
-D:LIST1.LTX , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:13    ...Page  3
+D:LIST1.RO , D:LIST1.PRN , D:LIST1.SYM = D:LIST1.A68
    ...
 
 C'000040  FF 00 00 00      68.1          DC.B      $FF,$00,$00,$00
@@ -99,7 +99,7 @@ C'000074 '00000000         87.1          DC.L      RTDEBUG
                            88.c          MODENTRY RTEND,FF,FF,00,00
 C'000078  FF FF 00 00      89.1          DC.B      $FF,$FF,$00,$00
 C'00007C '00000000         90.1          DC.L      RTEND
-                           91.~  ...M68K D2.0C  3/12/85   ...Run on May 7, 2025  -74:50:18
+                           91.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:36
 C'000080                   92.           END
     0 Errors
      MODENTRY RTDEBUG,FF,FF,00,00
@@ -108,4 +108,4 @@ C'000074 '00000000         87.1          DC.L      RTDEBUG
                            88.c          MODENTRY RTEND,FF,FF,00,00
 C'000078  FF FF 00 00      89.1          DC.B      $FF,$FF,$00,$00
 C'00007C '00000000         90.1          DC.L      RTEND
-        
+           

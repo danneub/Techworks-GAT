@@ -807,9 +807,9 @@ NORESET  EQU	   *
 *
 	 MOVE.L    D0,VISYF	       Y POSITION (FEET)
 	 TRAP	   #0		       RETURN TO EXEC
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:49:24
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:42:23
 	 END
-********************************
+*******************************
 * STORE VISUAL Y POSITION  (FEET)  (NORTH/SOUTH) (POS=SOUTH)	     *
 **********************************************************************
 	 MOVE.L    VISY,D0	       AGAS AT 2-10

@@ -410,7 +410,7 @@ TCBX	 BRA.S	   TCBX 	       LOOP FOREVER
 MSG1	 DC.B	   'SSTACK  '
 MSG2	 DC.B	   'USTACK  '
 MSG3	 DC.B	   'LPOOL   '
-MSG5	 DC.B	   'HEAP    '
+MSG5	 DC.B	   'HEAP TW '
 	 PAGE
 **********************************************************************
 *								     *

@@ -484,9 +484,9 @@ XX1	 MOVE.L    NRRAS2,D0	       +11	 GET SLANT RANGE SQUARED IN NM
 	 ST.B	   NRLOS	       .	 YES, IN LINE OF SIGHT
 LOS	 EQU	   *
 	 RTS
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:48:37
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:41:36
 	 END
- WORD
+WORD
 	 ASL.L	   #8,D1	       +08	 CHANGE SCALE
 	 ASL.L	   #3,D1	       +11	 CHANGE SCALE
 *

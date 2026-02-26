@@ -11,9 +11,9 @@ IVINIT	 EQU	   *
 	 JSR	   INIT4	       INITIALIZE HANDLER FOR IV #4
 	 MOVE.L    #INT4,$70	       LOAD ADDRESS FOR IV #4
 	 RTS
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:47:37
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:36
 	 END
-*
+
 *								     *
 *	 IVINIT    INTERRUPT VECTOR INITIALIZER ROUTINE 	     *
 *								     *

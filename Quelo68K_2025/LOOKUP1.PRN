@@ -1,5 +1,5 @@
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page  1
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page  1
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
                             1.           XDEF      DPTABLE
@@ -58,8 +58,8 @@ C'0000C0  54 46 52 41 4D   41.           DC.B      'TFRAMEW '
           45 57 20
 C'0000C8  00001168         42.           DC.L      $00001168
 C'0000CC  04 01 01 00      43.           DC.B      $04,$01,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page  2
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page  2
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'0000D0  54 4D 4F 44 55   44.           DC.B      'TMODULE '
@@ -118,8 +118,8 @@ C'0001A0  45 4E 46 55 4C   83.           DC.B      'ENFULL  '
           4C 20 20
 C'0001A8  00001462         84.           DC.L      $00001462
 C'0001AC  02 03 01 03      85.           DC.B      $02,$03,$01,$03
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page  3
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page  3
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'0001B0  45 4E 49 44 4C   86.           DC.B      'ENIDLE  '
@@ -178,8 +178,8 @@ C'000280  45 4D 41 47 52  125.           DC.B      'EMAGRT  '
           54 20 20
 C'000288  00001476        126.           DC.L      $00001476
 C'00028C  01 00 01 00     127.           DC.B      $01,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page  4
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page  4
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000290  45 43 41 52 42  128.           DC.B      'ECARBHT '
@@ -238,8 +238,8 @@ C'000360  46 50 48 49 46  167.           DC.B      'FPHIFRZ '
           52 5A 20
 C'000368  000014A2        168.           DC.L      $000014A2
 C'00036C  04 03 01 16     169.           DC.B      $04,$03,$01,$16
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page  5
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page  5
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000370  46 50 53 49 20  170.           DC.B      'FPSI    '
@@ -298,8 +298,8 @@ C'000440  46 55 45 57 20  209.           DC.B      'FUEW    '
           20 20 20
 C'000448  000014DA        210.           DC.L      $000014DA
 C'00044C  04 03 01 15     211.           DC.B      $04,$03,$01,$15
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page  6
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page  6
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000450  46 56 43 41 4C  212.           DC.B      'FVCAL   '
@@ -358,8 +358,8 @@ C'000520  46 43 4F 53 50  251.           DC.B      'FCOSPSIW'
           53 49 57
 C'000528  00001500        252.           DC.L      $00001500
 C'00052C  02 03 01 0F     253.           DC.B      $02,$03,$01,$0F
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page  7
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page  7
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000530  46 43 4F 53 54  254.           DC.B      'FCOSTHET'
@@ -418,8 +418,8 @@ C'000600  46 4C 41 4D 44  293.           DC.B      'FLAMDOT '
           4F 54 20
 C'000608  0000151C        294.           DC.L      $0000151C
 C'00060C  02 03 01 08     295.           DC.B      $02,$03,$01,$08
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page  8
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page  8
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000610  46 4D 50 58 20  296.           DC.B      'FMPX    '
@@ -478,8 +478,8 @@ C'0006E0  46 53 49 4E 50  335.           DC.B      'FSINPSI '
           53 49 20
 C'0006E8  00001538        336.           DC.L      $00001538
 C'0006EC  02 03 01 0F     337.           DC.B      $02,$03,$01,$0F
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page  9
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page  9
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'0006F0  46 53 49 4E 50  338.           DC.B      'FSINPSIW'
@@ -538,8 +538,8 @@ C'0007C0  46 45 4E 47 56  377.           DC.B      'FENGVOL '
           4F 4C 20
 C'0007C8  00001554        378.           DC.L      $00001554
 C'0007CC  02 03 01 0F     379.           DC.B      $02,$03,$01,$0F
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 10
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 10
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'0007D0  46 46 55 45 4C  380.           DC.B      'FFUELQR '
@@ -598,8 +598,8 @@ C'0008A0  46 41 4C 54 46  419.           DC.B      'FALTFRZ '
           52 5A 20
 C'0008A8  00001570        420.           DC.L      $00001570
 C'0008AC  01 00 01 00     421.           DC.B      $01,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 11
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 11
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'0008B0  46 41 4C 54 53  422.           DC.B      'FALTSDN '
@@ -658,8 +658,8 @@ C'000980  4D 50 49 54 43  461.           DC.B      'MPITCOMM'
           4F 4D 4D
 C'000988  00001580        462.           DC.L      $00001580
 C'00098C  02 03 01 08     463.           DC.B      $02,$03,$01,$08
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 12
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 12
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000990  4D 53 49 4E 50  464.           DC.B      'MSINPHI '
@@ -718,8 +718,8 @@ C'000A60  4E 41 44 46 32  503.           DC.B      'NADF2FRQ'
           46 52 51
 C'000A68  000015A4        504.           DC.L      $000015A4
 C'000A6C  04 00 01 00     505.           DC.B      $04,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 13
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 13
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000A70  4E 41 44 46 32  506.           DC.B      'NADF2STA'
@@ -778,8 +778,8 @@ C'000B40  4E 56 32 49 44  545.           DC.B      'NV2IDNT2'
           4E 54 32
 C'000B48  000015DC        546.           DC.L      $000015DC
 C'000B4C  04 00 01 00     547.           DC.B      $04,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 14
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 14
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000B50  4E 44 31 49 44  548.           DC.B      'ND1IDNT1'
@@ -838,8 +838,8 @@ C'000C20  4E 44 4D 45 32  587.           DC.B      'NDME2STA'
           53 54 41
 C'000C28  00001614        588.           DC.L      $00001614
 C'000C2C  04 00 01 00     589.           DC.B      $04,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 15
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 15
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000C30  4E 41 50 54 50  590.           DC.B      'NAPTPSA '
@@ -898,8 +898,8 @@ C'000D00  4E 53 50 41 52  629.           DC.B      'NSPARE2 '
           45 32 20
 C'000D08  0000164C        630.           DC.L      $0000164C
 C'000D0C  04 00 01 00     631.           DC.B      $04,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 16
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 16
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000D10  4E 53 50 41 52  632.           DC.B      'NSPARE3 '
@@ -958,8 +958,8 @@ C'000DE0  4E 41 44 46 32  671.           DC.B      'NADF2DEV'
           44 45 56
 C'000DE8  00001676        672.           DC.L      $00001676
 C'000DEC  02 03 01 06     673.           DC.B      $02,$03,$01,$06
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 17
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 17
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000DF0  4E 41 56 31 42  674.           DC.B      'NAV1BRG '
@@ -1018,8 +1018,8 @@ C'000EC0  4E 48 52 41 20  713.           DC.B      'NHRA    '
           20 20 20
 C'000EC8  00001692        714.           DC.L      $00001692
 C'000ECC  02 03 01 00     715.           DC.B      $02,$03,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 18
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 18
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000ED0  4E 47 53 44 31  716.           DC.B      'NGSD1DEG'
@@ -1078,8 +1078,8 @@ C'000FA0  4E 52 58 47 41  755.           DC.B      'NRXGAS  '
           53 20 20
 C'000FA8  000016AE        756.           DC.L      $000016AE
 C'000FAC  02 03 01 0C     757.           DC.B      $02,$03,$01,$0C
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 19
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 19
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'000FB0  4E 52 59 47 41  758.           DC.B      'NRYGAS  '
@@ -1138,8 +1138,8 @@ C'001080  4E 56 54 43 32  797.           DC.B      'NVTC2CTR'
           43 54 52
 C'001088  000016CA        798.           DC.L      $000016CA
 C'00108C  02 00 01 00     799.           DC.B      $02,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 20
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 20
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'001090  4E 4B 31 20 20  800.           DC.B      'NK1     '
@@ -1198,8 +1198,8 @@ C'001160  4E 43 4F 4E 52  839.           DC.B      'NCONRAD '
           41 44 20
 C'001168  000016E6        840.           DC.L      $000016E6
 C'00116C  02 03 01 06     841.           DC.B      $02,$03,$01,$06
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 21
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 21
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'001170  4E 41 56 31 47  842.           DC.B      'NAV1GS  '
@@ -1258,8 +1258,8 @@ C'001240  4E 53 50 41 52  881.           DC.B      'NSPAREW7'
           45 57 37
 C'001248  00001702        882.           DC.L      $00001702
 C'00124C  02 00 01 00     883.           DC.B      $02,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 22
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 22
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'001250  4E 53 50 41 52  884.           DC.B      'NSPAREW8'
@@ -1318,8 +1318,8 @@ C'001320  4E 49 4E 49 54  923.           DC.B      'NINIT   '
           20 20 20
 C'001328  00001714        924.           DC.L      $00001714
 C'00132C  01 00 01 00     925.           DC.B      $01,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 23
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 23
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'001330  4E 4D 4D 54 4F  926.           DC.B      'NMMTONE '
@@ -1378,8 +1378,8 @@ C'001400  4E 56 54 43 31  965.           DC.B      'NVTC1   '
           20 20 20
 C'001408  00001722        966.           DC.L      $00001722
 C'00140C  01 00 01 00     967.           DC.B      $01,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 24
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 24
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'001410  4E 56 54 43 32  968.           DC.B      'NVTC2   '
@@ -1438,8 +1438,8 @@ C'0014E0  4E 44 4D 31 4B 1007.           DC.B      'NDM1KY  '
           59 20 20
 C'0014E8  00001730       1008.           DC.L      $00001730
 C'0014EC  01 00 01 00    1009.           DC.B      $01,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 25
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 25
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'0014F0  4E 44 4D 32 4B 1010.           DC.B      'NDM2KY  '
@@ -1498,8 +1498,8 @@ C'0015C0  4E 43 4F 4D 32 1049.           DC.B      'NCOM2SQ '
           53 51 20
 C'0015C8  0000173E       1050.           DC.L      $0000173E
 C'0015CC  01 00 01 00    1051.           DC.B      $01,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 26
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 26
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'0015D0  4E 43 4F 4D 31 1052.           DC.B      'NCOM1VOL'
@@ -1558,8 +1558,8 @@ C'0016A0  4E 53 50 41 52 1091.           DC.B      'NSPAREB7'
           45 42 37
 C'0016A8  0000174C       1092.           DC.L      $0000174C
 C'0016AC  01 00 01 00    1093.           DC.B      $01,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 27
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 27
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'0016B0  4E 53 50 41 52 1094.           DC.B      'NSPAREB8'
@@ -1618,8 +1618,8 @@ C'001780  56 46 4C 41 47 1133.           DC.B      'VFLAG2  '
           32 20 20
 C'001788  00001766       1134.           DC.L      $00001766
 C'00178C  01 00 01 00    1135.           DC.B      $01,$00,$01,$00
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  14:53:38     ...Page 28
-D:LOOKUP1.LTX , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:43:15    ...Page 28
+D:LOOKUP1.RO , D:LOOKUP1.PRN , D:LOOKUP1.SYM = D:LOOKUP1.A68
    ...
 
 C'001790  53 59 4E 43 32 1136.           DC.B      'SYNC22  '
@@ -1644,15 +1644,14 @@ C'0017D8  0000176E       1149.           DC.L      $0000176E
 C'0017DC  04 03 01 0A    1150.           DC.B      $04,$03,$01,$0A
                          1151.  *
 C'0017E0  017E           1152.  DPCOUNT  DC.W              382
-C'0017E2                 1153.           END
+                         1153.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:40:37
+C'0017E2                 1154.           END
     0 Errors
- 20 20
-C'0017C8  0000176A       1146.           DC.L      $0000176A
-C'0017CC  04 03 01 0A    1147.           DC.B      $04,$03,$01,$0A
+   1147.           DC.B      $04,$03,$01,$0A
 C'0017D0  56 49 53 59 20 1148.           DC.B      'VISY    '
           20 20 20
 C'0017D8  0000176E       1149.           DC.L      $0000176E
 C'0017DC  04 03 01 0A    1150.           DC.B      $04,$03,$01,$0A
                          1151.  *
 C'0017E0  017E           1152.  DPCOUNT  DC.W              382
-C'0017E2   
+           

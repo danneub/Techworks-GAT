@@ -329,9 +329,9 @@ TANADDR  DC.W	   0		       +12	 TAN Y
 	 DC.W	   10077
 	 DC.W	   10776
 	 DC.W	   11520
-~~ ...M68K D2.0C  3/12/85   ...Run on Dec 4, 2025  13:48:36
+~~ ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:41:35
 	 END
-400
+00
 	 DC.W	   1696
 	 DC.W	   1950
 	 DC.W	   2192

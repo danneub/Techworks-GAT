@@ -1,5 +1,5 @@
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  1
-D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:45:25    ...Page  1
+D:NMATH.RO , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.A68
    ...
 
                             1.           OPT       MEX,CEX,NOPCS
@@ -18,8 +18,8 @@ D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
                            14.           XREF      MSIN1               MATH LIB SIN
                            15.           XREF      DSMUL               MATH LIB 32 * 16 = 32 MULTIPLY
                            16.           XREF      SQRT                MATH LIB 32 BIT SQUARE ROOT
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  2
-D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:45:25    ...Page  2
+D:NMATH.RO , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.A68
    ...
 
 C'000000                   18.           SECTION   12
@@ -53,8 +53,8 @@ C'00002A  4EB9'00000000    45.           JSR       MSIN1                        
 C'000030  321F             46.           MOVE.W    (SP)+,D1            +15       RELOAD Y OUTPUT
 C'000032  0840 000F        47.           BCHG      #15,D0              +15       CONVERT TO OFFSET BINARY
 C'000036  4E75             48.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  3
-D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:45:25    ...Page  3
+D:NMATH.RO , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.A68
    ...
 
                            50.  **********************************************************************
@@ -81,8 +81,8 @@ C'00004C  6E04             70.           BGT.S     END180                       
                            71.  *
 C'00004E  D07C 5A00        72.           ADD.W     #23040,D0           +06       ADD 360 DEG
 C'000052  4E75             73.  END180   RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  4
-D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:45:25    ...Page  4
+D:NMATH.RO , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.A68
    ...
 
                            75.  **********************************************************************
@@ -122,8 +122,8 @@ C'000090  4E75            108.           RTS
                           109.  *
 C'000092  907C 5A00       110.  MIN3601  SUB.W     #23040,D0           +06       DIFF-360                  DEG
 C'000096  4E75            111.  RET1     RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  5
-D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:45:25    ...Page  5
+D:NMATH.RO , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.A68
    ...
 
                           113.  **********************************************************************
@@ -182,8 +182,8 @@ C'0000CC  6030            161.           BRA.S     EQZERO2
                           166.  *        NUMERATOR   =   D1.L          +23 (SMALLER NUMBER) DEG      *
                           167.  *        DENOMINATOR =   D0.L          +23 (LAREGER NUMBER) DEG      *
                           168.  *                                                                    *
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  6
-D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:45:25    ...Page  6
+D:NMATH.RO , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.A68
    ...
 
                           169.  *        ABS(NUMERATOR)  <=  ABS(DENOMINATOR)                        *
@@ -242,8 +242,8 @@ C'00012A  60F2            221.           BRA.S     LOOP4
                           222.  *
      C'0000012C           223.  NEXT72   EQU       *                             NOW (M+N) = 12
                           224.  *
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  7
-D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:45:25    ...Page  7
+D:NMATH.RO , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.A68
    ...
 
 C'00012C  3F04            225.           MOVE.W    D4,-(SP)                      SAVE BASE
@@ -259,8 +259,8 @@ C'000138  6A02            233.           BPL.S     ENDATAN4                     
 C'00013A  4440            235.           NEG.W     D0                  +06       CHANGE SIGN
      C'0000013C           236.  ENDATAN4 EQU       *
 C'00013C  4E75            237.           RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  8
-D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:45:25    ...Page  8
+D:NMATH.RO , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.A68
    ...
 
                           239.  **********************************************************************
@@ -315,8 +315,8 @@ C'00017E  6A02            287.           BPL.S     ENDATAN2            .        
                           288.  *
 C'000180  4440            289.           NEG.W     D0                  +08       ATAN(-X) = -ATAN(X)
 C'000182  4E75            290.  ENDATAN2 RTS
-Quelo   ...A68K D5.0Pa 5/26/85   ...Run on May 7, 2025  15:01:42     ...Page  9
-D:NMATH.LTX , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.SA
+Quelo   ...A68K D5.0Pa 5/26/85   ...Run on Feb 26, 2026  10:45:25    ...Page  9
+D:NMATH.RO , D:NMATH.PRN , D:NMATH.SYM = D:NMATH.A68
    ...
 
                           292.  **********************************************************************
@@ -359,10 +359,10 @@ C'0001C0  2438            328.           DC.W      9272
 C'0001C2  275D            329.           DC.W      10077
 C'0001C4  2A18            330.           DC.W      10776
 C'0001C6  2D00            331.           DC.W      11520
-C'0001C8                  332.           END
+                          332.~  ...M68K D2.0C  3/12/85   ...Run on Feb 26, 2026  10:41:35
+C'0001C8                  333.           END
     0 Errors
- 1975            324.           DC.W      6517
-C'0001BA  1C27            325.           DC.W      7207
+W      7207
 C'0001BC  1EE3            326.           DC.W      7907
 C'0001BE  21BE            327.           DC.W      8638
 C'0001C0  2438            328.           DC.W      9272
